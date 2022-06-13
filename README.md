@@ -6,8 +6,14 @@ Movement\
 Camera Look\
 Model\
 Walk Animations\
+Footstep sounds\
 Syncing
-### Inventory 0.2
+### UI/Menus 0.2
+Mainmenu\
+Sidemenu\
+Options\
+Server Browser
+### Inventory 0.3
 Basic UI\
 Pickup\
 Transfer\
@@ -16,20 +22,15 @@ Storage\
 Shop\
 Animations\
 Syncing
-### Building 0.3
+### Building 0.4
 Placing\
 Upgrading\
 Breaking\
 Animations\
 Syncing
-### Fighting 0.4
+### Fighting 0.5
 Health\
 Weapons\
 Damage\
 Animations\
 Syncing
-### UI/Menus 0.5
-Mainmenu\
-Sidemenu\
-Options\
-Server Browser
