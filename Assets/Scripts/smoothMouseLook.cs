@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using Mirror;
-//[AddComponentMenu("Camera-Control/Smooth Mouse Look")]
+
 public class smoothMouseLook : MonoBehaviour
 {
     public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
@@ -18,16 +16,8 @@ public class smoothMouseLook : MonoBehaviour
     [Header("Read Only")]
     public float rotationX = 0F;
     public float rotationY = 0F;
-
-    float rotX = 0F;
-    float rotY = 0F;
-
     Quaternion originalRotation;
 
-    private void LateUpdate()
-    {
-
-    }
     void Update()
     {
         if (GetComponent<NetworkIdentity>() != null)
