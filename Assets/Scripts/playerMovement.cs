@@ -1,18 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Cinemachine;
 public class playerMovement : NetworkBehaviour
 {
-
+    [Header("Permanant")]
 	public GameObject bendPos;
 	public CinemachineVirtualCamera headCam;
+	public GameObject[] firstPerson;
+	public GameObject[] thirdPerson;
+	[Header("Speed")]
 	public float walkSpeed;
 	public float runSpeed;
 	public float jumpSpeed;
 	public float crouchSpeed;
 	public float gravity;
+	[Header("Readonly")]
+	[SyncVar]
+	public float velocityMagnatude;
+	//Private
 	CharacterController character;
 	[SyncVar]
 	string animClip = "stand";
@@ -20,46 +25,41 @@ public class playerMovement : NetworkBehaviour
 	Quaternion bendRot = Quaternion.identity;
 	float Yvelocity;
 
-	[SyncVar]
-	public float velocityMagnatude;
-
-	public GameObject[] firstPerson;
-	public GameObject[] thirdPerson;
-	// Start is called before the first frame update
 	void Start()
 	{
+		//Setup cc and disable collisions (use collider)
 		character = GetComponent<CharacterController>();
 		character.detectCollisions = false;
-
+		//Determine first or third person model
 		SetAllActive(firstPerson, hasAuthority);
 		SetAllActive(thirdPerson, !hasAuthority);
+		//Determine if local camera
 		if(hasAuthority) {
 			headCam.m_Priority = 10;
 		}else {
 			headCam.m_Priority = -10;
 		}
-		
-
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
 		if(GetComponent<NetworkIdentity>().hasAuthority)
 		{
+			//Sync magnitude
 			UpdateMagnitude(character.velocity.magnitude);
+			//Get raw move input
 			Vector3 raw = Vector3.zero;
 			raw.x = Input.GetAxisRaw("Horizontal");
 			raw.z = Input.GetAxisRaw("Vertical");
 			raw.y = 0;
 			raw.Normalize();
-
 			raw = transform.TransformDirection(raw);
-
+			//Sum gravity
 			if(!character.isGrounded)
 			{
 				Yvelocity -= Physics.gravity.magnitude * gravity * Time.deltaTime;
 			}
+			//Use appropriate speed
 			float sel = 0f;
 			if(Input.GetKeyDown(KeyCode.Space) && character.isGrounded)
 			{
@@ -78,49 +78,42 @@ public class playerMovement : NetworkBehaviour
 			{
 				sel = walkSpeed;
 			}
-
+			//Multiply vector by scalar
 			raw *= sel;
 			raw.y = Yvelocity;
-
+			//Change model according to stance
 			if(Input.GetKey(KeyCode.LeftControl))
 			{
-				character.height = 1.25f;
-			//	character.center = new Vector3(0, 0.875f, 0);
+				character.height = 1.6f;
+				character.center = new Vector3(0, 1.2f, 0);
 			}
 			else
 			{
-				character.height = 1.75f;
-			//	character.center = new Vector3(0, 0.625f, 0);
+				character.height = 2f;
+				character.center = new Vector3(0, 1f, 0);
 			}
-
-
+			//Apply movement
 			character.Move(raw * Time.deltaTime);
-
-
+			//Animation spaghetti
 			if(!character.isGrounded)
 			{
 				UpdateAnimation("jump");
 			}
 			else
 			{
-
 				if(Input.GetKey(KeyCode.LeftControl))
 				{
 					if(character.velocity.magnitude > 0.1f)
 					{
-
 						UpdateAnimation("crouch_walk");
-
 					}
 					else
 					{
 						UpdateAnimation("crouch_idle");
 					}
-
 				}
 				else
 				{
-
 					if(character.velocity.magnitude > 0.1f)
 					{
 						if(Input.GetKey(KeyCode.LeftShift))
@@ -135,7 +128,6 @@ public class playerMovement : NetworkBehaviour
 							}
 							else
 							{
-
 								UpdateAnimation("stand_run");
 							}
 						}
@@ -151,7 +143,6 @@ public class playerMovement : NetworkBehaviour
 							}
 							else
 							{
-
 								UpdateAnimation("stand_walk");
 							}
 						}
@@ -162,19 +153,19 @@ public class playerMovement : NetworkBehaviour
 					}
 				}
 			}
-
-
-			//GetComponent<Animation>().CrossFade(animClip, 0.1f);
+			//Apply local animation
+			GetComponent<Animation>().CrossFade(animClip, 0.1f);
 			bendRot = bendPos.transform.rotation;
 			UpdateBendRot(bendRot);
 		}
 		else
 		{
-			//GetComponent<Animation>().CrossFade(animClip, 0.1f);
+			//Apply server animation
+			GetComponent<Animation>().CrossFade(animClip, 0.1f);
 			bendPos.transform.rotation = Quaternion.Lerp(bendPos.transform.rotation, bendRot, Time.deltaTime * 5f);
 		}
-
 	}
+	//Commands to sync vars
 	[Command]
 	void UpdateAnimation(string newAni)
 	{
@@ -190,10 +181,9 @@ public class playerMovement : NetworkBehaviour
 	{
 		velocityMagnatude = newA;
 	}
-
+	//Set all models visible or not
 	void SetAllActive(GameObject[] obs, bool bo)
 	{
-		
 		foreach(GameObject gam in obs)
 		{
 			if(gam.GetComponent<SkinnedMeshRenderer>())
@@ -206,16 +196,14 @@ public class playerMovement : NetworkBehaviour
 				{
 					gam.GetComponent<SkinnedMeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
 				}
-
 			}
 			else
 			{
 				gam.SetActive(bo);
 			}
-			
 		}
 	}
-
+	//Assign this player to owner
 	public override void OnStartAuthority()
 	{
 		foreach(connected_client man in FindObjectsOfType<connected_client>())
@@ -227,5 +215,4 @@ public class playerMovement : NetworkBehaviour
 		}
 		base.OnStartAuthority();
 	}
-
 }
