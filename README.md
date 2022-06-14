@@ -11,14 +11,7 @@ Walk Animations✔️\
 Footstep sounds✔️\
 Syncing✔️
 
-### UI/Menus 0.2
-
-Mainmenu\
-Sidemenu\
-Options\
-Server Browser
-
-### Inventory 0.3
+### Inventory 0.2
 
 Basic UI\
 Pickup\
@@ -29,7 +22,7 @@ Shop\
 Animations\
 Syncing
 
-### Building 0.4
+### Building 0.3
 
 Placing\
 Upgrading\
@@ -37,10 +30,17 @@ Breaking\
 Animations\
 Syncing
 
-### Fighting 0.5
+### Fighting 0.4
 
 Health\
 Weapons\
 Damage\
 Animations\
 Syncing
+
+### UI/Menus 0.5
+
+Mainmenu\
+Sidemenu\
+Options\
+Server Browser
