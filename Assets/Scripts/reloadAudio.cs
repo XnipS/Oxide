@@ -22,7 +22,7 @@ public class reloadAudio : MonoBehaviour {
 		gam.GetComponent<AudioSource>().minDistance = 1f;
 		gam.GetComponent<AudioSource>().volume = volumeMod;
 		gam.GetComponent<AudioSource>().maxDistance = 25f;
-		gam.AddComponent<WaitTillDestory>().seconds = clip.length;
+		gam.AddComponent<waitUntilDestroy>().seconds = clip.length;
 
 		gam.transform.position = transform.position;
 		gam.transform.position += offset;
@@ -44,7 +44,7 @@ public class reloadAudio : MonoBehaviour {
 		gam.GetComponent<AudioSource>().minDistance = 1f;
 		gam.GetComponent<AudioSource>().volume = volumeMod;
 		gam.GetComponent<AudioSource>().maxDistance = 25f;
-		gam.AddComponent<WaitTillDestory>().seconds = clip.length;
+		gam.AddComponent<waitUntilDestroy>().seconds = clip.length;
 
 		gam.transform.position = transform.position;
 		gam.transform.position += offset;
