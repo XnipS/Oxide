@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class WaitTillDestory : MonoBehaviour {
+public class waitUntilDestroy : MonoBehaviour {
     public float seconds;
 	void Start () {
         StartCoroutine(Die());
