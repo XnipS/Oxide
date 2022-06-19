@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 [ExecuteInEditMode]
 
-public class InverseKinematics : MonoBehaviour {
+public class inverseKinematics : MonoBehaviour {
 
 	public Transform upperArm;
 	public Transform forearm;
@@ -27,22 +24,12 @@ public class InverseKinematics : MonoBehaviour {
 	float targetDistance;
 	float adyacent;
 
-    // Use this for initialization
-    void Start () {
-
-	}
-	
-	// Update is called once per frame
 	void LateUpdate () {
 		if(upperArm != null && forearm != null && hand != null && elbow != null && target != null){
-
-
 			upperArm.LookAt (target, elbow.position - upperArm.position);
 			upperArm.Rotate (uppperArm_OffsetRotation);
 
 			Vector3 cross = Vector3.Cross (elbow.position - upperArm.position, forearm.position - upperArm.position);
-
-
 
 			upperArm_Length = Vector3.Distance (upperArm.position, forearm.position);
 			forearm_Length =  Vector3.Distance (forearm.position, hand.position);
@@ -90,5 +77,4 @@ public class InverseKinematics : MonoBehaviour {
 			}
 		}
 	}
-
 }
