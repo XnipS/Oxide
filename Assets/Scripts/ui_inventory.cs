@@ -13,30 +13,32 @@ public class ui_inventory : MonoBehaviour
     public List<ui_slot> belt;
     public List<inv_item> invent;
     public bool inventoryStatus;
+    Sprite[] icons;
     //PickedItem
     public ui_slotCursor cursor;
     bool picked_picking;
     ui_slot picked_slot;
     inv_item picked_inv;
-    Sprite[] picked_icons;
 
-    void Start () {
-        inv_item x = ScriptableObject.CreateInstance<inv_item>();
-        x.slot = 23;
-        x.id = 1;
-        x.amount = 1;
-        invent.Add(x);
-        inv_item y = ScriptableObject.CreateInstance<inv_item>();
-        y.slot = 24;
-        y.id = 2;
-        invent.Add(y);
+
+    void Start()
+    {
+        List<inv_item> newInvent = new List<inv_item>();
+        foreach (inv_item it in invent)
+        {
+            newInvent.Add(Instantiate(it));
+        }
+        invent = newInvent;
+        icons = FindObjectOfType<itemDictionary>().icons;
         UpdateBelt();
-        picked_icons = pre_slot.GetComponent<ui_slot>().icons;
+
     }
 
-    void Update () {
+    void Update()
+    {
         //Icon cursor follow real cursor if active
-        if(picked_picking) { 
+        if (picked_picking)
+        {
             Vector2 movePos;
             Canvas canvas = GetComponentInParent<Canvas>();
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, canvas.worldCamera, out movePos);
@@ -44,7 +46,8 @@ public class ui_inventory : MonoBehaviour
         }
     }
 
-    public void UpdateBelt () {
+    public void UpdateBelt()
+    {
         //Delete old UI
         foreach (Transform item in tra_belt)
         {
@@ -58,17 +61,21 @@ public class ui_inventory : MonoBehaviour
             GameObject ga = Instantiate(pre_slot, tra_belt); //Make slots
             ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
             ga.GetComponent<ui_slot>().slot = x + 24; //Assign slot number
+            ga.GetComponent<ui_slot>().icons = icons; //Assing icons
             belt.Add(ga.GetComponent<ui_slot>()); //Add to list
         }
         //Populate Slots
-        foreach(inv_item inv in invent) {
-            if(inv.slot > 23) {
+        foreach (inv_item inv in invent)
+        {
+            if (inv.slot > 23)
+            {
                 belt[inv.slot - 24].UpdateIconData(inv);
             }
         }
     }
 
-    public void OpenInventory () {
+    public void OpenInventory()
+    {
         //Toggle variable
         inventoryStatus = true;
         //Generate Slots
@@ -77,17 +84,21 @@ public class ui_inventory : MonoBehaviour
             GameObject ga = Instantiate(pre_slot, tra_bag); //Make slots
             ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
             ga.GetComponent<ui_slot>().slot = x; //Assign slot number
+            ga.GetComponent<ui_slot>().icons = icons; //Assing icons
             bag.Add(ga.GetComponent<ui_slot>()); //Add to list
         }
         //Populate Slots
-        foreach(inv_item inv in invent) {
-            if(inv.slot < 24) {
+        foreach (inv_item inv in invent)
+        {
+            if (inv.slot < 24)
+            {
                 bag[inv.slot].UpdateIconData(inv);
             }
         }
     }
 
-    public void CloseInventory () {
+    public void CloseInventory()
+    {
         //Delete Slots
         inventoryStatus = false;
         foreach (Transform item in tra_bag)
@@ -97,34 +108,134 @@ public class ui_inventory : MonoBehaviour
         bag = new List<ui_slot>();
     }
 
-    public void UpdateInventory () {
+    public void UpdateInventory()
+    {
         CloseInventory();
         OpenInventory();
     }
 
-    public void PickedItem (ui_slot input) {
-        if(picked_picking) {return;}
+    public void PickedItem(ui_slot input)
+    {
+        if (picked_picking) { return; }
         //Find item data we picked up
-        foreach(inv_item inv in invent) {
-            if(inv.slot == input.slot) {
+        foreach (inv_item inv in invent)
+        {
+            if (inv.slot == input.slot)
+            {
                 picked_inv = inv;
             }
         }
-        if(picked_inv == null || picked_inv.id == 0) { return;} //Check if we got data or nothing
+        if (picked_inv == null || picked_inv.id == 0) { return; } //Check if we got data or nothing
         picked_picking = true; //Toggle pick
         cursor.GetComponentInChildren<Image>().enabled = true; //Enable cursor
-        cursor.GetComponentInChildren<Image>().sprite = picked_icons[picked_inv.id]; //Set Icon
+        cursor.GetComponentInChildren<Image>().sprite = icons[picked_inv.id]; //Set Icon
         input.icon.enabled = false;
         input.text.enabled = false;
     }
-    public void DroppedItem (ui_slot input) {
-        if(!picked_picking) {return;}
-        Debug.Log("Dropped" + input.slot);
-        //ChangeSlots
-        picked_inv.slot = input.slot;
+    //Successful drop on slot
+    public void DroppedItem(ui_slot newSlot)
+    {
+        if (!picked_picking) { return; }
+        //Check if slot populated
+        inv_item occupied = null;
+        foreach (inv_item it in invent)
+        {
+            if (it.slot == newSlot.slot)
+            {
+                occupied = it;
+            }
+        }
+        //Check if moved to same slot
+        if (occupied == picked_inv) { StopDrag(); return; }
+        if (occupied)
+        {
+            if (occupied.id != picked_inv.id) { StopDrag(); return; } //Check if same item in slot
+            //Add to slot
+            if (Input.GetKey(KeyCode.LeftShift) && picked_inv.amount > 1)
+            {
+                //Move half
+                int amountToSplit = picked_inv.amount / 2; //Split number
+                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(picked_inv.id).maxAmount;
+                if ((occupied.amount + amountToSplit) > max)
+                {
+                    int x = (max - occupied.amount);
+                    occupied.amount = max; //Set amount
+                    picked_inv.amount -= x; //Remove move amount
+                }
+                else
+                {
+                    amountToSplit = occupied.amount - picked_inv.amount;
+                    occupied.amount += amountToSplit; //Set amount
+                    picked_inv.amount -= amountToSplit; //Remove move amount
+                }
+            }
+            else if (Input.GetKey(KeyCode.LeftControl) && picked_inv.amount > 1)
+            {
+                //Move half
+                int amountToSplit = 1; //Split number
+                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(picked_inv.id).maxAmount;
+                if ((occupied.amount + amountToSplit) > max)
+                {
+                }
+                else
+                {
+                    occupied.amount += amountToSplit; //Set amount
+                    picked_inv.amount -= amountToSplit; //Remove move amount
+                }
+            }
+            else
+            {
+                //Move completely
+                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(picked_inv.id).maxAmount;
+                if ((occupied.amount + picked_inv.amount) > max)
+                {
+                    int amountToSplit = (max - occupied.amount);
+                    occupied.amount = max; //Set amount
+                    picked_inv.amount -= amountToSplit; //Remove move amount
+                }
+                else
+                {
+                    occupied.amount += picked_inv.amount; //Set amount
+                    invent.Remove(picked_inv); //Remove empty from inv
+                }
+
+            }
+        }
+        else
+        {
+            //Empty slot
+            if (Input.GetKey(KeyCode.LeftShift) && picked_inv.amount > 1)
+            {
+                //Move half
+                int amountToSplit = picked_inv.amount / 2; //Split number
+                inv_item newItem = Instantiate(picked_inv); //Duplicate item
+                invent.Add(newItem); //Add item to storage
+                newItem.amount = amountToSplit; //Set amount
+                picked_inv.amount -= amountToSplit; //Remove move amount
+                newItem.slot = newSlot.slot; //Set new slot
+            }
+            else if (Input.GetKey(KeyCode.LeftControl) && picked_inv.amount > 1)
+            {
+                //Move single
+                int amountToSplit = 1; //Split number
+                inv_item newItem = Instantiate(picked_inv); //Duplicate item
+                invent.Add(newItem); //Add item to storage
+                newItem.amount = amountToSplit; //Set amount
+                picked_inv.amount -= amountToSplit; //Remove move amount
+                newItem.slot = newSlot.slot; //Set new slot
+            }
+            else
+            {
+                //Move completely
+                picked_inv.slot = newSlot.slot;
+            }
+        }
+        //Reset
         StopDrag();
     }
-    public void StopDrag () {
+    //Unsuccessful drop (reset)
+    public void StopDrag()
+    {
         //UpdateInventory
         UpdateInventory();
         UpdateBelt();
