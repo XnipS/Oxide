@@ -1,0 +1,13 @@
+# Sword (Main weapon)
+Wood
+Stone
+Metal
+
+# 2 Abilities
+# Pickaxe -> Destroying
+
+# Hammer -> Building
+
+# Coins (side)
+
+# Materials (side)
