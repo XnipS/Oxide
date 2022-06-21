@@ -9,20 +9,23 @@ public class itemDictionary : MonoBehaviour
     //Output
     public Sprite[] icons;
 
-
-    void Start () {
+    void Start()
+    {
         List<Sprite> sprites = new List<Sprite>();
         sprites.Add(null);
-        foreach(inv_item_data da in dataDictionary) {
+        foreach (inv_item_data da in dataDictionary)
+        {
             sprites.Add(da.icon);
         }
         icons = sprites.ToArray();
     }
 
-    public inv_item_data GetDataFromItemID (int id) {
-        inv_item_data data = null;
-        foreach(inv_item_data da in dataDictionary) {
-            if(da.id == id) {
+    public inv_item_data GetDataFromItemID(int id)
+    {
+        foreach (inv_item_data da in dataDictionary)
+        {
+            if (da.id == id)
+            {
                 return da;
             }
         }
