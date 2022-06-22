@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEditor;
-
+#if UNITY_EDITOR
 public class iconGenerator : MonoBehaviour
 {
     public Camera mainCam;
@@ -66,3 +66,4 @@ public class iconGenerator_editor_popup : EditorWindow
         }
     }
 }
+#endif

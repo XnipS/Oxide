@@ -12,7 +12,9 @@ public class ui_inventory : MonoBehaviour
     public List<ui_slot> bag;
     public List<ui_slot> belt;
     public List<inv_item> invent;
+    [HideInInspector]
     public bool inventoryStatus;
+    [HideInInspector]
     public playerInventory player;
     Sprite[] icons;
     //PickedItem

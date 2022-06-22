@@ -15,7 +15,7 @@ public class playerMovement : NetworkBehaviour
     public float crouchSpeed;
     public float gravity;
     [Header("Readonly")]
-    //public connected_client myClient;
+    [HideInInspector]
     [SyncVar]
     public float velocityMagnatude;
     //Private

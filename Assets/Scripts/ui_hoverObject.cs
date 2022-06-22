@@ -5,6 +5,7 @@ using Mirror;
 public class ui_hoverObject : MonoBehaviour
 {
     ui_inventory inv;
+    [HideInInspector]
     public playerInventory player = null;
     Camera mainCam;
     public Text itemText;

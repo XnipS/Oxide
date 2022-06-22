@@ -7,6 +7,7 @@ public class itemDictionary : MonoBehaviour
     //Input
     public inv_item_data[] dataDictionary;
     //Output
+    [HideInInspector]
     public Sprite[] icons;
 
     void Start()

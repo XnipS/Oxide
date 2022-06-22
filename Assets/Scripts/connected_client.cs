@@ -3,6 +3,7 @@ using Mirror;
 
 public class connected_client : NetworkBehaviour
 {
+    [HideInInspector]
     public playerMovement myPlayer = null;
     void Start()
     {

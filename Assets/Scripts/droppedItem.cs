@@ -3,6 +3,7 @@ using Mirror;
 
 public class droppedItem : NetworkBehaviour
 {
+    [HideInInspector]
     [SyncVar]
     public inv_item myData;
 

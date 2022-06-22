@@ -14,7 +14,9 @@ public class smoothMouseLook : MonoBehaviour
     public float minimumY = -90F;
     public float maximumY = 90F;
     [Header("Read Only")]
+    [HideInInspector]
     public float rotationX = 0F;
+    [HideInInspector]
     public float rotationY = 0F;
     Quaternion originalRotation;
 

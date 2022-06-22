@@ -5,7 +5,7 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public Vector2 startScale;
+    Vector2 startScale;
     public Image icon;
     public Sprite[] icons;
     public Text text;

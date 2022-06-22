@@ -2,6 +2,7 @@
 using UnityEngine;
 
 public class waitUntilDestroy : MonoBehaviour {
+    [HideInInspector]
     public float seconds;
 	void Start () {
         StartCoroutine(Die());
