@@ -1,6 +1,6 @@
 # CoreWars
 
-# DevLog - v0.1.0
+# DevLog - v0.1.4
 
 ### Player Basics 0.1
 
@@ -13,10 +13,10 @@ Syncing✔️
 
 ### Inventory 0.2
 
-Basic UI\
-Pickup\
-Transfer\
-Drop\
+Basic UI✔️\
+Pickup✔️\
+Transfer✔️\
+Drop✔️\
 Storage\
 Shop\
 Animations\

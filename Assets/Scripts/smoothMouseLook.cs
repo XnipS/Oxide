@@ -28,7 +28,13 @@ public class smoothMouseLook : MonoBehaviour
         {
             if (!GetComponentInParent<NetworkIdentity>().hasAuthority) { return; }
         }
-
+        if (FindObjectOfType<ui_inventory>())
+        {
+            if (FindObjectOfType<ui_inventory>().inventoryStatus)
+            {
+                return;
+            }
+        }
 
         if (axes == RotationAxes.MouseXAndY)
         {

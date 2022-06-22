@@ -43,7 +43,7 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
         if(eventData.pointerEnter && eventData.pointerEnter.GetComponent<ui_slot>()) {
             GetComponentInParent<ui_inventory>().DroppedItem(eventData.pointerEnter.GetComponent<ui_slot>());
         }else {
-            GetComponentInParent<ui_inventory>().StopDrag();
+            GetComponentInParent<ui_inventory>().StopDrag(true);
         }
     }
 

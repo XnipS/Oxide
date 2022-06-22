@@ -13,6 +13,7 @@ public class ui_inventory : MonoBehaviour
     public List<ui_slot> belt;
     public List<inv_item> invent;
     public bool inventoryStatus;
+    public playerInventory player;
     Sprite[] icons;
     //PickedItem
     public ui_slotCursor cursor;
@@ -20,9 +21,9 @@ public class ui_inventory : MonoBehaviour
     ui_slot picked_slot;
     inv_item picked_inv;
 
-
     void Start()
     {
+
         List<inv_item> newInvent = new List<inv_item>();
         foreach (inv_item it in invent)
         {
@@ -44,6 +45,58 @@ public class ui_inventory : MonoBehaviour
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, canvas.worldCamera, out movePos);
             cursor.gameObject.transform.position = canvas.transform.TransformPoint(movePos);
         }
+    }
+
+    public void GiveItem(inv_item item)
+    {
+        int count = 0;
+        item = Instantiate(item);
+        //Find available slot
+        for (int i = 0; i < 30; i++)
+        {
+            inv_item taken = null;
+            foreach (inv_item it in invent)
+            {
+                if (it.slot == i)
+                {
+                    taken = it;
+                }
+            }
+            if (taken == null)
+            {
+                item.slot = i;
+                invent.Add(item);
+                count += item.amount;
+                break;
+            }
+            else if (taken.id == item.id)
+            {
+                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(item.id).maxAmount;
+                if ((taken.amount + item.amount) > max)
+                {
+                    item.amount -= (max - taken.amount);
+                    taken.amount = max;
+                    count += (max - taken.amount);
+                }
+                else
+                {
+                    taken.amount += item.amount;
+                    count += item.amount;
+                    break;
+                }
+            }
+        }
+        FindObjectOfType<ui_notifyManager>().Notify("+" + count + " " + FindObjectOfType<itemDictionary>().GetDataFromItemID(item.id).title, ui_notification.NotifyColourType.green, ui_notification.NotifyIconType.plus);
+        //Redrop item because inventory is full
+        if (player)
+        {
+            if (count != item.amount)
+            {
+                player.CMD_SpawnDroppedItem(item, player.transform.position + player.transform.forward + player.transform.up);
+            }
+            return;
+        }
+        Debug.LogError("NO PLAYER TO DROP ITEM");
     }
 
     public void UpdateBelt()
@@ -146,10 +199,10 @@ public class ui_inventory : MonoBehaviour
             }
         }
         //Check if moved to same slot
-        if (occupied == picked_inv) { StopDrag(); return; }
+        if (occupied == picked_inv) { StopDrag(false); return; }
         if (occupied)
         {
-            if (occupied.id != picked_inv.id) { StopDrag(); return; } //Check if same item in slot
+            if (occupied.id != picked_inv.id) { StopDrag(false); return; } //Check if same item in slot
             //Add to slot
             if (Input.GetKey(KeyCode.LeftShift) && picked_inv.amount > 1)
             {
@@ -231,11 +284,20 @@ public class ui_inventory : MonoBehaviour
             }
         }
         //Reset
-        StopDrag();
+        StopDrag(false);
     }
     //Unsuccessful drop (reset)
-    public void StopDrag()
+    public void StopDrag(bool wantToDrop)
     {
+        //Attempt to drop to ground
+        if (wantToDrop)
+        {
+            if (player)
+            {
+                player.CMD_SpawnDroppedItem(picked_inv, player.transform.position + player.transform.forward + player.transform.up);
+                invent.Remove(picked_inv);
+            }
+        }
         //UpdateInventory
         UpdateInventory();
         UpdateBelt();

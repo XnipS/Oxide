@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -37,13 +35,14 @@ public class iconGenerator : MonoBehaviour
 }
 
 [CustomEditor(typeof(iconGenerator))]
-public class iconGenerator_editor : Editor {
+public class iconGenerator_editor : Editor
+{
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         iconGenerator script = (iconGenerator)target;
 
-        if(GUILayout.Button("Generate"))
+        if (GUILayout.Button("Generate"))
         {
             iconGenerator_editor_popup window = (iconGenerator_editor_popup)EditorWindow.GetWindow(typeof(iconGenerator_editor_popup));
             window.script = script;
@@ -52,14 +51,16 @@ public class iconGenerator_editor : Editor {
     }
 }
 
-public class iconGenerator_editor_popup : EditorWindow {
+public class iconGenerator_editor_popup : EditorWindow
+{
     public string input_id;
     public iconGenerator script;
     void OnGUI()
     {
         GUILayout.Label("Base Settings", EditorStyles.boldLabel);
         input_id = EditorGUILayout.TextField("", input_id);
-        if (GUILayout.Button("Done!")) {
+        if (GUILayout.Button("Done!"))
+        {
             script.Generate(input_id);
             this.Close();
         }
