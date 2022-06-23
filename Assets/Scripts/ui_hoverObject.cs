@@ -5,6 +5,7 @@ using Mirror;
 public class ui_hoverObject : MonoBehaviour
 {
     ui_inventory inv;
+    
     [HideInInspector]
     public playerInventory player = null;
     Camera mainCam;
@@ -13,6 +14,7 @@ public class ui_hoverObject : MonoBehaviour
     void Start()
     {
         inv = FindObjectOfType<ui_inventory>();
+
         mainCam = Camera.main;
     }
     void Update()
@@ -22,7 +24,7 @@ public class ui_hoverObject : MonoBehaviour
         bool hover = false;
         if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out RaycastHit hit, 2f))
         {
-            if (hit.collider.GetComponent<droppedItem>() && hit.collider.GetComponent<droppedItem>().myData != null)
+            if (hit.collider.GetComponent<droppedItem>() != null&& hit.collider.GetComponent<droppedItem>().myData != null)
             {
                 hover = true;
                 string str = "Pickup: " + FindObjectOfType<itemDictionary>().GetDataFromItemID(hit.collider.GetComponent<droppedItem>().myData.id).title + " (" + hit.collider.GetComponent<droppedItem>().myData.amount + ")";
@@ -30,6 +32,17 @@ public class ui_hoverObject : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     hit.collider.GetComponent<droppedItem>().CMD_Pickup(player.GetComponent<NetworkIdentity>());
+                }
+            }
+            if (hit.collider.GetComponent<itemStorage>() != null && inv.inventoryStatus == false)
+            {
+                hover = true;
+                string str = "Open Storage";
+                itemText.text = str;
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    inv.OpenInventory();
+                    inv.OpenStorage(hit.collider.GetComponent<itemStorage>().storage, hit.collider.GetComponent<itemStorage>().slots, hit.collider.GetComponent<itemStorage>());
                 }
             }
         }

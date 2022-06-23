@@ -8,6 +8,9 @@ public class playerMovement : NetworkBehaviour
     public CinemachineVirtualCamera headCam;
     public GameObject[] firstPerson;
     public GameObject[] thirdPerson;
+    public int layer_first;
+    public int layer_third;
+    public GameObject[] viewmodels;
     [Header("Speed")]
     public float walkSpeed;
     public float runSpeed;
@@ -36,6 +39,14 @@ public class playerMovement : NetworkBehaviour
         //Determine first or third person model
         SetAllActive(firstPerson, hasAuthority);
         SetAllActive(thirdPerson, !hasAuthority);
+        //Assign mask to viewmodels
+        foreach(GameObject gam in viewmodels) {
+            if(hasAuthority) {
+                gam.layer = layer_first;
+            }else {
+                gam.layer = layer_third;
+            }
+        }
         //Determine if local camera
         if (hasAuthority)
         {

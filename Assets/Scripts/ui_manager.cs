@@ -21,13 +21,9 @@ public class ui_manager : MonoBehaviour
 
     void ToggleBackpack () {
         if(inventory.inventoryStatus) {
-            inventory.CloseInventory();
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            inventory.CloseInventory();    
         }else {
             inventory.OpenInventory();
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
         }
     } 
 }

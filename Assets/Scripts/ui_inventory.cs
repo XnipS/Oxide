@@ -6,12 +6,15 @@ public class ui_inventory : MonoBehaviour
 {
     public Transform tra_belt;
     public Transform tra_bag;
+    public Transform tra_box;
     public GameObject pre_slot;
     public int bag_count;
     public int belt_count;
     public List<ui_slot> bag;
     public List<ui_slot> belt;
+    public List<ui_slot> box;
     public List<inv_item> invent;
+    public List<inv_item> storage;
     [HideInInspector]
     public bool inventoryStatus;
     [HideInInspector]
@@ -22,17 +25,22 @@ public class ui_inventory : MonoBehaviour
     bool picked_picking;
     ui_slot picked_slot;
     inv_item picked_inv;
+    bool picked_storage;
+    int currentStorageSlots;
+    public itemStorage currentStorage;
 
     void Start()
     {
-
+        //Add initial dev items
         List<inv_item> newInvent = new List<inv_item>();
         foreach (inv_item it in invent)
         {
             newInvent.Add(Instantiate(it));
         }
         invent = newInvent;
+        //Get icons
         icons = FindObjectOfType<itemDictionary>().icons;
+        //Update
         UpdateBelt();
 
     }
@@ -117,6 +125,7 @@ public class ui_inventory : MonoBehaviour
             ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
             ga.GetComponent<ui_slot>().slot = x + 24; //Assign slot number
             ga.GetComponent<ui_slot>().icons = icons; //Assing icons
+            ga.GetComponent<ui_slot>().storage = false; //My or other inventory
             belt.Add(ga.GetComponent<ui_slot>()); //Add to list
         }
         //Populate Slots
@@ -131,6 +140,8 @@ public class ui_inventory : MonoBehaviour
 
     public void OpenInventory()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         //Toggle variable
         inventoryStatus = true;
         //Generate Slots
@@ -140,6 +151,7 @@ public class ui_inventory : MonoBehaviour
             ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
             ga.GetComponent<ui_slot>().slot = x; //Assign slot number
             ga.GetComponent<ui_slot>().icons = icons; //Assing icons
+            ga.GetComponent<ui_slot>().storage = false; //My or other inventory
             bag.Add(ga.GetComponent<ui_slot>()); //Add to list
         }
         //Populate Slots
@@ -151,9 +163,35 @@ public class ui_inventory : MonoBehaviour
             }
         }
     }
+    public void OpenStorage(List<inv_item> store, int slotCount, itemStorage obj)
+    {
+        currentStorageSlots = slotCount;
+        currentStorage = obj;
+        storage = store;
+        //Generate Slots
+        for (int x = 0; x < slotCount; x++)
+        {
+            GameObject ga = Instantiate(pre_slot, tra_box); //Make slots
+            ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
+            ga.GetComponent<ui_slot>().slot = x; //Assign slot number
+            ga.GetComponent<ui_slot>().icons = icons; //Assing icons
+            ga.GetComponent<ui_slot>().storage = true; //My or other inventory
+            box.Add(ga.GetComponent<ui_slot>()); //Add to list
+        }
+        //Populate Slots
+        foreach (inv_item inv in storage)
+        {
+            if (inv.slot < 24)
+            {
+                box[inv.slot].UpdateIconData(inv);
+            }
+        }
+    }
 
     public void CloseInventory()
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         //Delete Slots
         inventoryStatus = false;
         foreach (Transform item in tra_bag)
@@ -161,6 +199,16 @@ public class ui_inventory : MonoBehaviour
             Destroy(item.gameObject);
         }
         bag = new List<ui_slot>();
+        CloseStorage();
+    }
+    void CloseStorage()
+    {
+        //Delete Slots
+        foreach (Transform item in tra_box)
+        {
+            Destroy(item.gameObject);
+        }
+        box = new List<ui_slot>();
     }
 
     public void UpdateInventory()
@@ -169,35 +217,69 @@ public class ui_inventory : MonoBehaviour
         OpenInventory();
     }
 
-    public void PickedItem(ui_slot input)
+    public void UpdateStorage(List<inv_item> storage, int count)
+     {
+        CloseStorage();
+        currentStorage.CMD_UpdateStorage(storage, count);
+        OpenStorage(storage, count, currentStorage);
+    }
+
+    public void PickedItem(ui_slot input, bool store)
     {
         if (picked_picking) { return; }
         //Find item data we picked up
-        foreach (inv_item inv in invent)
+        if (store)
         {
-            if (inv.slot == input.slot)
+            foreach (inv_item inv in storage)
             {
-                picked_inv = inv;
+                if (inv.slot == input.slot)
+                {
+                    picked_inv = inv;
+                }
+            }
+        }
+        else
+        {
+            foreach (inv_item inv in invent)
+            {
+                if (inv.slot == input.slot)
+                {
+                    picked_inv = inv;
+                }
             }
         }
         if (picked_inv == null || picked_inv.id == 0) { return; } //Check if we got data or nothing
         picked_picking = true; //Toggle pick
+        picked_storage = store; //Define
         cursor.GetComponentInChildren<Image>().enabled = true; //Enable cursor
         cursor.GetComponentInChildren<Image>().sprite = icons[picked_inv.id]; //Set Icon
         input.icon.enabled = false;
         input.text.enabled = false;
     }
     //Successful drop on slot
-    public void DroppedItem(ui_slot newSlot)
+    public void DroppedItem(ui_slot newSlot, bool store)
     {
         if (!picked_picking) { return; }
         //Check if slot populated
         inv_item occupied = null;
-        foreach (inv_item it in invent)
+        if (store)
         {
-            if (it.slot == newSlot.slot)
+            foreach (inv_item inv in storage)
             {
-                occupied = it;
+                if (inv.slot == newSlot.slot)
+                {
+                    occupied = inv;
+                }
+            }
+        }
+        else
+        {
+            foreach (inv_item it in invent)
+            {
+                if (it.slot == newSlot.slot)
+                {
+                    occupied = it;
+                }
             }
         }
         //Check if moved to same slot
@@ -251,7 +333,15 @@ public class ui_inventory : MonoBehaviour
                 else
                 {
                     occupied.amount += picked_inv.amount; //Set amount
-                    invent.Remove(picked_inv); //Remove empty from inv
+                    if (picked_storage)
+                    {
+                        storage.Remove(picked_inv); //Remove empty from inv
+                    }
+                    else
+                    {
+                        invent.Remove(picked_inv); //Remove empty from inv
+                    }
+
                 }
 
             }
@@ -264,7 +354,14 @@ public class ui_inventory : MonoBehaviour
                 //Move half
                 int amountToSplit = picked_inv.amount / 2; //Split number
                 inv_item newItem = Instantiate(picked_inv); //Duplicate item
-                invent.Add(newItem); //Add item to storage
+                if (store)
+                {
+                    storage.Add(newItem); //Add item to storage
+                }
+                else
+                {
+                    invent.Add(newItem); //Add item to storage
+                }
                 newItem.amount = amountToSplit; //Set amount
                 picked_inv.amount -= amountToSplit; //Remove move amount
                 newItem.slot = newSlot.slot; //Set new slot
@@ -274,7 +371,14 @@ public class ui_inventory : MonoBehaviour
                 //Move single
                 int amountToSplit = 1; //Split number
                 inv_item newItem = Instantiate(picked_inv); //Duplicate item
-                invent.Add(newItem); //Add item to storage
+                if (store)
+                {
+                    storage.Add(newItem); //Add item to storage
+                }
+                else
+                {
+                    invent.Add(newItem); //Add item to storage
+                }
                 newItem.amount = amountToSplit; //Set amount
                 picked_inv.amount -= amountToSplit; //Remove move amount
                 newItem.slot = newSlot.slot; //Set new slot
@@ -282,7 +386,19 @@ public class ui_inventory : MonoBehaviour
             else
             {
                 //Move completely
-                picked_inv.slot = newSlot.slot;
+                if(store == picked_storage) {
+                    picked_inv.slot = newSlot.slot;
+                }else {
+                    if(store) { 
+                        invent.Remove(picked_inv);
+                         picked_inv.slot = newSlot.slot;
+                        storage.Add(picked_inv);
+                    }else {
+                        storage.Remove(picked_inv);
+                         picked_inv.slot = newSlot.slot;
+                        invent.Add(picked_inv);
+                    }
+                }
             }
         }
         //Reset
@@ -292,17 +408,27 @@ public class ui_inventory : MonoBehaviour
     public void StopDrag(bool wantToDrop)
     {
         //Attempt to drop to ground
-        if (wantToDrop)
+        if (wantToDrop && picked_inv != null)
         {
             if (player)
             {
                 player.CMD_SpawnDroppedItem(picked_inv, player.transform.position + player.transform.forward + player.transform.up);
-                invent.Remove(picked_inv);
+                if (picked_storage)
+                {
+                    storage.Remove(picked_inv);
+                }
+                else
+                {
+                    invent.Remove(picked_inv);
+                }
+
             }
         }
+        picked_inv = null;
         //UpdateInventory
         UpdateInventory();
         UpdateBelt();
+        UpdateStorage(storage, currentStorageSlots);
         //Reset Cursor
         picked_picking = false; //Toggle pick
         cursor.GetComponentInChildren<Image>().enabled = false; //Enable cursor
