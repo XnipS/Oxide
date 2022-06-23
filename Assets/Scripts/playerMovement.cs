@@ -31,8 +31,6 @@ public class playerMovement : NetworkBehaviour
 
     void Start()
     {
-        GetComponent<Animation>()["pick_equip"].layer = 10;
-        GetComponent<Animation>().CrossFade("pick_equip", 0.1f);
         //Setup cc and disable collisions (use collider)
         character = GetComponent<CharacterController>();
         character.detectCollisions = false;
@@ -40,10 +38,14 @@ public class playerMovement : NetworkBehaviour
         SetAllActive(firstPerson, hasAuthority);
         SetAllActive(thirdPerson, !hasAuthority);
         //Assign mask to viewmodels
-        foreach(GameObject gam in viewmodels) {
-            if(hasAuthority) {
+        foreach (GameObject gam in viewmodels)
+        {
+            if (hasAuthority)
+            {
                 gam.layer = layer_first;
-            }else {
+            }
+            else
+            {
                 gam.layer = layer_third;
             }
         }

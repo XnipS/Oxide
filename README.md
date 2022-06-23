@@ -1,6 +1,6 @@
 # CoreWars
 
-# DevLog - v0.1.5
+# DevLog - v0.2.0
 
 ### Player Basics 0.1
 
@@ -18,8 +18,8 @@ Pickup✔️\
 Transfer✔️\
 Drop✔️\
 Storage✔️\
-Animations\
-Syncing
+Animations✔️\
+Syncing✔️
 
 ### Items 0.3
 

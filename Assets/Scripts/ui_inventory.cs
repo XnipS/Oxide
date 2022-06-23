@@ -103,6 +103,7 @@ public class ui_inventory : MonoBehaviour
             if (count != item.amount)
             {
                 player.CMD_SpawnDroppedItem(item, player.transform.position + player.transform.forward + player.transform.up);
+                player.DropItemAnimation();
             }
             return;
         }
@@ -218,7 +219,7 @@ public class ui_inventory : MonoBehaviour
     }
 
     public void UpdateStorage(List<inv_item> storage, int count)
-     {
+    {
         CloseStorage();
         currentStorage.CMD_UpdateStorage(storage, count);
         OpenStorage(storage, count, currentStorage);
@@ -386,16 +387,22 @@ public class ui_inventory : MonoBehaviour
             else
             {
                 //Move completely
-                if(store == picked_storage) {
+                if (store == picked_storage)
+                {
                     picked_inv.slot = newSlot.slot;
-                }else {
-                    if(store) { 
+                }
+                else
+                {
+                    if (store)
+                    {
                         invent.Remove(picked_inv);
-                         picked_inv.slot = newSlot.slot;
+                        picked_inv.slot = newSlot.slot;
                         storage.Add(picked_inv);
-                    }else {
+                    }
+                    else
+                    {
                         storage.Remove(picked_inv);
-                         picked_inv.slot = newSlot.slot;
+                        picked_inv.slot = newSlot.slot;
                         invent.Add(picked_inv);
                     }
                 }
@@ -412,6 +419,7 @@ public class ui_inventory : MonoBehaviour
         {
             if (player)
             {
+                player.DropItemAnimation();
                 player.CMD_SpawnDroppedItem(picked_inv, player.transform.position + player.transform.forward + player.transform.up);
                 if (picked_storage)
                 {
@@ -428,7 +436,11 @@ public class ui_inventory : MonoBehaviour
         //UpdateInventory
         UpdateInventory();
         UpdateBelt();
-        UpdateStorage(storage, currentStorageSlots);
+        if (picked_storage)
+        {
+            UpdateStorage(storage, currentStorageSlots);
+            picked_storage = false;
+        }
         //Reset Cursor
         picked_picking = false; //Toggle pick
         cursor.GetComponentInChildren<Image>().enabled = false; //Enable cursor

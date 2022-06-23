@@ -5,7 +5,8 @@ public class playerInventory : NetworkBehaviour
 {
     public GameObject prefab_droppedItem;
     ui_inventory myInv;
-
+    public AnimationClip anim_pickup;
+    public AnimationClip anim_drop;
     void Start()
     {
         if (!hasAuthority) { return; }
@@ -25,10 +26,14 @@ public class playerInventory : NetworkBehaviour
     [ClientRpc]
     public void RPC_GiveItem(inv_item data)
     {
-
         if (hasAuthority)
         {
             myInv.GiveItem(data);
+            GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_pickup.name);
         }
+    }
+    public void DropItemAnimation()
+    {
+        GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_drop.name);
     }
 }
