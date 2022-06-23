@@ -1,6 +1,6 @@
 # CoreWars
 
-# DevLog - v0.1.4
+# DevLog - v0.1.5
 
 ### Player Basics 0.1
 
@@ -17,24 +17,25 @@ Basic UI✔️\
 Pickup✔️\
 Transfer✔️\
 Drop✔️\
-Storage\
-Shop\
+Storage✔️\
 Animations\
 Syncing
 
-### Building 0.3
+### Items 0.3
+
+Tools\
+Weapons\
+Guns\
+Health\
+Damage\
+Animations\
+Syncing
+
+### Building 0.4
 
 Placing\
 Upgrading\
 Breaking\
-Animations\
-Syncing
-
-### Fighting 0.4
-
-Health\
-Weapons\
-Damage\
 Animations\
 Syncing
 
