@@ -1,6 +1,8 @@
-# CoreWars
+# Oxide
 
-# DevLog - v0.2.0
+![Oxide Logo](https://drive.google.com/uc?export=view&id=1AveHQy8IlCIktX_c_tb2MK2D6PS0oUUv)
+
+# DevLog - v0.2.1
 
 ### Player Basics 0.1
 
@@ -23,7 +25,7 @@ Syncing✔️
 
 ### Items 0.3
 
-Tools\
+Tools✔️\
 Weapons\
 Guns\
 Health\
