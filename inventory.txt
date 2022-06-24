@@ -1,13 +1,45 @@
-# Sword (Main weapon)
-Wood
-Stone
-Metal
+#Construction
+Lock            100 wood
+Sign            300 wood
+Barricade       250 wood
+Cupboard        1000 wood
+Building plan   1 paper
+# Items
+Furnace         200 stone 200 wood 100 animal oil
+Camp Fire       100 wood
+Storage Box     100 Wood
+Bag             30 cloth 100 wood
+Repair Bench    500 wood 100 metal
 
-# 2 Abilities
-# Pickaxe -> Destroying
+# Resources
+Animal oil      2 Fat 1 cloth
+Paper           100 wood
+Gun Powder      10 charcoal 10 sulfur
 
-# Hammer -> Building
+# Attire
+Cloth Shoes     20 Cloth
+Cloth Headwarp  30 Cloth
+Cloth Shirt     30 Cloth
+Cloth pants     30 Cloth
+Hide Shoes      30 Cloth
+Hide Hat        40 Cloth
+Hide Shirt      50 Cloth
+Hide pants      45 Cloth
 
-# Coins (side)
+#Tool
+Hammer          100 wood
+Stone Hatchet   200 wood 100 stone
+Stone Pickaxe   100 wood 200 stone
+Torch           30 wood 1 cloth 20 fuel
 
-# Materials (side)
+# Medical
+
+# Weapon
+Wooden spear    300 wood
+Bow             200 wood 50 cloth
+Fintlock Pistol 200 wood 50 metal
+Bone knife      60 bone 30 cloth
+
+# Ammo
+Arrow           25 Wood 10 Stone
+Shell           5 Stone 5 Gunpowder

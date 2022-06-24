@@ -24,16 +24,18 @@ public class playerInventory : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RPC_GiveItem(inv_item data)
+    public void RPC_GiveItem(inv_item data, bool fromGround)
     {
         if (hasAuthority)
         {
             myInv.GiveItem(data);
-            GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_pickup.name);
+            if(fromGround) {
+                GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_pickup.name, GetComponent<playerWeapons>().currentWeapon);
+            }
         }
     }
     public void DropItemAnimation()
     {
-        GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_drop.name);
+        GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_drop.name,GetComponent<playerWeapons>().currentWeapon);
     }
 }

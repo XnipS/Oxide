@@ -55,6 +55,17 @@ public class ui_inventory : MonoBehaviour
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, canvas.worldCamera, out movePos);
             cursor.gameObject.transform.position = canvas.transform.TransformPoint(movePos);
         }
+        //Check storage access distance
+        if (currentStorage != null && player != null && inventoryStatus)
+        {
+            if (Vector3.Distance(currentStorage.gameObject.transform.position, player.transform.position) > 3f)
+            {
+                //Delete data
+                currentStorage = null;
+                currentStorageSlots = 0;
+                StopDrag(false);
+            }
+        }
     }
 
     public void GiveItem(inv_item item)
@@ -220,8 +231,8 @@ public class ui_inventory : MonoBehaviour
 
     public void UpdateStorage(List<inv_item> storage, int count)
     {
-        CloseStorage();
         currentStorage.CMD_UpdateStorage(storage, count);
+        CloseStorage();
         OpenStorage(storage, count, currentStorage);
     }
 
@@ -287,7 +298,19 @@ public class ui_inventory : MonoBehaviour
         if (occupied == picked_inv) { StopDrag(false); return; }
         if (occupied)
         {
-            if (occupied.id != picked_inv.id) { StopDrag(false); return; } //Check if same item in slot
+            if (occupied.id != picked_inv.id)
+            {//Check if same item in slot
+            // int slotp = picked_inv.slot;
+            // int sloto = occupied.slot;
+            //     inv_item x = Instantiate(picked_inv);
+            //     inv_item y = Instantiate(occupied);
+            //     picked_inv = y;
+            //     occupied = x;
+            //     picked_inv.slot = slotp;
+            //     occupied.slot = sloto;
+                StopDrag(false);
+                return;
+            }
             //Add to slot
             if (Input.GetKey(KeyCode.LeftShift) && picked_inv.amount > 1)
             {
@@ -436,7 +459,7 @@ public class ui_inventory : MonoBehaviour
         //UpdateInventory
         UpdateInventory();
         UpdateBelt();
-        if (picked_storage)
+        if (currentStorage != null)
         {
             UpdateStorage(storage, currentStorageSlots);
             picked_storage = false;

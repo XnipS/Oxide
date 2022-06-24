@@ -23,7 +23,8 @@ public class playerWeapons : NetworkBehaviour
     }
     void Update()
     {
-
+        if(!hasAuthority) {return;}
+        if(myInv.inventoryStatus) {return;}
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             EquipSlot(1);
@@ -59,7 +60,7 @@ public class playerWeapons : NetworkBehaviour
                 if (Input.GetKey(KeyCode.Mouse0))
                 {
                     cooldown = currentData.cooldown;
-                    CMD_PlayWeaponAnimation(currentData.anim_attack.name);
+                    CMD_PlayWeaponAnimation(currentData.anim_attack.name, currentData.weaponId);
 
                 }
             }
@@ -68,7 +69,7 @@ public class playerWeapons : NetworkBehaviour
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     cooldown = currentData.cooldown;
-                    CMD_PlayWeaponAnimation(currentData.anim_attack.name);
+                    CMD_PlayWeaponAnimation(currentData.anim_attack.name, currentData.weaponId);
 
                 }
             }
@@ -77,11 +78,16 @@ public class playerWeapons : NetworkBehaviour
     }
     public void ANIM_AttackHit()
     {
+        if(!hasAuthority) {return;}
         if (currentData.anim_attack_hit != null)
         {
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 2f, mask))
             {
-                CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name);
+                CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId);
+                if(hit.collider.GetComponent<harvestableNode>()) {
+                    FindObjectOfType<effectManager>().CMD_SpawnEffect(0, hit.point, Quaternion.LookRotation(hit.normal));
+                    FindObjectOfType<resourceManager>().CMD_HitNode(hit.collider.GetComponent<harvestableNode>().id, GetComponent<NetworkIdentity>(), currentData.weaponId);
+                }
             }
 
         }
@@ -98,12 +104,12 @@ public class playerWeapons : NetworkBehaviour
                 occupied = it;
             }
         }
-        Debug.Log(id + " _ " + occupied);
         //Update Viewmodels
         if (occupied == null) { UpdateViewmodels(0); return; }
-        currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
-        UpdateViewmodels(currentData.weaponId);
-        CMD_PlayWeaponAnimation(currentData.anim_equip.name);
+        if(currentData != FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id)) {
+            currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
+            CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
+        }
     }
     void UpdateViewmodels(int id)
     {
@@ -121,13 +127,14 @@ public class playerWeapons : NetworkBehaviour
         }
     }
     [Command]
-    public void CMD_PlayWeaponAnimation(string animation)
+    public void CMD_PlayWeaponAnimation(string animation, int viewmodel)
     {
-        RPC_PlayWeaponAnimation(animation);
+        RPC_PlayWeaponAnimation(animation, viewmodel);
     }
     [ClientRpc]
-    public void RPC_PlayWeaponAnimation(string animation)
+    public void RPC_PlayWeaponAnimation(string animation, int viewmodel)
     {
+        UpdateViewmodels(viewmodel);
         anim[animation].layer = 10;
         anim.Stop(animation);
         anim.CrossFade(animation,0.1f,PlayMode.StopSameLayer);

@@ -26,7 +26,7 @@ public class droppedItem : NetworkBehaviour
             {
                 if (target.GetComponent<playerInventory>())
                 {
-                    target.GetComponent<playerInventory>().RPC_GiveItem(myData);
+                    target.GetComponent<playerInventory>().RPC_GiveItem(myData, true);
                     NetworkServer.Destroy(this.gameObject);
                 }
                 else

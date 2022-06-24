@@ -25,6 +25,41 @@ public class islandGeneratorManager : MonoBehaviour
     public GameObject[] foliage;
     public TerrainLayer[] layers;
 
+    public void NoiseAndSplat(float amt) {
+        TerrainData data = GetComponent<Terrain>().terrainData;
+        float[,] inputData = data.GetHeights(0,0,islandSize, islandSize);
+        float[,] outputData;
+        GenerateHeightmap(out outputData);
+        for (int x = 0; x < islandSize; x++)
+        {
+            for (int y = 0; y < islandSize; y++)
+            {
+                inputData[x,y] += outputData[x,y] * (amt/data.heightmapResolution);
+            }
+        }
+
+        data.SetHeights(0, 0, inputData);
+    }
+
+    void GenerateNoiseOnly(out float[,] raw)
+    {
+        float[,] rawData = new float[islandSize, islandSize];
+        for (int x = 0; x < islandSize; x++)
+        {
+            for (int y = 0; y < islandSize; y++)
+            {
+                //First Pass - randomness
+                float xCoord = ((float)x / (float)islandSize * (float)noiseScale);//+ (float)transform.position.x;
+                float yCoord = ((float)y / (float)islandSize * (float)noiseScale);//+ (float)transform.position.z;
+                float noise = Mathf.PerlinNoise(xCoord, yCoord);
+                noise *= pass1Weight;
+                //Apply
+                rawData[x, y] = noise;
+            }
+        }
+        raw = rawData;
+    }
+
     public void GenerateIsland()
     {
         TerrainData data = new TerrainData();
@@ -74,6 +109,7 @@ public class islandGeneratorManager : MonoBehaviour
 
     void AddTerrainLayers(TerrainData data)
     {
+        data.treeInstances = new TreeInstance[0];
         data.terrainLayers = layers;
         List<TreePrototype> trees = new List<TreePrototype>();
         foreach (GameObject tree in foliage)
@@ -90,6 +126,7 @@ public class islandGeneratorManager : MonoBehaviour
     {
         float[,,] splatData;
         TerrainData data = GetComponent<Terrain>().terrainData;
+        AddTerrainLayers(data);
         GenerateSplatmap(out splatData, data);
         data.SetAlphamaps(0, 0, splatData);
     }
@@ -360,25 +397,30 @@ public class islandGeneratorManager : MonoBehaviour
 [CustomEditor(typeof(islandGeneratorManager))]
 public class islandGeneratorEditor : Editor
 {
+    string input_id = "";
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
         islandGeneratorManager man = (islandGeneratorManager)target;
-        if (GUILayout.Button("Apply Alpha"))
+        if (GUILayout.Button("Apply Splat and Foliage"))
         {
             man.InspectorGenerateSplat();
 
         }
-
-        if (GUILayout.Button("Apply Foliage"))
+        EditorGUILayout.Separator();
+        EditorGUILayout.LabelField("Noise Scale To Apply");
+        input_id = EditorGUILayout.TextField("", input_id);
+        EditorGUILayout.Separator();
+        if (GUILayout.Button("Apply Noise"))
         {
+
+            man.NoiseAndSplat(float.Parse(input_id));
             //man.GenerateFoliage();
             //man.GenerateGrass(man.islandSize, man.islandSize);
         }
-        if (GUILayout.Button("Generate Island from scratch"))
+        if (GUILayout.Button("Generate New Island"))
         {
-            //man.InspectorGenerateSplat();
             man.GenerateIsland();
         }
     }
