@@ -38,9 +38,9 @@ public class resourceManager : NetworkBehaviour
             {
                 case 2://Stone pick
                     RPC_NodeUpdate(target.id, Mathf.Clamp(target.health - 4, 0, 100));
-                    inv_item item = new inv_item();
+                    inv_item item = inv_item.CreateInstance<inv_item>();
                     item.id = target.resource_id;
-                    item.amount = ((target.resource_totalAmount / target.maxHealth)* 4) ;//+ Random.Range(-3, 3);
+                    item.amount = ((target.resource_totalAmount / target.maxHealth)* 4) + Random.Range(-5, 5);
                     human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
                     break;
                 default:
