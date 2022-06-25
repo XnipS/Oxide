@@ -6,13 +6,24 @@ public class sunManager : NetworkBehaviour
     [SyncVar]
     public double sunAngle;
     public float speed;
+    public Gradient day;
+    public Color night;
     void FixedUpdate()
     {
         sunAngle = (double)NetworkTime.time * speed;
         float val = (float)sunAngle;
-        Debug.LogError(Mathf.Sin(Mathf.Deg2Rad * 360f));
-        Debug.Log(Mathf.Sin(Mathf.Deg2Rad * (val * speed)));
-        GetComponent<Light>().intensity = Mathf.Clamp(Mathf.Deg2Rad * (val * speed),0f,1f) * 1f;
-        transform.rotation = Quaternion.Euler(val, -30, 0);//Quaternion.Lerp(transform.rotation, Quaternion.Euler(val, -30, 0), Time.fixedDeltaTime * 10f);
+        float normal = Mathf.Sin(Mathf.Deg2Rad * (val % 360));
+        //Debug.Log(normal);
+        GetComponent<Light>().intensity = Mathf.Clamp(normal * 4f, 0, 2f);
+        if (normal > 0)
+        {
+            RenderSettings.ambientLight = day.Evaluate(Mathf.Clamp01(normal));
+        }
+        else
+        {
+            RenderSettings.ambientLight = night;
+        }
+        // Debug.Log(GetComponent<Light>().intensity);
+        transform.rotation = Quaternion.Euler(val, -30, 0);
     }
 }
