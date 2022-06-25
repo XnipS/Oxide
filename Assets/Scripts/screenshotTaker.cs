@@ -35,7 +35,7 @@ public class screenshotTaker : MonoBehaviour
         Debug.Log(string.Format("Took screenshot to: {0}", filename));
     }
 }
-
+#if UNITY_EDITOR
 [CustomEditor(typeof(screenshotTaker))]
 public class screenshotTaker_editor : Editor
 {
@@ -50,3 +50,4 @@ public class screenshotTaker_editor : Editor
         }
     }
 }
+#endif

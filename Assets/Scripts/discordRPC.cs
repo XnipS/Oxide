@@ -1,24 +1,28 @@
-using System.Collections;
 using UnityEngine;
 using Discord;
 using UnityEditor;
 #if UNITY_EDITOR
 [InitializeOnLoad]
+#endif
 [ExecuteInEditMode]
 public class discordRPC : MonoBehaviour
 {
     //public bool running;
     Discord.Discord discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
-    void OnEnable()
+#if !UNITY_EDITOR
+    void Start()
     {
-        //Debug.Log("Enabled!");
-        //EditorApplication.update += Callback;
+        UpdatePresence(false);
     }
+    void Update() {
+        discord.RunCallbacks();
+    }
+#endif
     void OnDisable()
     {
 
     }
-
+#if UNITY_EDITOR
     public void StopUpdate()
     {
         EditorApplication.update -= Callback;
@@ -29,28 +33,50 @@ public class discordRPC : MonoBehaviour
     {
         //discord.Dispose();
         EditorApplication.update += Callback;
-        UpdatePresence();
+        UpdatePresence(true);
         Debug.Log("Start!");
     }
-    public void UpdatePresence()
+#endif
+    public void UpdatePresence(bool editor)
     {
         var activityManager = discord.GetActivityManager();
-        var activity = new Discord.Activity
+        Discord.Activity activity;
+        if (editor)
         {
-            Details = "Developing v" + Application.version,
-            State = "In Unity Editor",
-            Assets = new ActivityAssets
+            activity = new Discord.Activity
             {
-                LargeImage = "oxideicon_1024",
-                LargeText = "Oxide",
-                SmallImage = "unitylogo",
-                SmallText = "Unity Engine"
-            },
-            Timestamps = new Discord.ActivityTimestamps
+                Details = "Developing v" + Application.version,
+                State = "In Unity Editor",
+                Assets = new ActivityAssets
+                {
+                    LargeImage = "oxideicon_1024",
+                    LargeText = "Oxide",
+                    SmallImage = "unitylogo",
+                    SmallText = "Unity Engine"
+                },
+                Timestamps = new Discord.ActivityTimestamps
+                {
+                    Start = System.DateTimeOffset.Now.ToUnixTimeSeconds()
+                }
+            };
+        }
+        else
+        {
+            activity = new Discord.Activity
             {
-                Start = System.DateTimeOffset.Now.ToUnixTimeSeconds()
-            }
-        };
+                Details = "Playing v" + Application.version,
+                State = "In Game",
+                Assets = new ActivityAssets
+                {
+                    LargeImage = "oxideicon_1024",
+                    LargeText = "Oxide",
+                },
+                Timestamps = new Discord.ActivityTimestamps
+                {
+                    Start = System.DateTimeOffset.Now.ToUnixTimeSeconds()
+                }
+            };
+        }
 
         activityManager.UpdateActivity(activity, (res) =>
         {
@@ -64,13 +90,14 @@ public class discordRPC : MonoBehaviour
             }
         });
     }
-        void Callback()
+    void Callback()
     {
         discord.RunCallbacks();
-        Debug.Log("callbacl");
+        Debug.Log("callback");
     }
 
 }
+#if UNITY_EDITOR
 [CustomEditor(typeof(discordRPC))]
 public class discordRPC_editor : Editor
 {
@@ -91,7 +118,7 @@ public class discordRPC_editor : Editor
         }
         if (GUILayout.Button("Update Presence"))
         {
-            man.UpdatePresence();
+            man.UpdatePresence(true);
 
         }
     }
