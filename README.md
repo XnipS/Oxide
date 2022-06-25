@@ -26,8 +26,10 @@ Syncing✔️
 ### Items 0.3
 
 Tools✔️\
+Harvest Rocks\
+Harest Trees\
+Crafting\
 Weapons\
-Guns\
 Health\
 Damage\
 Animations\
