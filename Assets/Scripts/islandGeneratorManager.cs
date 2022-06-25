@@ -24,17 +24,19 @@ public class islandGeneratorManager : MonoBehaviour
     //[System.Serializable]
     public GameObject[] foliage;
     public TerrainLayer[] layers;
+    public GameObject rockNode;
 
-    public void NoiseAndSplat(float amt) {
+    public void NoiseAndSplat(float amt)
+    {
         TerrainData data = GetComponent<Terrain>().terrainData;
-        float[,] inputData = data.GetHeights(0,0,islandSize, islandSize);
+        float[,] inputData = data.GetHeights(0, 0, islandSize, islandSize);
         float[,] outputData;
         GenerateHeightmap(out outputData);
         for (int x = 0; x < islandSize; x++)
         {
             for (int y = 0; y < islandSize; y++)
             {
-                inputData[x,y] += outputData[x,y] * (amt/data.heightmapResolution);
+                inputData[x, y] += outputData[x, y] * (amt / data.heightmapResolution);
             }
         }
 
@@ -224,8 +226,43 @@ public class islandGeneratorManager : MonoBehaviour
         GetComponent<Terrain>().Flush();
     }
 
+    void SpawnHarvestableRock(float x, float y, TerrainData data, int surface)
+    {
+        //Debug.Log(data.heightmapScale.y);
+        if (surface == 2) //stone
+        {
+            if (Random.Range(0f, 1f) > 0.98f)
+            {
+
+                float xx = transform.position.z + y;
+                float yy = transform.position.x + x;
+                float zz = data.GetHeight((int)y, (int)x) + transform.position.y;//data.GetHeight((int)(x * data.alphamapResolution), (int)(y * data.alphamapResolution));
+                GameObject g = Instantiate(rockNode, new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
+                g.transform.up = data.GetInterpolatedNormal(y * (1f / data.heightmapResolution), x * (1f / data.heightmapResolution));
+                g.transform.SetParent(this.transform);
+            }
+        }
+        if (surface == 1) //dirt
+        {
+            if (Random.Range(0f, 1f) > 0.99f)
+            {
+
+                float xx = transform.position.z + y;
+                float yy = transform.position.x + x;
+                float zz = data.GetHeight((int)y, (int)x) + transform.position.y;//data.GetHeight((int)(x * data.alphamapResolution), (int)(y * data.alphamapResolution));
+                GameObject g = Instantiate(rockNode, new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
+                g.transform.up = data.GetInterpolatedNormal(y * (1f / data.heightmapResolution), x * (1f / data.heightmapResolution));
+                g.transform.SetParent(this.transform);
+            }
+        }
+    }
+
     void GenerateSplatmap(out float[,,] raw, TerrainData terrainData)
     {
+        for (int i = this.transform.childCount; i > 0; --i)
+        {
+            DestroyImmediate(this.transform.GetChild(0).gameObject);
+        }
         float[,,] splatmapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
 
         for (int y = 0; y < terrainData.alphamapHeight; y++)
@@ -300,6 +337,7 @@ public class islandGeneratorManager : MonoBehaviour
                             else
                             {
                                 //	stone
+                                SpawnHarvestableRock(x, y, terrainData, 2);
                                 splatWeights[0] = 0f;//sand
                                 splatWeights[1] = 0f;//dirt
                                 splatWeights[2] = 1f;//stone
@@ -333,6 +371,7 @@ public class islandGeneratorManager : MonoBehaviour
                                 {
                                     GenerateGrass(x, y, 1);
                                 }
+                                SpawnHarvestableRock(x, y, terrainData, 1);
                                 splatWeights[0] = 0f;//sand
                                 splatWeights[1] = 1f;//dirt
                                 splatWeights[2] = 0f;//stone
@@ -366,6 +405,8 @@ public class islandGeneratorManager : MonoBehaviour
 
                 if (steepness > 25f)
                 {
+                    //stone
+                    SpawnHarvestableRock(x, y, terrainData, 2);
                     splatWeights[0] = 0f;//sand
                     splatWeights[1] = 0f;//dirt
                     splatWeights[2] = 0f;//stone
