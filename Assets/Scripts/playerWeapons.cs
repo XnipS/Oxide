@@ -23,8 +23,8 @@ public class playerWeapons : NetworkBehaviour
     }
     void Update()
     {
-        if(!hasAuthority) {return;}
-        if(myInv.inventoryStatus) {return;}
+        if (!hasAuthority) { return; }
+        if (myInv.inventoryStatus) { return; }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             EquipSlot(1);
@@ -53,7 +53,7 @@ public class playerWeapons : NetworkBehaviour
         {
             cooldown -= Time.deltaTime;
         }
-        if (cooldown <= 0 && currentWeapon != 0)
+        if (cooldown <= 0 && currentData != null)
         {
             if (currentData.automatic)
             {
@@ -78,19 +78,22 @@ public class playerWeapons : NetworkBehaviour
     }
     public void ANIM_AttackHit()
     {
-        if(!hasAuthority) {return;}
+        if (!hasAuthority) { return; }
         if (currentData.anim_attack_hit != null)
         {
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 2f, mask))
             {
                 CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId);
-                if(hit.collider.GetComponent<harvestableNode>()) {
+                if (hit.collider.GetComponent<harvestableNode>())
+                {
                     FindObjectOfType<effectManager>().CMD_SpawnEffect(0, hit.point, Quaternion.LookRotation(hit.normal));
                     FindObjectOfType<resourceManager>().CMD_HitNode(hit.collider.GetComponent<harvestableNode>().id, GetComponent<NetworkIdentity>(), currentData.weaponId);
                 }
-                if(hit.collider.GetComponent<Terrain>()) {
+                if (hit.collider.GetComponent<Terrain>())
+                {
                     resourceManager.harvestableTree tar = FindObjectOfType<resourceManager>().GetTreeWithPOS(hit.point);
-                    if(tar != null) {
+                    if (tar != null)
+                    {
                         FindObjectOfType<effectManager>().CMD_SpawnEffect(1, hit.point, Quaternion.LookRotation(hit.normal));
                         FindObjectOfType<resourceManager>().CMD_HitTree(tar.myId, GetComponent<NetworkIdentity>(), currentData.weaponId);
                     }
@@ -112,8 +115,15 @@ public class playerWeapons : NetworkBehaviour
             }
         }
         //Update Viewmodels
-        if (occupied == null) { UpdateViewmodels(0); return; }
-        if(currentData != FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id)) {
+        if (occupied == null) { currentData = null; CMD_PlayWeaponAnimation("hands", 0); return; }
+        if (currentData == null)
+        {
+            currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
+            CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
+        }
+        else
+        if (currentData.id != occupied.id)
+        {
             currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
             CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
         }
@@ -144,6 +154,6 @@ public class playerWeapons : NetworkBehaviour
         UpdateViewmodels(viewmodel);
         anim[animation].layer = 10;
         anim.Stop(animation);
-        anim.CrossFade(animation,0.1f,PlayMode.StopSameLayer);
+        anim.CrossFade(animation, 0.1f, PlayMode.StopSameLayer);
     }
 }
