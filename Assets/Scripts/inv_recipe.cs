@@ -5,6 +5,8 @@ public class inv_recipe : ScriptableObject
 {
     public int outputItem;
     public int outputAmount;
+    public int tab;
     //Id,Count
-    public int[,] inputItems;
+    public int[] inputItems;
+    public int[] inputAmount;
 }

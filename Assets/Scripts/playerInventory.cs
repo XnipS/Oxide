@@ -7,11 +7,18 @@ public class playerInventory : NetworkBehaviour
     ui_inventory myInv;
     public AnimationClip anim_pickup;
     public AnimationClip anim_drop;
+    [System.Serializable]
+    public class engramMemory {
+        public int[] itemId;
+        public bool[] learned;
+    }
+    public engramMemory myMemory;
     void Start()
     {
         if (!hasAuthority) { return; }
         myInv = FindObjectOfType<ui_inventory>();
         myInv.player = this;
+        FindObjectOfType<ui_crafting>().player = this;
         FindObjectOfType<ui_hoverObject>().player = this;
     }
 

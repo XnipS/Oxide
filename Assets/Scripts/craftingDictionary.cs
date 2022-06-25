@@ -1,18 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class craftingDictionary : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public inv_recipe[] craftingData;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
