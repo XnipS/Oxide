@@ -185,6 +185,12 @@ public class islandGeneratorManager : MonoBehaviour
             if (GetTerrainNoise(100, x, y) > 0.50f && Random.Range(0f, 1f) > 0.98f)
             {
                 //Bush_1
+                SpawnTree(x, y, 8);
+            }
+            else
+            if (GetTerrainNoise(100, x, y) > 0.50f && Random.Range(0f, 1f) > 0.98f)
+            {
+                //Bush_1
                 SpawnTree(x, y, 2);
             }
             else

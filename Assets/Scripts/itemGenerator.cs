@@ -40,7 +40,7 @@ public class itemGenerator_editor_popup : EditorWindow
     //BASIC
     public int id;
     public int maxAmount = 1;
-    public string title;
+    public string itemName;
     public Sprite icon;
     //EQUIPPABLE
     public int weaponId = 0;

@@ -21,7 +21,7 @@ public class reloadAudio : MonoBehaviour {
 		gam.GetComponent<AudioSource>().spatialBlend = 1f;
 		gam.GetComponent<AudioSource>().minDistance = 1f;
 		gam.GetComponent<AudioSource>().volume = volumeMod;
-		gam.GetComponent<AudioSource>().maxDistance = 25f;
+		gam.GetComponent<AudioSource>().maxDistance = 50f;
 		gam.AddComponent<waitUntilDestroy>().seconds = clip.length;
 
 		gam.transform.position = transform.position;
@@ -43,7 +43,7 @@ public class reloadAudio : MonoBehaviour {
 		gam.GetComponent<AudioSource>().spatialBlend = 1f;
 		gam.GetComponent<AudioSource>().minDistance = 1f;
 		gam.GetComponent<AudioSource>().volume = volumeMod;
-		gam.GetComponent<AudioSource>().maxDistance = 25f;
+		gam.GetComponent<AudioSource>().maxDistance = 50;
 		gam.AddComponent<waitUntilDestroy>().seconds = clip.length;
 
 		gam.transform.position = transform.position;
