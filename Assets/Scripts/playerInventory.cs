@@ -20,6 +20,7 @@ public class playerInventory : NetworkBehaviour
         myInv.player = this;
         FindObjectOfType<ui_crafting>().player = this;
         FindObjectOfType<ui_hoverObject>().player = this;
+        FindObjectOfType<ui_manager>().player = this;
     }
 
     [Command(requiresAuthority = false)]

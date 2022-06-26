@@ -9,20 +9,27 @@ public class ui_crafting : MonoBehaviour
     public playerInventory player;
     Sprite[] icons;
 
+    public Transform crafting;
+
     public Sprite[] tab_icons;
     public string[] tab_names;
     public GameObject tab_prefab;
     public Transform tab_transform;
     ui_crafting_tab[] tab_objs;
     public Text tab_title;
+    public Text tab_info;
 
     public Transform pan_transform;
     public GameObject pan_prefab;
 
+    public void UpdateCraftingUI (bool enabled) {
+        crafting.gameObject.SetActive(enabled);
+    }
 
-    // Start is called before the first frame update
     void Start()
     {
+        //Start hidden
+        UpdateCraftingUI(false);
         //Spawn tabs
         List<ui_crafting_tab> tabs = new List<ui_crafting_tab>();
         for (int i = 0; i < tab_icons.Length; i++)
@@ -34,8 +41,6 @@ public class ui_crafting : MonoBehaviour
             tabs.Add(g.GetComponent<ui_crafting_tab>());
         }
         tab_objs = tabs.ToArray();
-        //Open default tab
-        //OpenTab(0);
     }
 
     public void OpenTab(int id)
@@ -52,7 +57,7 @@ public class ui_crafting : MonoBehaviour
         //Get all data in tab
         inv_recipe[] data = FindObjectOfType<craftingDictionary>().craftingData;
         List<inv_recipe> selected = new List<inv_recipe>();
-        selected = data.Where(x => x.tab == id).ToList();
+        selected = data.Where(x => ((int)x.tab) == id).ToList();
         List<inv_recipe> final = new List<inv_recipe>();
         //Remove unknown engrams
         foreach (inv_recipe r in selected)
@@ -72,6 +77,8 @@ public class ui_crafting : MonoBehaviour
                 final.Add(r);
             }
         }
+        //Set tab info
+        tab_info.text = "UNLOCKED " + final.Count + "/" + selected.Count;
         //Render final list
         itemDictionary dic = FindObjectOfType<itemDictionary>();
         foreach (inv_recipe r in final)
@@ -89,11 +96,5 @@ public class ui_crafting : MonoBehaviour
             }
             g.GetComponent<ui_craftingSlot>().smallText.text = str;
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
