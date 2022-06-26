@@ -119,13 +119,27 @@ public class playerWeapons : NetworkBehaviour
         if (currentData == null)
         {
             currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
-            CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
+            if (currentData.weaponId != 0)
+            {
+                CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
+            }
+            else
+            {
+                CMD_PlayWeaponAnimation("hands", 0);
+            }
         }
         else
         if (currentData.id != occupied.id)
         {
             currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
-            CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
+            if (currentData.weaponId != 0)
+            {
+                CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
+            }
+            else
+            {
+                CMD_PlayWeaponAnimation("hands", 0);
+            }
         }
     }
     void UpdateViewmodels(int id)

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 public class itemDictionary : MonoBehaviour
 {
     //Input
@@ -12,6 +13,7 @@ public class itemDictionary : MonoBehaviour
     public void Regenerate()
     {
         dataDictionary = (inv_item_data[])Resources.FindObjectsOfTypeAll(typeof(inv_item_data));
+        dataDictionary = dataDictionary.OrderBy(x=>x.id).ToArray();
     }
 
     void Start()
