@@ -22,13 +22,14 @@ public class resourceManager : NetworkBehaviour
     public harvestableTree[] trees;
     Terrain[] terrains;
     [System.Serializable]
-    public class harvestYield {
+    public class harvestYield
+    {
         public int resource_id;
         public int resource_totalAmount;
     }
     public harvestYield tree;
     public GameObject[] treeGibs;
-   
+
 
     void Start()
     {
@@ -105,7 +106,7 @@ public class resourceManager : NetworkBehaviour
         RPC_TreeUpdate(target.myId, Mathf.Clamp(target.health - damage, 0, target.maxHealth));
         inv_item item = inv_item.CreateInstance<inv_item>();
         item.id = tree.resource_id;
-        item.amount = ((tree.resource_totalAmount / target.maxHealth) * damage) + Random.Range(-bonus, bonus);
+        item.amount = ((tree.resource_totalAmount / target.maxHealth) * damage) + Random.Range(0, bonus);
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
     void HarvestNode(int damage, int bonus, NetworkIdentity human, harvestableNode target)
@@ -113,7 +114,7 @@ public class resourceManager : NetworkBehaviour
         RPC_NodeUpdate(target.id, Mathf.Clamp(target.health - 4, 0, 100));
         inv_item item = inv_item.CreateInstance<inv_item>();
         item.id = target.resource_id;
-        item.amount = ((target.resource_totalAmount / target.maxHealth) * 4) + Random.Range(-5, 5);
+        item.amount = ((target.resource_totalAmount / target.maxHealth) * damage) + Random.Range(0, 5);
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
 
@@ -124,11 +125,14 @@ public class resourceManager : NetworkBehaviour
         harvestableTree target = GetTreeWithID(id);
         if (target.health > 0)
         {
-            Debug.Log("harvest");
+            
             switch (weaponId)
             {
-                case 2://Stone pick 4 damage, 5 bonus
-                    HarvestTree(10, 5, human, target);
+                case 4://Stone hatchet 
+                    HarvestTree(4, 5, human, target);
+                    break;
+                case 5://metal hatchet
+                    HarvestTree(6, 10, human, target);
                     break;
                 default:
                     //Invalid tool
@@ -151,7 +155,7 @@ public class resourceManager : NetworkBehaviour
             terrains[target.terrainId].terrainData.SetTreeInstances(instances.ToArray(), true);
             terrainCollider.enabled = true;
             GameObject g = Instantiate(treeGibs[target.treeGibId], target.pos, Quaternion.identity);
-            g.GetComponent<Rigidbody>().AddForce(g.transform.forward *5f, ForceMode.VelocityChange);
+            g.GetComponent<Rigidbody>().AddForce(g.transform.forward * 5f, ForceMode.VelocityChange);
         }
         //Debug.Log("Harvested " + id);
     }
@@ -166,6 +170,9 @@ public class resourceManager : NetworkBehaviour
             {
                 case 2://Stone pick
                     HarvestNode(4, 5, human, target);
+                    break;
+                case 3://Metal pick
+                    HarvestNode(10, 10, human, target);
                     break;
                 default:
                     //Invalid tool

@@ -68,6 +68,34 @@ public class ui_inventory : MonoBehaviour
         }
     }
 
+    public void DestroyItem(int id, int amount)
+    {
+        //Find available slot
+        for (int x = 0; x < amount; x++)
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                inv_item taken = null;
+                foreach (inv_item it in invent)
+                {
+                    if (it.slot == i)
+                    {
+                        taken = it;
+                    }
+                }
+                if (taken != null && taken.id == id)
+                {
+                    taken.amount --;
+                    if(taken.amount == 0) {
+                        invent.Remove(taken);
+
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
     public void GiveItem(inv_item item)
     {
         int count = 0;
@@ -174,6 +202,8 @@ public class ui_inventory : MonoBehaviour
                 bag[inv.slot].UpdateIconData(inv);
             }
         }
+        //UpdateBelt
+        UpdateBelt();
     }
     public void OpenStorage(List<inv_item> store, int slotCount, itemStorage obj)
     {
@@ -300,14 +330,14 @@ public class ui_inventory : MonoBehaviour
         {
             if (occupied.id != picked_inv.id)
             {//Check if same item in slot
-            // int slotp = picked_inv.slot;
-            // int sloto = occupied.slot;
-            //     inv_item x = Instantiate(picked_inv);
-            //     inv_item y = Instantiate(occupied);
-            //     picked_inv = y;
-            //     occupied = x;
-            //     picked_inv.slot = slotp;
-            //     occupied.slot = sloto;
+             // int slotp = picked_inv.slot;
+             // int sloto = occupied.slot;
+             //     inv_item x = Instantiate(picked_inv);
+             //     inv_item y = Instantiate(occupied);
+             //     picked_inv = y;
+             //     occupied = x;
+             //     picked_inv.slot = slotp;
+             //     occupied.slot = sloto;
                 StopDrag(false);
                 return;
             }

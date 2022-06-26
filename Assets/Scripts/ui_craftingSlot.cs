@@ -13,6 +13,7 @@ public class ui_craftingSlot : MonoBehaviour, IPointerDownHandler, IPointerClick
     public Text smallText;
     [HideInInspector]
     public int slot;
+    public inv_recipe myRec;
     void Start () {
         startScale = gameObject.transform.localScale;
         gameObject.transform.localScale = startScale * 0.95f;
@@ -37,7 +38,7 @@ public class ui_craftingSlot : MonoBehaviour, IPointerDownHandler, IPointerClick
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        
+        FindObjectOfType<ui_crafting>().Craft(myRec);
     }
 
     public void OnPointerDown(PointerEventData eventData)

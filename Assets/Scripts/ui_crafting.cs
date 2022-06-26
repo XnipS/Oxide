@@ -21,9 +21,17 @@ public class ui_crafting : MonoBehaviour
 
     public Transform pan_transform;
     public GameObject pan_prefab;
+    int currentTab;
 
-    public void UpdateCraftingUI (bool enabled) {
+    ui_inventory inventory;
+
+    public void UpdateCraftingUI(bool enabled)
+    {
         crafting.gameObject.SetActive(enabled);
+        if (enabled)
+        {
+            OpenTab(currentTab);
+        }
     }
 
     void Start()
@@ -41,10 +49,13 @@ public class ui_crafting : MonoBehaviour
             tabs.Add(g.GetComponent<ui_crafting_tab>());
         }
         tab_objs = tabs.ToArray();
+        //Assing
+        inventory = GetComponent<ui_inventory>();
     }
 
     public void OpenTab(int id)
     {
+        currentTab = id;
         //Get icons
         icons = FindObjectOfType<itemDictionary>().icons;
         //Set tab name
@@ -85,16 +96,77 @@ public class ui_crafting : MonoBehaviour
         {
             GameObject g = Instantiate(pan_prefab, pan_transform);
             g.GetComponent<ui_craftingSlot>().icon.sprite = icons[r.outputItem];
+            g.GetComponent<ui_craftingSlot>().myRec = r;
             g.GetComponent<ui_craftingSlot>().bigText.text = dic.GetDataFromItemID(r.outputItem).title;
             string str = "";
             for (int x = 0; x < r.inputItems.Length; x++)
             {
-                str += dic.GetDataFromItemID(r.inputItems[x]).title;
-                str += ",";
-                str += r.inputAmount[x];
-                str += " ";
+                //Check if afford
+                if (HasEnough(r.inputItems[x], r.inputAmount[x]))
+                {
+                    str += dic.GetDataFromItemID(r.inputItems[x]).title;
+                    str += " ";
+                    str += r.inputAmount[x];
+                    if (x != r.inputItems.Length - 1)
+                    {
+                        str += ", ";
+                    }
+                }
+                else
+                {
+                    str += "<color=#ff0000ff>";
+                    str += dic.GetDataFromItemID(r.inputItems[x]).title;
+                    str += " ";
+                    str += r.inputAmount[x];
+                    if (x != r.inputItems.Length - 1)
+                    {
+                        str += ", ";
+                    }
+                    str += "</color>";
+                }
             }
             g.GetComponent<ui_craftingSlot>().smallText.text = str;
         }
+    }
+
+    public void Craft(inv_recipe recipe)
+    {
+        //Check if can afford
+        for (int x = 0; x < recipe.inputItems.Length; x++)
+        {
+            //Check if afford
+            if (!HasEnough(recipe.inputItems[x], recipe.inputAmount[x]))
+            {
+                return;
+            }
+        }
+        //Remove input
+        for (int x = 0; x < recipe.inputItems.Length; x++)
+        {
+            inventory.DestroyItem(recipe.inputItems[x], recipe.inputAmount[x]);
+        }
+        //Give output
+        inv_item it = inv_item.CreateInstance<inv_item>();
+        it.amount = recipe.outputAmount;
+        it.id = recipe.outputItem;
+        inventory.GiveItem(it);
+        //Refresh
+        inventory.CloseInventory();
+        UpdateCraftingUI(false);
+        inventory.OpenInventory();
+        UpdateCraftingUI(true);
+    }
+
+    bool HasEnough(int itemId, int amount)
+    {
+        int needed = amount;
+        foreach (inv_item it in inventory.invent)
+        {
+            if (it.id == itemId)
+            {
+                needed -= it.amount;
+            }
+        }
+        return (needed <= 0);
     }
 }
