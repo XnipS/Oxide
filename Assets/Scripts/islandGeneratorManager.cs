@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEditor;
@@ -11,7 +10,6 @@ public class islandGeneratorManager : MonoBehaviour
     public int islandSize;
     [Tooltip("The terrain material.")]
     public Material terrainMaterial;
-    //public float islandHeightmapResolutionScale = 1.0f;
     [Header("Generation Settings")]
     public float noiseScale;
     public float noiseVerticalScale;
@@ -21,7 +19,6 @@ public class islandGeneratorManager : MonoBehaviour
     public float yScale = 1f;//y height of heightmap
     [Tooltip("Heightmap resolution.")]
     public HeightmapResolution resolution;
-    //[System.Serializable]
     public GameObject[] foliage;
     public TerrainLayer[] layers;
     public GameObject rockNode;

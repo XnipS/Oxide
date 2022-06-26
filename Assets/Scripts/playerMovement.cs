@@ -11,7 +11,7 @@ public class playerMovement : NetworkBehaviour
     public GameObject[] thirdPerson;
     public int layer_first;
     public int layer_third;
-        public int layer_inv;
+    public int layer_inv;
     public GameObject[] viewmodels;
     [Header("Speed")]
     public float walkSpeed;
@@ -37,11 +37,14 @@ public class playerMovement : NetworkBehaviour
         character = GetComponent<CharacterController>();
         character.detectCollisions = false;
         //Determine first or third person model
-        if(hasAuthority) {
+        if (hasAuthority)
+        {
             SetAllLayer(firstPerson, layer_first);
             SetAllLayer(thirdPerson, layer_inv);
             SetAllLayer(viewmodels, layer_first);
-        }else {
+        }
+        else
+        {
             SetAllActive(firstPerson, false);
             SetAllLayer(thirdPerson, layer_third);
             SetAllLayer(viewmodels, layer_third);
@@ -222,10 +225,11 @@ public class playerMovement : NetworkBehaviour
         }
     }
     //Set all model layers
-    static void SetAllLayer (GameObject[] obs, int layer) {
+    static void SetAllLayer(GameObject[] obs, int layer)
+    {
         foreach (GameObject gam in obs)
         {
-           gam.layer = layer;
+            gam.layer = layer;
         }
     }
     //Assign this player to owner

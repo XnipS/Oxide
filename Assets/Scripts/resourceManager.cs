@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
@@ -8,7 +7,6 @@ public class resourceManager : NetworkBehaviour
 {
     [HideInInspector]
     public harvestableNode[] nodes;
-    //[HideInInspector]
     public class harvestableTree
     {
         public int myId;
@@ -33,7 +31,9 @@ public class resourceManager : NetworkBehaviour
 
     void Start()
     {
+        //Get terrain
         terrains = FindObjectsOfType<Terrain>();
+        //Fill array with trees
         List<harvestableTree> newTrees = new List<harvestableTree>();
         for (int x = 0; x < terrains.Length; x++)
         {
@@ -51,10 +51,8 @@ public class resourceManager : NetworkBehaviour
                 newTrees.Add(terra);
             }
         }
-        //Debug.Log(newTrees[5].pos);
-
         trees = newTrees.ToArray();
-
+        //Fill array with nodes
         nodes = FindObjectsOfType<harvestableNode>();
         for (int i = 0; i < nodes.Length; i++)
         {
@@ -103,7 +101,9 @@ public class resourceManager : NetworkBehaviour
 
     void HarvestTree(int damage, int bonus, NetworkIdentity human, harvestableTree target)
     {
+        //Update tree array
         RPC_TreeUpdate(target.myId, Mathf.Clamp(target.health - damage, 0, target.maxHealth));
+        //Add item to inventory
         inv_item item = inv_item.CreateInstance<inv_item>();
         item.id = tree.resource_id;
         item.amount = ((tree.resource_totalAmount / target.maxHealth) * damage) + Random.Range(0, bonus);
@@ -111,11 +111,12 @@ public class resourceManager : NetworkBehaviour
     }
     void HarvestNode(int damage, int bonus, NetworkIdentity human, harvestableNode target)
     {
+        //Update node array
         RPC_NodeUpdate(target.id, Mathf.Clamp(target.health - 4, 0, 100));
+        //Add item to inventory
         inv_item item = inv_item.CreateInstance<inv_item>();
         switch (Random.Range(0, 3))
         {
-
             case 0:
                 item.id = 5;
                 break;
@@ -126,11 +127,9 @@ public class resourceManager : NetworkBehaviour
                 item.id = 9;
                 break;
         }
-        //item.id = target.resource_id;
         item.amount = ((target.resource_totalAmount / target.maxHealth) * damage) + Random.Range(0, 5);
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
-
 
     [Command(requiresAuthority = false)]
     public void CMD_HitTree(int id, NetworkIdentity human, int weaponId)
@@ -138,7 +137,6 @@ public class resourceManager : NetworkBehaviour
         harvestableTree target = GetTreeWithID(id);
         if (target.health > 0)
         {
-
             switch (weaponId)
             {
                 case 4://Stone hatchet 
@@ -152,25 +150,28 @@ public class resourceManager : NetworkBehaviour
                     break;
             }
         }
-
     }
     [ClientRpc]
     public void RPC_TreeUpdate(int id, int newHp)
     {
+        //Get tree
         harvestableTree target = GetTreeWithID(id);
         target.health = newHp;
         if (target.health == 0)
         {
+            //Get and remove instance from array
             List<TreeInstance> instances = new List<TreeInstance>(terrains[target.terrainId].terrainData.treeInstances);
             instances.Remove(target.instance);
+            //Refresh collider
             TerrainCollider terrainCollider = terrains[target.terrainId].GetComponent<TerrainCollider>();
             terrainCollider.enabled = false;
+            //Assign edited array
             terrains[target.terrainId].terrainData.SetTreeInstances(instances.ToArray(), true);
             terrainCollider.enabled = true;
+            //Spawn gibs
             GameObject g = Instantiate(treeGibs[target.treeGibId], target.pos, Quaternion.identity);
             g.GetComponent<Rigidbody>().AddForce(g.transform.forward * 5f, ForceMode.VelocityChange);
         }
-        //Debug.Log("Harvested " + id);
     }
 
     [Command(requiresAuthority = false)]

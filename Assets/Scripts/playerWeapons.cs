@@ -23,8 +23,10 @@ public class playerWeapons : NetworkBehaviour
     }
     void Update()
     {
+        //Check if mine and inv is closed
         if (!hasAuthority) { return; }
         if (myInv.inventoryStatus) { return; }
+        //Get slot number input
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             EquipSlot(1);
@@ -49,10 +51,12 @@ public class playerWeapons : NetworkBehaviour
         {
             EquipSlot(6);
         }
+        //Decrease weapon cooldown
         if (cooldown > 0)
         {
             cooldown -= Time.deltaTime;
         }
+        //Fire mechanics
         if (cooldown <= 0 && currentData != null)
         {
             if (currentData.automatic)
@@ -86,11 +90,13 @@ public class playerWeapons : NetworkBehaviour
                 CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId);
                 if (hit.collider.GetComponent<harvestableNode>())
                 {
+                    //Hit rock node
                     FindObjectOfType<effectManager>().CMD_SpawnEffect(0, hit.point, Quaternion.LookRotation(hit.normal));
                     FindObjectOfType<resourceManager>().CMD_HitNode(hit.collider.GetComponent<harvestableNode>().id, GetComponent<NetworkIdentity>(), currentData.weaponId);
                 }
                 if (hit.collider.GetComponent<Terrain>())
                 {
+                    //Hit terrain & possible tree
                     resourceManager.harvestableTree tar = FindObjectOfType<resourceManager>().GetTreeWithPOS(hit.point);
                     if (tar != null)
                     {

@@ -1,12 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 #if UNITY_EDITOR
-//public class itemGenerator : MonoBehaviour
-//{
-
-//}
 
 public class itemRemote_editor_popup : EditorWindow
 {

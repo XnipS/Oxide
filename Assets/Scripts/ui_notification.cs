@@ -33,10 +33,12 @@ public class ui_notification : MonoBehaviour
 
     IEnumerator Think()
     {
+        //Assign colours
         Color x = img.color;
         Color y = tex.color;
         Color z = icon.color;
         float fadein = 0f;
+        //Fade in
         while (fadein < 1f)
         {
             fadein += Time.deltaTime * 2f;
@@ -45,7 +47,7 @@ public class ui_notification : MonoBehaviour
             icon.color = Color.Lerp(Color.clear, z, fadein);
             yield return null;
         }
-        //Fade
+        //Fade out
         float max = 3f;
         float timer = max;
         while (timer > 0)
@@ -56,6 +58,7 @@ public class ui_notification : MonoBehaviour
             icon.color = Color.Lerp(icon.color, Color.clear, (1f / max) * max - timer);
             yield return null;
         }
+        //Delete
         Destroy(gameObject);
     }
 }

@@ -8,14 +8,15 @@ public class collisionSounds : MonoBehaviour
 
     void OnCollisionEnter(Collision col)
     {
-        
-        if(GetComponent<Rigidbody>().velocity.magnitude > 0.1f) {
-        if (oneShot && shot == false)
+        //Check if moving
+        if (GetComponent<Rigidbody>().velocity.magnitude > 0.1f)
         {
-            Debug.Log("COLLISIOn");
-            GetComponent<reloadAudio>().PlayRandomReloadAudio(sounds);
-            shot = true;
-        }
+            if (oneShot && shot == false)
+            {
+                //Play sound
+                GetComponent<reloadAudio>().PlayRandomReloadAudio(sounds);
+                shot = true;
+            }
         }
     }
 }

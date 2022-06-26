@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 using Mirror;
 
 public class itemStorage : NetworkBehaviour
@@ -9,6 +8,7 @@ public class itemStorage : NetworkBehaviour
     [SyncVar]
     public int slots;
     ui_inventory inv;
+
     void Start()
     {
         inv = FindObjectOfType<ui_inventory>();
@@ -21,6 +21,7 @@ public class itemStorage : NetworkBehaviour
         }
         storage = newInvent;
     }
+
     [Command(requiresAuthority = false)]
     public void CMD_UpdateStorage(List<inv_item> str, int slo)
     {
@@ -28,19 +29,17 @@ public class itemStorage : NetworkBehaviour
         slots = slo;
         RPC_UpdateStorage(str, slo);
     }
+
     [ClientRpc]
     public void RPC_UpdateStorage(List<inv_item> str, int slo)
     {
-
         if (inv.inventoryStatus && inv.currentStorage == this)
         {
-
             storage = str;
             slots = slo;
             inv.CloseInventory();
             inv.OpenInventory();
             inv.OpenStorage(storage, slots, this);
-
         }
         else
         {

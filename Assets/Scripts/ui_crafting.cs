@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -10,7 +9,7 @@ public class ui_crafting : MonoBehaviour
     Sprite[] icons;
 
     public Transform crafting;
-
+    //Tabs
     public Sprite[] tab_icons;
     public string[] tab_names;
     public GameObject tab_prefab;
@@ -18,7 +17,7 @@ public class ui_crafting : MonoBehaviour
     ui_crafting_tab[] tab_objs;
     public Text tab_title;
     public Text tab_info;
-
+    //Panels
     public Transform pan_transform;
     public GameObject pan_prefab;
     int currentTab;
@@ -74,8 +73,6 @@ public class ui_crafting : MonoBehaviour
         foreach (inv_recipe r in selected)
         {
             bool shown = false;
-            //Debug.Log(player);
-            //Debug.Log(player.myMemory.itemId.Length);
             for (int i = 0; i < player.myMemory.itemId.Length; i++)
             {
                 if (player.myMemory.itemId[i] == r.outputItem)

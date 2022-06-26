@@ -16,7 +16,9 @@ public class harvestableNode : MonoBehaviour
 
     public void UpdateNode(int newHp)
     {
+        //Assign server hp
         health = newHp;
+        //Clamp health
         if (health > 0)
         {
             GetComponent<Collider>().enabled = true;

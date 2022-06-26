@@ -1,9 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-public class ui_craftingSlot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
-    IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler,
-    IBeginDragHandler, IDragHandler, IEndDragHandler
+public class ui_craftingSlot : MonoBehaviour, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler
 {
     Vector2 startScale;
     public Image icon;
@@ -14,36 +12,15 @@ public class ui_craftingSlot : MonoBehaviour, IPointerDownHandler, IPointerClick
     [HideInInspector]
     public int slot;
     public inv_recipe myRec;
-    void Start () {
+    void Start()
+    {
         startScale = gameObject.transform.localScale;
         gameObject.transform.localScale = startScale * 0.95f;
-    }
-    public void UpdateRecipeData (inv_recipe data) {
-        
-    }
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-       
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         FindObjectOfType<ui_crafting>().Craft(myRec);
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -54,10 +31,5 @@ public class ui_craftingSlot : MonoBehaviour, IPointerDownHandler, IPointerClick
     public void OnPointerExit(PointerEventData eventData)
     {
         gameObject.transform.localScale = startScale * 0.95f;
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        
     }
 }

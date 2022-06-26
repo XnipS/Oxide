@@ -9,6 +9,7 @@ public class connected_client : NetworkBehaviour
     {
         if (hasAuthority)
         {
+            //Spawn player if connected
             FindObjectOfType<respawn_manager>().CMD_SpawnPlayer(GetComponent<NetworkIdentity>().connectionToClient);
         }
     }
@@ -21,6 +22,7 @@ public class connected_client : NetworkBehaviour
             {
                 if (myPlayer == null)
                 {
+                    //Temporary respawn
                     FindObjectOfType<respawn_manager>().CMD_SpawnPlayer(GetComponent<NetworkIdentity>().connectionToClient);
                 }
             }

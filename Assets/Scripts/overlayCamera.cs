@@ -7,5 +7,4 @@ public class overlayCamera : MonoBehaviour
         var cameraData = Camera.main.GetUniversalAdditionalCameraData();
         cameraData.cameraStack.Add(GetComponent<Camera>());
     }
-
 }

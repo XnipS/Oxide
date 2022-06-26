@@ -1,9 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
-    IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler,
-    IBeginDragHandler, IDragHandler, IEndDragHandler
+public class ui_slot : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler,
+    IBeginDragHandler, IEndDragHandler
 {
     Vector2 startScale;
     public Image icon;
@@ -14,21 +13,29 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     public int slot;
     //[HideInInspector]
     public bool storage;
-    void Start () {
+    void Start()
+    {
         startScale = gameObject.transform.localScale;
         gameObject.transform.localScale = startScale * 0.95f;
     }
-    public void UpdateIconData (inv_item data) {
-        if(data.amount != 0) {
+    public void UpdateIconData(inv_item data)
+    {
+        if (data.amount != 0)
+        {
             text.enabled = true;
             text.text = data.amount.ToString();
-        }else {
+        }
+        else
+        {
             text.enabled = false;
         }
-        if(data.id != 0) {
+        if (data.id != 0)
+        {
             icon.enabled = true;
             icon.sprite = icons[data.id];
-        }else {
+        }
+        else
+        {
             icon.enabled = false;
         }
     }
@@ -37,28 +44,17 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
         GetComponentInParent<ui_inventory>().PickedItem(this, storage);
     }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        
-    }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if(eventData.pointerEnter && eventData.pointerEnter.GetComponent<ui_slot>()) {
+        if (eventData.pointerEnter && eventData.pointerEnter.GetComponent<ui_slot>())
+        {
             GetComponentInParent<ui_inventory>().DroppedItem(eventData.pointerEnter.GetComponent<ui_slot>(), eventData.pointerEnter.GetComponent<ui_slot>().storage);
-        }else {
+        }
+        else
+        {
             GetComponentInParent<ui_inventory>().StopDrag(true);
         }
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -71,8 +67,4 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
         gameObject.transform.localScale = startScale * 0.95f;
     }
 
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        
-    }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class googlyEyes : MonoBehaviour
@@ -26,23 +24,21 @@ public class googlyEyes : MonoBehaviour
 
     void Update()
     {
-
-
+        //Get pos
         var currentPosition = transform.position;
-
+        //Get gravity
         var gravity = transform.InverseTransformDirection(Physics.gravity);
-
+        //Assign velocity
         _velocity += gravity * GravityMultiplier * Time.deltaTime;
         _velocity += transform.InverseTransformVector((_lastPosition - currentPosition)) * 500f * Time.deltaTime;
         _velocity.z = 0f;
-
+        //Apply position
         var position = Eye.localPosition;
-
         position += _velocity * Speed * Time.deltaTime;
-
+        //Get applied direction & angle
         var direction = new Vector2(position.x, position.y);
         var angle = Mathf.Atan2(direction.y, direction.x);
-
+        //Clamp position
         if (direction.magnitude > maxDistance)
         {
             var normal = -direction.normalized;
@@ -55,7 +51,7 @@ public class googlyEyes : MonoBehaviour
                 0f
             );
         }
-
+        //Apply
         position.z = Eye.localPosition.z;
         Eye.localPosition = position;
         _lastPosition = transform.position;

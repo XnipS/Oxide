@@ -7,5 +7,4 @@ public class playReloadAudio : MonoBehaviour
     {
         GetComponent<reloadAudio>().PlayReloadAudio(clip);
     }
-
 }
