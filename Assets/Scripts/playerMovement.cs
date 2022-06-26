@@ -6,10 +6,12 @@ public class playerMovement : NetworkBehaviour
     [Header("Permanant")]
     public GameObject bendPos;
     public CinemachineVirtualCamera headCam;
+    public Camera viewmodelCam;
     public GameObject[] firstPerson;
     public GameObject[] thirdPerson;
     public int layer_first;
     public int layer_third;
+        public int layer_inv;
     public GameObject[] viewmodels;
     [Header("Speed")]
     public float walkSpeed;
@@ -35,19 +37,14 @@ public class playerMovement : NetworkBehaviour
         character = GetComponent<CharacterController>();
         character.detectCollisions = false;
         //Determine first or third person model
-        SetAllActive(firstPerson, hasAuthority);
-        SetAllActive(thirdPerson, !hasAuthority);
-        //Assign mask to viewmodels
-        foreach (GameObject gam in viewmodels)
-        {
-            if (hasAuthority)
-            {
-                gam.layer = layer_first;
-            }
-            else
-            {
-                gam.layer = layer_third;
-            }
+        if(hasAuthority) {
+            SetAllLayer(firstPerson, layer_first);
+            SetAllLayer(thirdPerson, layer_inv);
+            SetAllLayer(viewmodels, layer_first);
+        }else {
+            SetAllActive(firstPerson, false);
+            SetAllLayer(thirdPerson, layer_third);
+            SetAllLayer(viewmodels, layer_third);
         }
         //Determine if local camera
         if (hasAuthority)
@@ -58,6 +55,8 @@ public class playerMovement : NetworkBehaviour
         {
             headCam.m_Priority = -10;
         }
+        //Determine to use viewmodel camera
+        viewmodelCam.gameObject.SetActive(hasAuthority);
     }
 
     void Update()
@@ -201,7 +200,7 @@ public class playerMovement : NetworkBehaviour
         velocityMagnatude = newA;
     }
     //Set all models visible or not
-    void SetAllActive(GameObject[] obs, bool bo)
+    static void SetAllActive(GameObject[] obs, bool bo)
     {
         foreach (GameObject gam in obs)
         {
@@ -220,6 +219,13 @@ public class playerMovement : NetworkBehaviour
             {
                 gam.SetActive(bo);
             }
+        }
+    }
+    //Set all model layers
+    static void SetAllLayer (GameObject[] obs, int layer) {
+        foreach (GameObject gam in obs)
+        {
+           gam.layer = layer;
         }
     }
     //Assign this player to owner

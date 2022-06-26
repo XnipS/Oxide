@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class ui_inventory : MonoBehaviour
 {
     public Transform tra_belt;
+    public Transform tra_cloth;
     public Transform tra_bag;
     public Transform tra_box;
     public GameObject pre_slot;
@@ -180,8 +181,11 @@ public class ui_inventory : MonoBehaviour
 
     public void OpenInventory()
     {
+        //Cursor
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+        //Clothing
+        tra_cloth.gameObject.SetActive(true);
         //Toggle variable
         inventoryStatus = true;
         //Generate Slots
@@ -232,8 +236,11 @@ public class ui_inventory : MonoBehaviour
 
     public void CloseInventory()
     {
+        //Cursor
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        //Clothing
+        tra_cloth.gameObject.SetActive(false);
         //Delete Slots
         inventoryStatus = false;
         foreach (Transform item in tra_bag)

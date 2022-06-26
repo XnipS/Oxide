@@ -29,9 +29,10 @@ Tools✔️\
 Harvest Rocks✔️\
 Harest Trees✔️\
 Crafting✔️\
+Deployables
 Weapons\
-Health\
-Damage\
+Health & Damage\
+Clothing\
 Animations\
 Syncing
 
