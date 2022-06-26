@@ -10,6 +10,7 @@ public class sunManager : NetworkBehaviour
     public Color night;
     void FixedUpdate()
     {
+        RenderSettings.reflectionIntensity = RenderSettings.ambientLight.r;
         sunAngle = (double)NetworkTime.time * speed;
         float val = (float)sunAngle;
         float normal = Mathf.Sin(Mathf.Deg2Rad * (val % 360));
