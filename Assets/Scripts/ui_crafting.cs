@@ -74,8 +74,8 @@ public class ui_crafting : MonoBehaviour
         foreach (inv_recipe r in selected)
         {
             bool shown = false;
-            Debug.Log(player);
-            Debug.Log(player.myMemory.itemId.Length);
+            //Debug.Log(player);
+            //Debug.Log(player.myMemory.itemId.Length);
             for (int i = 0; i < player.myMemory.itemId.Length; i++)
             {
                 if (player.myMemory.itemId[i] == r.outputItem)

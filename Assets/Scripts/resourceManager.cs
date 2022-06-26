@@ -51,7 +51,7 @@ public class resourceManager : NetworkBehaviour
                 newTrees.Add(terra);
             }
         }
-        Debug.Log(newTrees[5].pos);
+        //Debug.Log(newTrees[5].pos);
 
         trees = newTrees.ToArray();
 
@@ -113,7 +113,20 @@ public class resourceManager : NetworkBehaviour
     {
         RPC_NodeUpdate(target.id, Mathf.Clamp(target.health - 4, 0, 100));
         inv_item item = inv_item.CreateInstance<inv_item>();
-        item.id = target.resource_id;
+        switch (Random.Range(0, 3))
+        {
+
+            case 0:
+                item.id = 5;
+                break;
+            case 1:
+                item.id = 8;
+                break;
+            case 2:
+                item.id = 9;
+                break;
+        }
+        //item.id = target.resource_id;
         item.amount = ((target.resource_totalAmount / target.maxHealth) * damage) + Random.Range(0, 5);
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
@@ -125,7 +138,7 @@ public class resourceManager : NetworkBehaviour
         harvestableTree target = GetTreeWithID(id);
         if (target.health > 0)
         {
-            
+
             switch (weaponId)
             {
                 case 4://Stone hatchet 
