@@ -61,6 +61,9 @@ public class itemGenerator_editor_popup : EditorWindow
     public AnimationClip anim_equip;
     public AnimationClip anim_attack;
     public AnimationClip anim_attack_hit;
+    //PLACEABLE
+    public bool placeable;
+    public int placeId;
 
     [MenuItem("Oxide/GenerateItem")]
     static void Init()
@@ -85,6 +88,9 @@ public class itemGenerator_editor_popup : EditorWindow
         anim_attack = (AnimationClip)EditorGUILayout.ObjectField("Attack Animation", anim_attack, typeof(AnimationClip), false);
         anim_attack_hit = (AnimationClip)EditorGUILayout.ObjectField("Hit Animation", anim_attack_hit, typeof(AnimationClip), false);
         EditorGUILayout.EndToggleGroup();
+        placeable = EditorGUILayout.BeginToggleGroup("Placeable", placeable);
+        placeId = EditorGUILayout.IntField("Placeable ID", placeId);
+        EditorGUILayout.EndToggleGroup();
 
         if (GUILayout.Button("Generate"))
         {
@@ -99,6 +105,7 @@ public class itemGenerator_editor_popup : EditorWindow
             data.anim_equip = anim_equip;
             data.anim_attack_hit = anim_attack_hit;
             data.anim_attack = anim_attack;
+            data.placeId = placeId;
 
             AssetDatabase.CreateAsset(data, "Assets/Resources/Items/Data/ID_" + data.id + ".asset");
             AssetDatabase.SaveAssets();

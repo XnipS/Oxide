@@ -15,4 +15,6 @@ public class inv_item_data : ScriptableObject
     public AnimationClip anim_equip;
     public AnimationClip anim_attack;
     public AnimationClip anim_attack_hit;
+    //PLACEABLE
+    public int placeId = 0;
 }
