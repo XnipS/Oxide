@@ -7,36 +7,48 @@ using UnityEditor;
 [ExecuteInEditMode]
 public class discordRPC : MonoBehaviour
 {
-    //public bool running;
-    Discord.Discord discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
-#if !UNITY_EDITOR
-    void Start()
+
+    public bool running;
+    Discord.Discord discord;
+
+    void OnEnable()
     {
-        UpdatePresence(false);
-    }
-    void Update() {
-        discord.RunCallbacks();
-    }
+        Debug.Log("start");
+        if (discord == null)
+        {
+            discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
+        }
+        else
+        {
+            Debug.Log("Disposed Discord!");
+            discord.Dispose();
+            discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
+        }
+#if UNITY_EDITOR
+        UpdatePresence(true);
+#else
+UpdatePresence(false);
 #endif
-    void OnDisable()
-    {
 
     }
-#if UNITY_EDITOR
-    public void StopUpdate()
+    void Update()
     {
-        EditorApplication.update -= Callback;
+        if (discord != null)
+        {
+            running = true;
+            discord.RunCallbacks();
+        }
+        else
+        {
+            running = false;
+        }
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("Disposed Discord!");
         discord.Dispose();
-        Debug.Log("Stop!");
     }
-    public void StartUpdate()
-    {
-        //discord.Dispose();
-        EditorApplication.update += Callback;
-        UpdatePresence(true);
-        Debug.Log("Start!");
-    }
-#endif
     public void UpdatePresence(bool editor)
     {
         var activityManager = discord.GetActivityManager();
@@ -106,16 +118,6 @@ public class discordRPC_editor : Editor
         base.OnInspectorGUI();
 
         discordRPC man = (discordRPC)target;
-        if (GUILayout.Button("Start"))
-        {
-            man.StartUpdate();
-
-        }
-        if (GUILayout.Button("Stop"))
-        {
-            man.StopUpdate();
-
-        }
         if (GUILayout.Button("Update Presence"))
         {
             man.UpdatePresence(true);
