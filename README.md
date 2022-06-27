@@ -29,7 +29,7 @@ Tools✔️\
 Harvest Rocks✔️\
 Harest Trees✔️\
 Crafting✔️\
-Deployables
+Deployables✔️\
 Weapons\
 Health & Damage\
 Clothing\

@@ -3,6 +3,7 @@ using Mirror;
 
 public class itemStorage : NetworkBehaviour
 {
+    public string label = "Storage";
     [SyncVar]
     public List<inv_item> storage;
     [SyncVar]

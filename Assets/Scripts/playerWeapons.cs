@@ -57,7 +57,7 @@ public class playerWeapons : NetworkBehaviour
             cooldown -= Time.deltaTime;
         }
         //Fire mechanics
-        if (cooldown <= 0 && currentData != null)
+        if (cooldown <= 0 && currentData != null && currentData.weaponId != 0)
         {
             if (currentData.automatic)
             {
@@ -111,6 +111,8 @@ public class playerWeapons : NetworkBehaviour
     }
     void EquipSlot(int id)
     {
+        //Delete
+        GetComponent<playerDeployables>().CancelGhost();
         //Check if slot populated
         inv_item occupied = null;
         foreach (inv_item it in myInv.invent)
@@ -129,6 +131,11 @@ public class playerWeapons : NetworkBehaviour
             {
                 CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
             }
+            else if (currentData.placeId != 0)
+            {
+                GetComponent<playerDeployables>().SpawnGhost(currentData.placeId, currentData.id);
+                CMD_PlayWeaponAnimation("hands", 0);
+            }
             else
             {
                 CMD_PlayWeaponAnimation("hands", 0);
@@ -141,6 +148,11 @@ public class playerWeapons : NetworkBehaviour
             if (currentData.weaponId != 0)
             {
                 CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId);
+            }
+            else if (currentData.placeId != 0)
+            {
+                GetComponent<playerDeployables>().SpawnGhost(currentData.placeId, currentData.id);
+                CMD_PlayWeaponAnimation("hands", 0);
             }
             else
             {

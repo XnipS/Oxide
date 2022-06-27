@@ -40,7 +40,8 @@ public class ui_hoverObject : MonoBehaviour
             {
                 //Detected crate
                 hover = true;
-                string str = "Open Storage";
+                string str = "Open ";
+                str += hit.collider.GetComponent<itemStorage>().label;
                 itemText.text = str;
                 if (Input.GetKeyDown(KeyCode.E))
                 {

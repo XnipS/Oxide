@@ -86,8 +86,9 @@ public class ui_inventory : MonoBehaviour
                 }
                 if (taken != null && taken.id == id)
                 {
-                    taken.amount --;
-                    if(taken.amount == 0) {
+                    taken.amount--;
+                    if (taken.amount == 0)
+                    {
                         invent.Remove(taken);
 
                     }
@@ -95,6 +96,8 @@ public class ui_inventory : MonoBehaviour
                 }
             }
         }
+        //Refresh
+                UpdateBelt();
     }
 
     public void GiveItem(inv_item item)
@@ -263,6 +266,7 @@ public class ui_inventory : MonoBehaviour
     public void UpdateInventory()
     {
         CloseInventory();
+        UpdateBelt();
         OpenInventory();
     }
 
