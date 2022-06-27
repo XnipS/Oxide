@@ -6,6 +6,8 @@ using System.Linq;
 public class resourceManager : NetworkBehaviour
 {
     [HideInInspector]
+    public pickableNode[] hemp;
+    [HideInInspector]
     public harvestableNode[] nodes;
     public class harvestableTree
     {
@@ -58,8 +60,25 @@ public class resourceManager : NetworkBehaviour
         {
             nodes[i].id = i;
         }
+        //Fill array with hemp
+        hemp = FindObjectsOfType<pickableNode>();
+        for (int i = 0; i < hemp.Length; i++)
+        {
+            hemp[i].id = i;
+        }
     }
-
+    pickableNode GetHempWithID(int id)
+    {
+        foreach (pickableNode n in hemp)
+        {
+            if (n.id == id)
+            {
+                return n;
+            }
+        }
+        Debug.LogError("Hemp with id:" + id + " not found.");
+        return null;
+    }
     harvestableNode GetNodeWithID(int id)
     {
         foreach (harvestableNode n in nodes)
@@ -130,6 +149,16 @@ public class resourceManager : NetworkBehaviour
         item.amount = ((target.resource_totalAmount / target.maxHealth) * damage) + Random.Range(0, 5);
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
+    void HarvestHemp(NetworkIdentity human, pickableNode target)
+    {
+        //Update tree array
+        RPC_HempUpdate(target.id, false);
+        //Add item to inventory
+        inv_item item = inv_item.CreateInstance<inv_item>();
+        item.id = 13;
+        item.amount = 10 + Random.Range(0, 5);
+        human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
+    }
 
     [Command(requiresAuthority = false)]
     public void CMD_HitTree(int id, NetworkIdentity human, int weaponId)
@@ -193,7 +222,20 @@ public class resourceManager : NetworkBehaviour
                     break;
             }
         }
+    }
 
+    [Command(requiresAuthority = false)]
+    public void CMD_PickNode(int id, NetworkIdentity human)
+    {
+        pickableNode target = GetHempWithID(id);
+        HarvestHemp(human, target);
+
+    }
+    [ClientRpc]
+    public void RPC_HempUpdate(int id, bool state)
+    {
+        pickableNode target = GetHempWithID(id);
+        target.UpdateNode(state);
     }
     [ClientRpc]
     public void RPC_NodeUpdate(int id, int newHp)

@@ -48,6 +48,17 @@ public class ui_hoverObject : MonoBehaviour
                     inv.OpenStorage(hit.collider.GetComponent<itemStorage>().storage, hit.collider.GetComponent<itemStorage>().slots, hit.collider.GetComponent<itemStorage>());
                 }
             }
+            if (hit.collider.GetComponent<pickableNode>() != null && inv.inventoryStatus == false)
+            {
+                //Detected hemp
+                hover = true;
+                string str = "Pick Hemp";
+                itemText.text = str;
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    FindObjectOfType<resourceManager>().CMD_PickNode(hit.collider.GetComponent<pickableNode>().id, player.GetComponent<NetworkIdentity>());
+                }
+            }
         }
         itemText.enabled = hover;
     }

@@ -22,6 +22,7 @@ public class islandGeneratorManager : MonoBehaviour
     public GameObject[] foliage;
     public TerrainLayer[] layers;
     public GameObject rockNode;
+    public GameObject hempNode;
 
     public void NoiseAndSplat(float amt)
     {
@@ -223,6 +224,19 @@ public class islandGeneratorManager : MonoBehaviour
         GetComponent<Terrain>().Flush();
     }
 
+    void SpawnHemp(float x, float y, TerrainData data, int surface)
+    {
+         if (Random.Range(0f, 1f) > 0.995f)
+            {
+        float xx = transform.position.z + y;
+        float yy = transform.position.x + x;
+        float zz = data.GetHeight((int)y, (int)x) + transform.position.y;//data.GetHeight((int)(x * data.alphamapResolution), (int)(y * data.alphamapResolution));
+        GameObject g = Instantiate(hempNode, new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
+        g.transform.up = data.GetInterpolatedNormal(y * (1f / data.heightmapResolution), x * (1f / data.heightmapResolution));
+        g.transform.SetParent(this.transform);
+            }
+    }
+
     void SpawnHarvestableRock(float x, float y, TerrainData data, int surface)
     {
         //Debug.Log(data.heightmapScale.y);
@@ -353,6 +367,7 @@ public class islandGeneratorManager : MonoBehaviour
                                 if (steepness < 25f)
                                 {
                                     GenerateGrass(x, y, 3);
+                                    SpawnHemp(x, y, terrainData, 3);
                                 }
                                 splatWeights[0] = 0f;//sand
                                 splatWeights[1] = 0f;//dirt
