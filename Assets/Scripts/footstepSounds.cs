@@ -43,33 +43,33 @@ public class footstepSounds : MonoBehaviour
         {
             if (hit.collider.GetComponent<Terrain>() != null)
             {
-                Step(GetTerrainTexture(hit.collider.GetComponent<Terrain>()), hard);
+                Step(GetTerrainTexture(hit.collider.GetComponent<Terrain>()), hard, hit.point);
             }
             else
             {
                 if (hit.collider.sharedMaterial == null)
                 {
-                    Step(4, hard);
+                    Step(4, hard, hit.point);
                 }
                 else
                 {
                     if (hit.collider.sharedMaterial.name == "Concrete")
                     {
-                        Step(4, hard);
+                        Step(4, hard, hit.point);
                     }
                     if (hit.collider.sharedMaterial.name == "Dirt")
                     {
-                        Step(1, hard);
+                        Step(1, hard, hit.point);
                     }
                 }
             }
         }
     }
 
-    void Step(int index, bool hard)
+    void Step(int index, bool hard, Vector3 pos)
     {
-        // GameObject gam = Instantiate(surfaces[index].stepEffect, transform.position, transform.rotation);
-        // gam.transform.forward = Vector3.up;
+        GameObject gam = Instantiate(footsteps[index].effect, pos, Quaternion.identity);
+        gam.transform.forward = Vector3.up;
         if (hard)
         {
             GetComponent<reloadAudio>().PlayRandomReloadAudio(footsteps[index].hard);

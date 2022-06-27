@@ -15,6 +15,10 @@ public class islandGeneratorManager : MonoBehaviour
     public float noiseVerticalScale;
     public float pass1Weight;
     public float pass2Weight;
+    public float maxHeight_wetbeach;
+    public float maxHeight_drybeach;
+    public float maxHeight_topstone;
+    public float maxHeight_snow;
     [Tooltip("Y scale of height map.")]
     public float yScale = 1f;//y height of heightmap
     [Tooltip("Heightmap resolution.")]
@@ -129,6 +133,7 @@ public class islandGeneratorManager : MonoBehaviour
         AddTerrainLayers(data);
         GenerateSplatmap(out splatData, data);
         data.SetAlphamaps(0, 0, splatData);
+        GenerateTerrainStuffs();
     }
 
     float GetTerrainNoise(float scale, float x, float y)
@@ -139,7 +144,7 @@ public class islandGeneratorManager : MonoBehaviour
         return noise;
     }
 
-    void SpawnTree(float x, float y, int type)
+    void SpawnTree(float x, float y, int type, bool normalSnap = false)
     {
         TerrainData data = GetComponent<Terrain>().terrainData;
         TreeInstance tree = new TreeInstance();
@@ -220,6 +225,47 @@ public class islandGeneratorManager : MonoBehaviour
                 SpawnTree(x, y, 1);
             }
         }
+        if (splat == 2)
+        {
+            //Stone Rocks
+            if (GetTerrainNoise(100, x, y) > 0.50f && Random.Range(0f, 1f) > 0.98f)
+            {
+                //Bush_1
+                SpawnTree(x, y, 14);
+            }
+            else
+            if (GetTerrainNoise(100, x, y) > 0.50f && Random.Range(0f, 1f) > 0.98f)
+            {
+                //Bush_1
+                SpawnTree(x, y, 13);
+            }
+            else
+            if (GetTerrainNoise(125, x, y) > 0.50f && Random.Range(0f, 1f) > 0.99f)
+            {
+
+                //Shrub_2
+                SpawnTree(x, y, 12);
+            }
+            else
+            if (GetTerrainNoise(90, x, y) > 0.50f && Random.Range(0f, 1f) > 0.99f)
+            {
+
+                //Shrub_3
+                SpawnTree(x, y, 11);
+            }
+            else
+            if (GetTerrainNoise(75, x, y) > 0.50f && Random.Range(0f, 1f) > 0.99f)
+            {
+
+                //Shrub_4
+                SpawnTree(x, y, 10);
+            }
+            else if (Random.Range(0f, 1f) > 0.99f)
+            {
+                //Grass_2
+                SpawnTree(x, y, 9);
+            }
+        }
 
         GetComponent<Terrain>().Flush();
     }
@@ -268,12 +314,98 @@ public class islandGeneratorManager : MonoBehaviour
         }
     }
 
-    void GenerateSplatmap(out float[,,] raw, TerrainData terrainData)
+    public void GenerateTerrainStuffs()
     {
+        TerrainData terrainData = GetComponent<Terrain>().terrainData;
         for (int i = this.transform.childCount; i > 0; --i)
         {
             DestroyImmediate(this.transform.GetChild(0).gameObject);
         }
+        terrainData.SetTreeInstances(new TreeInstance[0], true);
+        for (int y = 0; y < terrainData.alphamapHeight; y++)
+        {
+            for (int x = 0; x < terrainData.alphamapWidth; x++)
+            {
+                // Normalise x/y coordinates to range 0-1 
+                float y_01 = (float)y / (float)terrainData.alphamapHeight;
+                float x_01 = (float)x / (float)terrainData.alphamapWidth;
+
+                // Calculate the steepness of the terrain
+                float steepness = terrainData.GetSteepness(y_01, x_01);
+
+                // Sample the height at this location (note GetHeight expects int coordinates corresponding to locations in the heightmap array)
+                float height = terrainData.GetHeight(Mathf.RoundToInt(y_01 * terrainData.heightmapResolution), Mathf.RoundToInt(x_01 * terrainData.heightmapResolution));
+                float[,,] aMap = terrainData.GetAlphamaps(y, x, 1, 1);
+                if (aMap[0, 0, 6] > 0)
+                {
+                    Debug.Log("ESS");
+                }
+                else
+                {
+                    if (height > maxHeight_wetbeach + GetTerrainNoise(100, x, y))
+                    {
+                        if (height > maxHeight_drybeach + GetTerrainNoise(100, x, y))
+                        {
+                            if (height > maxHeight_topstone + GetTerrainNoise(100, x, y))
+                            {
+                                if (height > maxHeight_snow + GetTerrainNoise(100, x, y))
+                                {
+                                    //snow
+                                }
+                                else
+                                {
+                                    //	stone
+                                    SpawnHarvestableRock(x, y, terrainData, 2);
+                                    GenerateGrass(x,y,2);
+                                }
+                            }
+                            else
+                            {
+                                //grass
+
+                                if (GetTerrainNoise(50, x, y) > 0.3f)
+                                {
+                                    //grass
+                                    if (steepness < 25f)
+                                    {
+                                        GenerateGrass(x, y, 3);
+                                        SpawnHemp(x, y, terrainData, 3);
+                                    }
+                                }
+                                else
+                                {
+                                    //dirt
+                                    if (steepness < 25f)
+                                    {
+                                        GenerateGrass(x, y, 1);
+                                    }
+                                    SpawnHarvestableRock(x, y, terrainData, 1);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //drysand
+                        }
+                    }
+                    else
+                    {
+                        //wetsand
+                    }
+
+                    if (steepness > 25f)
+                    {
+                        //stone
+                        SpawnHarvestableRock(x, y, terrainData, 2);
+                        GenerateGrass(x,y,2);
+                    }
+                }
+            }
+        }
+    }
+
+    void GenerateSplatmap(out float[,,] raw, TerrainData terrainData)
+    {
         float[,,] splatmapData = new float[terrainData.alphamapWidth, terrainData.alphamapHeight, terrainData.alphamapLayers];
 
         for (int y = 0; y < terrainData.alphamapHeight; y++)
@@ -296,46 +428,20 @@ public class islandGeneratorManager : MonoBehaviour
                 // Setup an array to record the mix of texture weights at this point
                 float[] splatWeights = new float[terrainData.alphamapLayers];
 
-                // CHANGE THE RULES BELOW TO SET THE WEIGHTS OF EACH TEXTURE ON WHATEVER RULES YOU WANT
-
-                ///////////////////////////////////////////////////////////////////////// Examples
-                // Texture[0] has constant influence
-                ////splatWeights[0] = 0.5f;
-
-                // Texture[1] is stronger at lower altitudes
-                ////splatWeights[1] = Mathf.Clamp01((terrainData.heightmapResolution - height));
-
-                // Texture[2] stronger on flatter terrain
-                // Note "steepness" is unbounded, so we "normalise" it by dividing by the extent of heightmap height and scale factor
-                // Subtract result from 1.0 to give greater weighting to flat surfaces
-                ////splatWeights[2] = 1.0f - Mathf.Clamp01(steepness * steepness / (terrainData.heightmapResolution / 5.0f));
-
-                // Texture[3] increases with height but only on surfaces facing positive Z axis 
-                ////splatWeights[3] = height * Mathf.Clamp01(normal.z);
-                /////////////////////////////////////////////////////////////////////////
-
                 splatWeights[0] = 0f;//sand
                 splatWeights[1] = 0f;//dirt
                 splatWeights[2] = 0f;//stone
                 splatWeights[3] = 0f;//grass
                 splatWeights[4] = 0f;//snow
                 splatWeights[5] = 0f;//wetsand
-                                     //Mathf.Clamp01((terrainData.heightmapResolution - height));
 
-
-                //0Sand = base layer
-                //splatWeights[0] = 0.5f;
-                //1Dirt = from level 80 - max
-                //Debug.Log(height);
-                //splatWeights[1] = Mathf.Clamp01((terrainData.heightmapResolution - height));
-
-                if (height > 76f + GetTerrainNoise(100, x, y))
+                if (height > maxHeight_wetbeach + GetTerrainNoise(100, x, y))
                 {
-                    if (height > 80f + GetTerrainNoise(100, x, y))
+                    if (height > maxHeight_drybeach + GetTerrainNoise(100, x, y))
                     {
-                        if (height > 120f + GetTerrainNoise(100, x, y))
+                        if (height > maxHeight_topstone + GetTerrainNoise(100, x, y))
                         {
-                            if (height > 125f + GetTerrainNoise(100, x, y))
+                            if (height > maxHeight_snow + GetTerrainNoise(100, x, y))
                             {
                                 //snow
                                 splatWeights[0] = 0f;//sand
@@ -348,7 +454,6 @@ public class islandGeneratorManager : MonoBehaviour
                             else
                             {
                                 //	stone
-                                SpawnHarvestableRock(x, y, terrainData, 2);
                                 splatWeights[0] = 0f;//sand
                                 splatWeights[1] = 0f;//dirt
                                 splatWeights[2] = 1f;//stone
@@ -364,11 +469,6 @@ public class islandGeneratorManager : MonoBehaviour
                             if (GetTerrainNoise(50, x, y) > 0.3f)
                             {
                                 //grass
-                                if (steepness < 25f)
-                                {
-                                    GenerateGrass(x, y, 3);
-                                    SpawnHemp(x, y, terrainData, 3);
-                                }
                                 splatWeights[0] = 0f;//sand
                                 splatWeights[1] = 0f;//dirt
                                 splatWeights[2] = 0f;//stone
@@ -379,11 +479,6 @@ public class islandGeneratorManager : MonoBehaviour
                             else
                             {
                                 //dirt
-                                if (steepness < 25f)
-                                {
-                                    GenerateGrass(x, y, 1);
-                                }
-                                SpawnHarvestableRock(x, y, terrainData, 1);
                                 splatWeights[0] = 0f;//sand
                                 splatWeights[1] = 1f;//dirt
                                 splatWeights[2] = 0f;//stone
@@ -418,7 +513,6 @@ public class islandGeneratorManager : MonoBehaviour
                 if (steepness > 25f)
                 {
                     //stone
-                    SpawnHarvestableRock(x, y, terrainData, 2);
                     splatWeights[0] = 0f;//sand
                     splatWeights[1] = 0f;//dirt
                     splatWeights[2] = 0f;//stone
@@ -462,6 +556,11 @@ public class islandGeneratorEditor : Editor
         base.OnInspectorGUI();
 
         islandGeneratorManager man = (islandGeneratorManager)target;
+        if (GUILayout.Button("Apply Foliage ONLY"))
+        {
+            man.GenerateTerrainStuffs();
+
+        }
         if (GUILayout.Button("Apply Splat and Foliage"))
         {
             man.InspectorGenerateSplat();
