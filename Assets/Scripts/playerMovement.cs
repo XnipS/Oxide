@@ -225,13 +225,33 @@ public class playerMovement : NetworkBehaviour
         }
     }
     //Set all model layers
-    static void SetAllLayer(GameObject[] obs, int layer)
+    void SetAllLayer(GameObject[] obs, int layer)
     {
-        foreach (GameObject gam in obs)
+        foreach (GameObject g in obs)
         {
-            gam.layer = layer;
+            SetLayerRecursively(g, layer);
         }
     }
+
+    void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        if (null == obj)
+        {
+            return;
+        }
+
+        obj.layer = newLayer;
+
+        foreach (Transform child in obj.transform)
+        {
+            if (null == child)
+            {
+                continue;
+            }
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
+    }
+
     //Assign this player to owner
     public override void OnStartAuthority()
     {
