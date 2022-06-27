@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-public class ui_slot : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler,
-    IBeginDragHandler, IEndDragHandler
+public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
+    IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler,
+    IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     Vector2 startScale;
     public Image icon;
@@ -67,4 +68,23 @@ public class ui_slot : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler,
         gameObject.transform.localScale = startScale * 0.95f;
     }
 
+    public void OnDrag(PointerEventData eventData)
+    {
+        
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+       
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        
+    }
 }

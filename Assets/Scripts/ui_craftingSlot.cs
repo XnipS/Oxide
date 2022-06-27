@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-public class ui_craftingSlot : MonoBehaviour, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler
+public class ui_craftingSlot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
+    IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
 {
     Vector2 startScale;
     public Image icon;
@@ -31,5 +32,15 @@ public class ui_craftingSlot : MonoBehaviour, IPointerClickHandler, IPointerExit
     public void OnPointerExit(PointerEventData eventData)
     {
         gameObject.transform.localScale = startScale * 0.95f;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        
     }
 }
