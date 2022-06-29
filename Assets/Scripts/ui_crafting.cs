@@ -99,7 +99,7 @@ public class ui_crafting : MonoBehaviour
             for (int x = 0; x < r.inputItems.Length; x++)
             {
                 //Check if afford
-                if (HasEnough(r.inputItems[x], r.inputAmount[x]))
+                if (inventory.HasEnough(r.inputItems[x], r.inputAmount[x]))
                 {
                     str += dic.GetDataFromItemID(r.inputItems[x]).title;
                     str += " ";
@@ -132,7 +132,7 @@ public class ui_crafting : MonoBehaviour
         for (int x = 0; x < recipe.inputItems.Length; x++)
         {
             //Check if afford
-            if (!HasEnough(recipe.inputItems[x], recipe.inputAmount[x]))
+            if (!inventory.HasEnough(recipe.inputItems[x], recipe.inputAmount[x]))
             {
                 return;
             }
@@ -154,16 +154,5 @@ public class ui_crafting : MonoBehaviour
         UpdateCraftingUI(true);
     }
 
-    bool HasEnough(int itemId, int amount)
-    {
-        int needed = amount;
-        foreach (inv_item it in inventory.invent)
-        {
-            if (it.id == itemId)
-            {
-                needed -= it.amount;
-            }
-        }
-        return (needed <= 0);
-    }
+
 }

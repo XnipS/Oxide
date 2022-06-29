@@ -10,6 +10,7 @@ public class ui_hoverObject : MonoBehaviour
     public playerInventory player = null;
     Camera mainCam;
     public Text itemText;
+    public LayerMask mask;
 
     void Start()
     {
@@ -23,7 +24,7 @@ public class ui_hoverObject : MonoBehaviour
         if (!player) { itemText.enabled = false; return; }
         bool hover = false;
         //Test for bag or crate
-        if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out RaycastHit hit, 2f))
+        if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out RaycastHit hit, 2f, mask))
         {
             if (hit.collider.GetComponent<droppedItem>() != null && hit.collider.GetComponent<droppedItem>().myData != null)
             {

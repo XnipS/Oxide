@@ -2,7 +2,7 @@
 
 ![Oxide Logo](https://drive.google.com/uc?export=view&id=1AveHQy8IlCIktX_c_tb2MK2D6PS0oUUv)
 
-# DevLog - v0.2.5
+# DevLog - v0.2.7
 
 ### Player Basics 0.1
 
@@ -30,8 +30,9 @@ Harvest Rocks✔️\
 Harest Trees✔️\
 Crafting✔️\
 Deployables✔️\
-Weapons\
-Health & Damage\
+Weapons✔️\
+Health & Damage✔️\
+Status Effects\
 Clothing\
 Animations\
 Syncing

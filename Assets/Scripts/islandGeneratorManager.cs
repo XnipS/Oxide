@@ -338,7 +338,7 @@ public class islandGeneratorManager : MonoBehaviour
                 float[,,] aMap = terrainData.GetAlphamaps(y, x, 1, 1);
                 if (aMap[0, 0, 6] > 0)
                 {
-                    Debug.Log("ESS");
+                    //Debug.Log("ESS");
                 }
                 else
                 {
@@ -356,7 +356,7 @@ public class islandGeneratorManager : MonoBehaviour
                                 {
                                     //	stone
                                     SpawnHarvestableRock(x, y, terrainData, 2);
-                                    GenerateGrass(x,y,2);
+                                    GenerateGrass(x, y, 2);
                                 }
                             }
                             else
@@ -397,7 +397,7 @@ public class islandGeneratorManager : MonoBehaviour
                     {
                         //stone
                         SpawnHarvestableRock(x, y, terrainData, 2);
-                        GenerateGrass(x,y,2);
+                        GenerateGrass(x, y, 2);
                     }
                 }
             }

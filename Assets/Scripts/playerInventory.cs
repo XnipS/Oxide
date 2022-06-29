@@ -8,7 +8,8 @@ public class playerInventory : NetworkBehaviour
     public AnimationClip anim_pickup;
     public AnimationClip anim_drop;
     [System.Serializable]
-    public class engramMemory {
+    public class engramMemory
+    {
         public int[] itemId;
         public bool[] learned;
     }
@@ -37,13 +38,14 @@ public class playerInventory : NetworkBehaviour
         if (hasAuthority)
         {
             myInv.GiveItem(data);
-            if(fromGround) {
-                GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_pickup.name, GetComponent<playerWeapons>().currentWeapon);
+            if (fromGround)
+            {
+                GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_pickup.name, GetComponent<playerWeapons>().currentWeapon, false);
             }
         }
     }
     public void DropItemAnimation()
     {
-        GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_drop.name,GetComponent<playerWeapons>().currentWeapon);
+        GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_drop.name, GetComponent<playerWeapons>().currentWeapon, false);
     }
 }

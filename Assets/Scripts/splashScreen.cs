@@ -8,7 +8,10 @@ public class splashScreen : MonoBehaviour
     public string targetScene;
     void Start()
     {
-        StartCoroutine(LoadMenu());
+        if (targetScene != "")
+        {
+            StartCoroutine(LoadMenu());
+        }
     }
 
     IEnumerator LoadMenu()

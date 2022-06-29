@@ -69,6 +69,19 @@ public class ui_inventory : MonoBehaviour
         }
     }
 
+    public bool HasEnough(int itemId, int amount)
+    {
+        int needed = amount;
+        foreach (inv_item it in invent)
+        {
+            if (it.id == itemId)
+            {
+                needed -= it.amount;
+            }
+        }
+        return (needed <= 0);
+    }
+
     public void DestroyItem(int id, int amount)
     {
         //Find available slot
@@ -97,7 +110,7 @@ public class ui_inventory : MonoBehaviour
             }
         }
         //Refresh
-                UpdateBelt();
+        UpdateBelt();
     }
 
     public void GiveItem(inv_item item)

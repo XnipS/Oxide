@@ -69,7 +69,7 @@ public class footstepSounds : MonoBehaviour
     void Step(int index, bool hard, Vector3 pos)
     {
         GameObject gam = Instantiate(footsteps[index].effect, pos, Quaternion.identity);
-        gam.transform.forward = Vector3.up;
+        gam.transform.up = Vector3.up;
         if (hard)
         {
             GetComponent<reloadAudio>().PlayRandomReloadAudio(footsteps[index].hard);
