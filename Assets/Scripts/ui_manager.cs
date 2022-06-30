@@ -12,13 +12,25 @@ public class ui_manager : MonoBehaviour
     public ui_crafting crafting;
     public ui_hud hud;
     public playerInventory player;
+    playerInventory lastPlayer;
 
     void Update()
     {
+        if (lastPlayer != player)
+        {
+            lastPlayer = player;
+            CloseAll();
+            UpdateStatus(ui_hud.statusType.health, 100f);
+        }
         if (Input.GetKeyDown(KeyCode.Tab) && player != null)
         {
             ToggleBackpack();
         }
+    }
+
+    public void UpdateStatus(ui_hud.statusType type, float update)
+    {
+        hud.UpdateStatusHud(type, update);
     }
 
     void ToggleBackpack()
@@ -33,5 +45,11 @@ public class ui_manager : MonoBehaviour
             inventory.OpenInventory();
             crafting.UpdateCraftingUI(true);
         }
+    }
+
+    public void CloseAll()
+    {
+        inventory.CloseInventory();
+        crafting.UpdateCraftingUI(false);
     }
 }

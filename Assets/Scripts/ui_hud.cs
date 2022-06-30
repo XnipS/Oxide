@@ -11,11 +11,11 @@ public class ui_hud : MonoBehaviour
     public RectMask2D hungerMask;
     public RectMask2D waterMask;
 
-    public void UpdateStatusHud(statusType type, int amount)
+    public void UpdateStatusHud(statusType type, float amount)
     {
         ui_manager manager = FindObjectOfType<ui_manager>();
         int max = manager.maxStats[type];
-        int val = (215 - ((max / 215) * amount));
+        float val = (215 - ((max / 215) * amount));
         Debug.Log(val);
         switch (type)
         {

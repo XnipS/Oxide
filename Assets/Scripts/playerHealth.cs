@@ -22,10 +22,15 @@ public class playerHealth : NetworkBehaviour
             NetworkServer.Destroy(this.gameObject);
         }
     }
+
     [ClientRpc]
     public void RPC_UpdateHealth(float hp, float delta)
     {
         currentHealth = hp;
+        if (hasAuthority)
+        {
+            FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.health, currentHealth);
+        }
     }
 
 }
