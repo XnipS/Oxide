@@ -74,7 +74,7 @@ public class projectile : NetworkBehaviour
         if (target != owner)
         {
             target.GetComponentInParent<playerHealth>().CMD_TakeDamage(damage * multiplier);
-            FindObjectOfType<effectManager>().CMD_SpawnEffect(2, model.transform.position, Quaternion.identity);
+            FindObjectOfType<effectManager>().CMD_SpawnEffect(2, pos, Quaternion.identity);
             NetworkServer.Destroy(gameObject);
         }
     }

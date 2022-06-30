@@ -16,6 +16,9 @@ public class ui_manager : MonoBehaviour
 
     void Update()
     {
+        if(lastPlayer == null) {
+            CloseAll();
+        }
         if (lastPlayer != player)
         {
             lastPlayer = player;

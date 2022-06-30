@@ -29,7 +29,7 @@ public class playerHealth : NetworkBehaviour
         currentHealth = hp;
         if (hasAuthority)
         {
-            FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.health, currentHealth);
+            FindObjectOfType<ui_hud>().UpdateStatusHud(ui_hud.statusType.health, currentHealth);
         }
     }
 
