@@ -266,7 +266,7 @@ public class ui_inventory : MonoBehaviour
         bag = new List<ui_slot>();
         CloseStorage();
     }
-    void CloseStorage()
+    public void CloseStorage()
     {
         //Delete Slots
         foreach (Transform item in tra_box)
