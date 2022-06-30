@@ -49,12 +49,29 @@ public class ui_hoverObject : MonoBehaviour
                     inv.OpenInventory();
                     inv.OpenStorage(hit.collider.GetComponent<itemStorage>().storage, hit.collider.GetComponent<itemStorage>().slots, hit.collider.GetComponent<itemStorage>());
                 }
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    if (hit.collider.GetComponent<itemCooker>() != null)
+                    {
+                        hit.collider.GetComponent<itemCooker>().CMD_AttemptToToggle();
+                    }
+                }
             }
             if (hit.collider.GetComponent<pickableNode>() != null && inv.inventoryStatus == false)
             {
                 //Detected hemp
                 hover = true;
-                string str = "Pick Hemp";
+                string str = "";
+                switch (hit.collider.GetComponent<pickableNode>().type)
+                {
+                    case 0:
+                        str = "Pick Hemp";
+                        break;
+                    case 1:
+                        str = "Pick Shroom";
+                        break;
+                }
+
                 itemText.text = str;
                 if (Input.GetKeyDown(KeyCode.E))
                 {

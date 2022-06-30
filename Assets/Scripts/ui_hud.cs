@@ -15,7 +15,7 @@ public class ui_hud : MonoBehaviour
     {
         ui_manager manager = FindObjectOfType<ui_manager>();
         int max = manager.maxStats[type];
-        Debug.Log(amount);
+      //  Debug.Log(amount);
         switch (type)
         {
             case (statusType.health):

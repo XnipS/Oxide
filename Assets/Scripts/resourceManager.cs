@@ -155,8 +155,19 @@ public class resourceManager : NetworkBehaviour
         RPC_HempUpdate(target.id, false);
         //Add item to inventory
         inv_item item = inv_item.CreateInstance<inv_item>();
-        item.id = 13;
-        item.amount = 10 + Random.Range(0, 5);
+        switch (target.type)
+        {
+            case 0:
+                item.id = 13;
+                item.amount = 10 + Random.Range(0, 5);
+                break;
+            case 1:
+                item.id = 12;
+                item.amount = 10 + Random.Range(0, 5);
+                break;
+        }
+
+
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
 
@@ -168,6 +179,9 @@ public class resourceManager : NetworkBehaviour
         {
             switch (weaponId)
             {
+                case 8://Rock 
+                    HarvestTree(2, 2, human, target);
+                    break;
                 case 4://Stone hatchet 
                     HarvestTree(4, 5, human, target);
                     break;
@@ -211,11 +225,14 @@ public class resourceManager : NetworkBehaviour
         {
             switch (weaponId)
             {
+                case 8://Rock
+                    HarvestNode(3, 2, human, target);
+                    break;
                 case 2://Stone pick
-                    HarvestNode(4, 5, human, target);
+                    HarvestNode(6, 5, human, target);
                     break;
                 case 3://Metal pick
-                    HarvestNode(10, 10, human, target);
+                    HarvestNode(12, 10, human, target);
                     break;
                 default:
                     //Invalid tool
