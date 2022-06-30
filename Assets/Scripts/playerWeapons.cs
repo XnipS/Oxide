@@ -15,6 +15,7 @@ public class playerWeapons : NetworkBehaviour
     }
     public weaponObject[] weaponObjects;
     Animation anim;
+    public bool isAiming;
     public int currentWeapon;
     inv_item_data currentData;
     ui_inventory myInv;
@@ -91,12 +92,14 @@ public class playerWeapons : NetworkBehaviour
                             if (myInv.HasEnough(currentData.ammo, 1))
                             {
                                 CMD_PlayWeaponAnimation(currentData.anim_aim.name, currentData.weaponId, true);
+                                isAiming = true;
                             }
                         }
                         else
                         {
 
                             CMD_PlayWeaponAnimation(currentData.anim_aim.name, currentData.weaponId, true);
+                             isAiming = true;
 
                         }
                     }
@@ -111,6 +114,7 @@ public class playerWeapons : NetworkBehaviour
             }
             if ((Input.GetKeyUp(KeyCode.Mouse1) && current_aimAnim != ""))
             {
+                isAiming = false;
                 CMD_PlayWeaponAnimation("", currentData.weaponId, true);
                 CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId, false);
             }
@@ -168,6 +172,7 @@ public class playerWeapons : NetworkBehaviour
         CMD_PlayWeaponAnimation(currentData.anim_attack.name, currentData.weaponId, false);
         if (currentData.aimRequiredToShoot)
         {
+            isAiming = false;
             CMD_PlayWeaponAnimation("", currentData.weaponId, true);
         }
         if (currentData.anim_attack_hit == null)
@@ -306,11 +311,6 @@ public class playerWeapons : NetworkBehaviour
         GameObject g = Instantiate(FindObjectOfType<itemDictionary>().GetDataFromItemID(type).projectile, pos, rot);
         g.GetComponent<projectile>().owner = GetComponent<NetworkIdentity>();
         NetworkServer.Spawn(g);
-    }
-    [Command]
-    public void CMD_SpawnRay(int type, Vector3 pos, Quaternion rot)
-    {
-
     }
     [Command]
     public void CMD_PlayWeaponAnimation(string animation, int viewmodel, bool aimAnim)

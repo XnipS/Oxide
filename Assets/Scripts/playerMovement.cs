@@ -7,6 +7,7 @@ public class playerMovement : NetworkBehaviour
     public GameObject bendPos;
     public CinemachineVirtualCamera headCam;
     public Camera viewmodelCam;
+     public GameObject animCam;
     public GameObject[] firstPerson;
     public GameObject[] thirdPerson;
     public int layer_first;
@@ -62,6 +63,13 @@ public class playerMovement : NetworkBehaviour
         viewmodelCam.gameObject.SetActive(hasAuthority);
     }
 
+    void LateUpdate () {
+        if (!GetComponent<NetworkIdentity>().hasAuthority) {return;}
+        if(GetComponent<playerWeapons>().isAiming) {
+            animCam.transform.localPosition = new Vector3(0,0.6f,0);
+        }
+    }
+
     void Update()
     {
         if (GetComponent<NetworkIdentity>().hasAuthority)
@@ -91,7 +99,7 @@ public class playerMovement : NetworkBehaviour
                 sel = crouchSpeed;
 
             }
-            else if (Input.GetKey(KeyCode.LeftShift))
+            else if (Input.GetKey(KeyCode.LeftShift) && !GetComponent<playerWeapons>().isAiming)
             {
                 sel = runSpeed;
             }
@@ -137,7 +145,7 @@ public class playerMovement : NetworkBehaviour
                 {
                     if (character.velocity.magnitude > 0.1f)
                     {
-                        if (Input.GetKey(KeyCode.LeftShift))
+                        if (Input.GetKey(KeyCode.LeftShift) && !GetComponent<playerWeapons>().isAiming)
                         {
                             if (Input.GetAxisRaw("Horizontal") > .1f)
                             {
