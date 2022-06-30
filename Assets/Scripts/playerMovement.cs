@@ -87,6 +87,8 @@ public class playerMovement : NetworkBehaviour
             if (!character.isGrounded)
             {
                 Yvelocity -= Physics.gravity.magnitude * gravity * Time.deltaTime;
+            }else {
+                 Yvelocity = -character.stepOffset / Time.deltaTime;
             }
             //Use appropriate speed
             float sel = 0f;
