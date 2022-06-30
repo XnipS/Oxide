@@ -5,7 +5,7 @@ public class craftingDictionary : MonoBehaviour
     public inv_recipe[] craftingData;
     public void Regenerate()
     {
-        craftingData = (inv_recipe[])Resources.FindObjectsOfTypeAll(typeof(inv_recipe));
+        craftingData = Resources.LoadAll<inv_recipe>("Items/Recipe");
     }
 }
 #if UNITY_EDITOR

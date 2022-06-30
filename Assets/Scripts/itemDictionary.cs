@@ -12,7 +12,7 @@ public class itemDictionary : MonoBehaviour
 
     public void Regenerate()
     {
-        dataDictionary = (inv_item_data[])Resources.FindObjectsOfTypeAll(typeof(inv_item_data));
+        dataDictionary = Resources.LoadAll<inv_item_data>("Items/Data");
         dataDictionary = dataDictionary.OrderBy(x=>x.id).ToArray();
     }
 
