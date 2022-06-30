@@ -26,6 +26,9 @@ public class oxideNetworkManager : NetworkManager
     /// </summary>
     public override void Awake()
     {
+        foreach(GameObject g in Resources.LoadAll<GameObject>("SpawnablePrefabs").ToList()) {
+            spawnPrefabs.Add(g);
+        }
         base.Awake();
     }
 
@@ -37,7 +40,7 @@ public class oxideNetworkManager : NetworkManager
     {
         singleton = this;
         base.Start();
-    
+
     }
 
     void Update()
@@ -270,32 +273,26 @@ public class oxideNetworkManager : NetworkManager
     /// This is invoked when a host is started.
     /// <para>StartHost has multiple signatures, but they all cause this hook to be called.</para>
     /// </summary>
-    public override void OnStartHost() { 
-        
+    public override void OnStartHost()
+    {
+
     }
 
     /// <summary>
     /// This is invoked when a server is started - including when a host is started.
     /// <para>StartServer has multiple signatures, but they all cause this hook to be called.</para>
     /// </summary>
-    public override void OnStartServer() { 
-        spawnPrefabs.Clear();
-             spawnPrefabs = Resources.LoadAll<GameObject>("SpawnablePrefabs").ToList();
+    public override void OnStartServer()
+    {
+
     }
 
     /// <summary>
     /// This is invoked when the client is started.
     /// </summary>
-    public override void OnStartClient() { 
-        spawnPrefabs.Clear();
-             spawnPrefabs = Resources.LoadAll<GameObject>("SpawnablePrefabs").ToList();
- 
-             NetworkClient.ClearSpawners();
- 
-             foreach (var prefab in spawnPrefabs)
-             {
-                 NetworkClient.RegisterPrefab(prefab);
-             }
+    public override void OnStartClient()
+    {
+
     }
 
     /// <summary>

@@ -2,9 +2,9 @@ using UnityEngine;
 [RequireComponent(typeof(reloadAudio))]
 public class playReloadAudio : MonoBehaviour
 {
-    public AudioClip clip;
+    public AudioClip[] clip;
     void Start()
     {
-        GetComponent<reloadAudio>().PlayReloadAudio(clip);
+        GetComponent<reloadAudio>().PlayRandomReloadAudio(clip);
     }
 }
