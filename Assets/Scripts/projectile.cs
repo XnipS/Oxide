@@ -59,7 +59,7 @@ public class projectile : NetworkBehaviour
         {
             if (hit.collider.GetComponent<playerHitbox>())
             {
-                HitPlayer(hit.collider.GetComponent<playerHitbox>().multiplier, hit.collider.GetComponent<playerHitbox>().id, hit.collider.GetComponentInParent<NetworkIdentity>());
+                HitPlayer(hit.collider.GetComponent<playerHitbox>().multiplier, hit.collider.GetComponent<playerHitbox>().id, hit.collider.GetComponentInParent<NetworkIdentity>(), hit.point);
             }
             else
             {
@@ -69,7 +69,7 @@ public class projectile : NetworkBehaviour
         }
     }
     [Server]
-    void HitPlayer(float multiplier, string str, NetworkIdentity target)
+    void HitPlayer(float multiplier, string str, NetworkIdentity target, Vector3 pos)
     {
         if (target != owner)
         {
