@@ -99,7 +99,7 @@ public class playerWeapons : NetworkBehaviour
                         {
 
                             CMD_PlayWeaponAnimation(currentData.anim_aim.name, currentData.weaponId, true);
-                             isAiming = true;
+                            isAiming = true;
 
                         }
                     }
@@ -194,9 +194,12 @@ public class playerWeapons : NetworkBehaviour
 
     void RaycastAttack()
     {
-        if (Physics.Raycast(Camera.main.transform.position + Camera.main.transform.forward * 0.5f, Camera.main.transform.forward, out RaycastHit hit, 2f, mask))
+        RaycastHit[] hits = Physics.RaycastAll(Camera.main.transform.position + Camera.main.transform.forward * 0.5f, Camera.main.transform.forward, 2f, mask);
+
+
+        foreach (RaycastHit hit in hits)
         {
-            // Debug.Log("HIT = " + hit.collider);
+            //Debug.Log("HIT = " + hit.collider);
             if (currentData.anim_attack_hit != null)
             {
                 CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false);
@@ -206,6 +209,7 @@ public class playerWeapons : NetworkBehaviour
                 //Hit rock node
                 FindObjectOfType<effectManager>().CMD_SpawnEffect(0, hit.point, Quaternion.LookRotation(hit.normal));
                 FindObjectOfType<resourceManager>().CMD_HitNode(hit.collider.GetComponent<harvestableNode>().id, GetComponent<NetworkIdentity>(), currentData.weaponId);
+                break;
             }
             if (hit.collider.GetComponent<Terrain>())
             {
@@ -216,6 +220,7 @@ public class playerWeapons : NetworkBehaviour
                     FindObjectOfType<effectManager>().CMD_SpawnEffect(1, hit.point, Quaternion.LookRotation(hit.normal));
                     FindObjectOfType<resourceManager>().CMD_HitTree(tar.myId, GetComponent<NetworkIdentity>(), currentData.weaponId);
                 }
+                break;
             }
             if (hit.collider.GetComponent<playerHitbox>())
             {
@@ -223,9 +228,13 @@ public class playerWeapons : NetworkBehaviour
                 {
                     hit.collider.GetComponentInParent<NetworkIdentity>().GetComponentInParent<playerHealth>().CMD_TakeDamage(currentData.ray_damage * hit.collider.GetComponent<playerHitbox>().multiplier);
                     FindObjectOfType<effectManager>().CMD_SpawnEffect(2, hit.point, Quaternion.identity);
+                    break;
                 }
+                
             }
         }
+
+
 
     }
 

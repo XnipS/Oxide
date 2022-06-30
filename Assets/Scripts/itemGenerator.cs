@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq;
 using UnityEditor;
 #if UNITY_EDITOR
 
@@ -120,7 +121,8 @@ public class itemLister_editor_popup : EditorWindow
     void Initial()
     {
         str = "";
-        inv_item_data[] dat = FindObjectOfType<itemDictionary>().dataDictionary;
+        inv_item_data[] dat = Resources.LoadAll<inv_item_data>("Items/Data");
+        dat = dat.OrderBy(x=>x.id).ToArray();
         for (int i = 0; i < dat.Length; i++)
         {
             if (i > 0)
