@@ -8,7 +8,8 @@ public class respawn_manager : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void CMD_SpawnPlayer(NetworkConnectionToClient request)
     {
-        GameObject ga = Instantiate(playerPrefab, transform.position, transform.rotation);
+        Transform spawnPoint = transform.GetChild(Random.Range(0,transform.childCount));
+        GameObject ga = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
         NetworkServer.Spawn(ga, request);
         ga.GetComponent<NetworkIdentity>().AssignClientAuthority(request);
 
