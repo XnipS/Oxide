@@ -1,47 +1,23 @@
 using UnityEngine;
 using Discord;
 using UnityEditor;
-#if UNITY_EDITOR
-[InitializeOnLoad]
-#endif
-[ExecuteInEditMode]
+
 public class discordRPC : MonoBehaviour
 {
 
     public bool running;
     Discord.Discord discord;
-
-    void OnEnable()
+#if !UNITY_EDITOR
+    void OnStart()
     {
         Debug.Log("start");
-        if (discord == null)
-        {
-            discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
-        }
-        else
-        {
-            Debug.Log("Disposed Discord!");
-            discord.Dispose();
-            discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
-        }
-#if UNITY_EDITOR
-        UpdatePresence(true);
-#else
-UpdatePresence(false);
-#endif
 
+            discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
+            UpdatePresence();
     }
     void Update()
     {
-        if (discord != null)
-        {
-            running = true;
             discord.RunCallbacks();
-        }
-        else
-        {
-            running = false;
-        }
     }
 
     void OnDisable()
@@ -49,80 +25,105 @@ UpdatePresence(false);
         Debug.Log("Disposed Discord!");
         discord.Dispose();
     }
-    public void UpdatePresence(bool editor)
+#endif
+    public void UpdatePresence()
     {
         var activityManager = discord.GetActivityManager();
         Discord.Activity activity;
-        if (editor)
+
+        activity = new Discord.Activity
         {
-            activity = new Discord.Activity
+            Details = "Playing v" + Application.version,
+            State = "In Game",
+            Assets = new ActivityAssets
             {
-                Details = "Developing v" + Application.version,
-                State = "In Unity Editor",
-                Assets = new ActivityAssets
-                {
-                    LargeImage = "oxideicon_1024",
-                    LargeText = "Oxide",
-                    SmallImage = "unitylogo",
-                    SmallText = "Unity Engine"
-                },
-                Timestamps = new Discord.ActivityTimestamps
-                {
-                    Start = System.DateTimeOffset.Now.ToUnixTimeSeconds()
-                }
-            };
+                LargeImage = "oxideicon_1024",
+                LargeText = "Oxide",
+            },
+            Timestamps = new Discord.ActivityTimestamps
+            {
+                Start = System.DateTimeOffset.Now.ToUnixTimeSeconds()
+            }
+        };
+        activityManager.UpdateActivity(activity, (res) =>
+    {
+        if (res == Discord.Result.Ok)
+        {
+            Debug.Log("Updated!");
         }
         else
         {
-            activity = new Discord.Activity
-            {
-                Details = "Playing v" + Application.version,
-                State = "In Game",
-                Assets = new ActivityAssets
-                {
-                    LargeImage = "oxideicon_1024",
-                    LargeText = "Oxide",
-                },
-                Timestamps = new Discord.ActivityTimestamps
-                {
-                    Start = System.DateTimeOffset.Now.ToUnixTimeSeconds()
-                }
-            };
+            Debug.LogError("DiscordRPC Error!");
         }
-
-        activityManager.UpdateActivity(activity, (res) =>
-        {
-            if (res == Discord.Result.Ok)
-            {
-                Debug.Log("Updated!");
-            }
-            else
-            {
-                Debug.LogError("DiscordRPC Error!");
-            }
-        });
-    }
-    void Callback()
-    {
-        discord.RunCallbacks();
-        Debug.Log("callback");
+    });
     }
 
 }
+
 #if UNITY_EDITOR
-[CustomEditor(typeof(discordRPC))]
-public class discordRPC_editor : Editor
+[InitializeOnLoad]
+//[CustomEditor(typeof(discordRPC))]
+public class discordRPC_editor : EditorWindow
 {
-    public override void OnInspectorGUI()
+    Discord.Discord discord;
+
+    // Add menu named "My Window" to the Window menu
+    [MenuItem("Oxide/DiscordRPC")]
+    static void Init()
     {
-        base.OnInspectorGUI();
+        Debug.Log("Begin");
 
-        discordRPC man = (discordRPC)target;
-        if (GUILayout.Button("Update Presence"))
+        discordRPC_editor window = (discordRPC_editor)EditorWindow.GetWindow(typeof(discordRPC_editor));
+        window.Innit();
+        window.Show();
+    }
+
+    void Innit()
+    {
+        discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
+        var activityManager = discord.GetActivityManager();
+        Discord.Activity activity;
+        activity = new Discord.Activity
         {
-            man.UpdatePresence(true);
+            Details = "Developing v" + Application.version,
+            State = "In Unity Editor",
+            Assets = new ActivityAssets
+            {
+                LargeImage = "oxideicon_1024",
+                LargeText = "Oxide",
+                SmallImage = "unitylogo",
+                SmallText = "Unity Engine"
+            },
+            Timestamps = new Discord.ActivityTimestamps
+            {
+                Start = System.DateTimeOffset.Now.ToUnixTimeSeconds()
+            }
+        };
+        activityManager.UpdateActivity(activity, (res) =>
+                {
+                    if (res == Discord.Result.Ok)
+                    {
+                        Debug.Log("Updated!");
+                    }
+                    else
+                    {
+                        Debug.LogError("DiscordRPC Error!");
+                    }
+                });
+    }
+    void OnGUI()
+    {
+        GUILayout.Label("Base Settings", EditorStyles.boldLabel);
+    }
+    void OnDestroy()
+    {
+        Debug.Log("Dispose");
+        discord.Dispose();
+    }
 
-        }
+    void Update()
+    {
+        discord.RunCallbacks();
     }
 }
 #endif
