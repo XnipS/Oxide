@@ -43,3 +43,33 @@ Bone knife      60 bone 30 cloth
 # Ammo
 Arrow           25 Wood 10 Stone
 Shell           5 Stone 5 Gunpowder
+
+
+
+##########NOTES##########
+Distant fog
+Bushes for cover
+Steeper terrain
+Flat beaches
+Sharp mountains
+Less saturated colours
+Dense forest
+##########NODES##########
+#Stone
+500 totalstone
+100 totalmetal
+25 totalsulphur
+1 hq
+#Sulfur
+500 totalstone
+50 totalmetal
+200 totalsulphur
+1 hq
+#Metal
+500 totalstone
+500 totalmetal
+25 totalsulphur
+3 hq
+##########TREES##########
+1000 max big tree
+550 max small tree
