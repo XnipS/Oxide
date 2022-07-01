@@ -40,8 +40,7 @@ public class ui_manager : MonoBehaviour
     {
         if (inventory.inventoryStatus)
         {
-            inventory.CloseInventory();
-            crafting.UpdateCraftingUI(false);
+            CloseAll();
         }
         else
         {
@@ -54,5 +53,8 @@ public class ui_manager : MonoBehaviour
     {
         inventory.CloseInventory();
         crafting.UpdateCraftingUI(false);
+            //Delete data
+        inventory.currentStorage = null;
+        inventory.currentStorageSlots = 0;
     }
 }

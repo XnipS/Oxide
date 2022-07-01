@@ -1,19 +1,22 @@
 using UnityEngine;
 using Discord;
 using UnityEditor;
+using UnityEngine.SceneManagement;
+using Mirror;
 
 public class discordRPC : MonoBehaviour
 {
 
     public bool running;
     Discord.Discord discord;
-#if !UNITY_EDITOR
-    void OnStart()
+
+    void Start()
     {
         Debug.Log("start");
 
             discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
             UpdatePresence();
+            SceneManager.sceneLoaded += LoadScene;
     }
     void Update()
     {
@@ -25,7 +28,11 @@ public class discordRPC : MonoBehaviour
         Debug.Log("Disposed Discord!");
         discord.Dispose();
     }
-#endif
+
+    void LoadScene (Scene scene, LoadSceneMode mode) {
+        UpdatePresence();
+    }
+
     public void UpdatePresence()
     {
         var activityManager = discord.GetActivityManager();
@@ -33,8 +40,7 @@ public class discordRPC : MonoBehaviour
 
         activity = new Discord.Activity
         {
-            Details = "Playing v" + Application.version,
-            State = "In Game",
+            Details = "On " + SceneManager.GetActiveScene().name,
             Assets = new ActivityAssets
             {
                 LargeImage = "oxideicon_1024",
@@ -45,6 +51,15 @@ public class discordRPC : MonoBehaviour
                 Start = System.DateTimeOffset.Now.ToUnixTimeSeconds()
             }
         };
+        if (NetworkClient.isConnected)
+        {
+            activity.State = "In Game, " + NetworkServer.connections.Count + "/100 survivors";
+        }
+        else
+        {
+            activity.State = "In Menu";
+        }
+
         activityManager.UpdateActivity(activity, (res) =>
     {
         if (res == Discord.Result.Ok)
@@ -85,7 +100,7 @@ public class discordRPC_editor : EditorWindow
         Discord.Activity activity;
         activity = new Discord.Activity
         {
-            Details = "Developing v" + Application.version,
+            Details = "Oxide Editor v"  + Application.version,
             State = "In Unity Editor",
             Assets = new ActivityAssets
             {

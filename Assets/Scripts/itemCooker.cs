@@ -94,17 +94,19 @@ public class itemCooker : NetworkBehaviour
                     can = false;
                 }
             }
-            if(!can) {break;}
-            //Remove input
-            for (int x = 0; x < rep.inputItems.Length; x++)
+            if (can)
             {
-                storage.DestroyItem(rep.inputItems[x], rep.inputAmount[x]);
+                //Remove input
+                for (int x = 0; x < rep.inputItems.Length; x++)
+                {
+                    storage.DestroyItem(rep.inputItems[x], rep.inputAmount[x]);
+                }
+                //Give output
+                inv_item it = inv_item.CreateInstance<inv_item>();
+                it.amount = rep.outputAmount;
+                it.id = rep.outputItem;
+                storage.GiveItem(it);
             }
-            //Give output
-            inv_item it = inv_item.CreateInstance<inv_item>();
-            it.amount = rep.outputAmount;
-            it.id = rep.outputItem;
-            storage.GiveItem(it);
         }
         storage.CMD_UpdateStorage(storage.storage, storage.slots);
     }

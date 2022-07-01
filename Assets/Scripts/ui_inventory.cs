@@ -27,7 +27,7 @@ public class ui_inventory : MonoBehaviour
     ui_slot picked_slot;
     public inv_item picked_inv;
     bool picked_storage;
-    int currentStorageSlots;
+    public int currentStorageSlots;
     public itemStorage currentStorage;
 
     void Start()
