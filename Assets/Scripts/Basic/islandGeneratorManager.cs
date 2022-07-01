@@ -25,7 +25,7 @@ public class islandGeneratorManager : MonoBehaviour
     public HeightmapResolution resolution;
     public GameObject[] foliage;
     public TerrainLayer[] layers;
-    public GameObject rockNode;
+    public GameObject[] rockNodes;
     public GameObject hempNode;
     public GameObject shroomNode;
 
@@ -308,7 +308,7 @@ public class islandGeneratorManager : MonoBehaviour
                 float xx = transform.position.z + y;
                 float yy = transform.position.x + x;
                 float zz = data.GetHeight((int)y, (int)x) + transform.position.y;//data.GetHeight((int)(x * data.alphamapResolution), (int)(y * data.alphamapResolution));
-                GameObject g = Instantiate(rockNode, new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
+                GameObject g = Instantiate(rockNodes[Random.Range(0,3)], new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
                 g.transform.up = data.GetInterpolatedNormal(y * (1f / data.heightmapResolution), x * (1f / data.heightmapResolution));
                 g.transform.SetParent(this.transform);
             }
@@ -321,7 +321,7 @@ public class islandGeneratorManager : MonoBehaviour
                 float xx = transform.position.z + y;
                 float yy = transform.position.x + x;
                 float zz = data.GetHeight((int)y, (int)x) + transform.position.y;//data.GetHeight((int)(x * data.alphamapResolution), (int)(y * data.alphamapResolution));
-                GameObject g = Instantiate(rockNode, new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
+                GameObject g = Instantiate(rockNodes[Random.Range(0,3)], new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
                 g.transform.up = data.GetInterpolatedNormal(y * (1f / data.heightmapResolution), x * (1f / data.heightmapResolution));
                 g.transform.SetParent(this.transform);
             }

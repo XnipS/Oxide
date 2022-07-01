@@ -5,7 +5,7 @@ public class inv_recipe : ScriptableObject
 {
     public int outputItem;
     public int outputAmount;
-    public ui_crafting_tab.tabType tab;
+    public int tab;
     //Id,Count
     public int[] inputItems;
     public int[] inputAmount;

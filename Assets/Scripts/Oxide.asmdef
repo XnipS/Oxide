@@ -1,0 +1,22 @@
+{
+    "name": "Oxide",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e904a71993cc2eb12b6517bd95abed21",
+        "GUID:02fa5d140d23bc7ab9a7ec77300705ef",
+        "GUID:c8121776e9b7da4fa95ed5b5e3e9e512",
+        "GUID:30817c1a0e6d646d99c048fc403f5979",
+        "GUID:4307f53044263cf4b835bd812fc161a4",
+        "GUID:20f276404442c9591a0bc81dd891f59a",
+        "GUID:3e355beb473baaad7b904312c1d60f80"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

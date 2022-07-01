@@ -179,13 +179,13 @@ public class playerWeapons : NetworkBehaviour
         {
             switch (currentData.fireType)
             {
-                case FireType.raycast:
+                case (int)FireType.raycast:
                     if (currentData.anim_attack_hit == null)
                     {
                         RaycastAttack();
                     }
                     break;
-                case FireType.projectile:
+                case (int)FireType.projectile:
                     CMD_SpawnProjectile(currentData.id, Camera.main.transform.position + Camera.main.transform.forward, Quaternion.LookRotation(Camera.main.transform.forward));
                     break;
             }
@@ -194,18 +194,18 @@ public class playerWeapons : NetworkBehaviour
 
     void RaycastAttack()
     {
-        RaycastHit[] hits = Physics.RaycastAll(Camera.main.transform.position + Camera.main.transform.forward * 0.5f, Camera.main.transform.forward, 2f, mask);
+        RaycastHit[] hits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, 2f, mask);
 
 
         foreach (RaycastHit hit in hits)
         {
-            //Debug.Log("HIT = " + hit.collider);
-            if (currentData.anim_attack_hit != null)
-            {
-                CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false);
-            }
             if (hit.collider.GetComponent<harvestableNode>())
             {
+                //Animation confirm
+                if (currentData.anim_attack_hit != null)
+                {
+                    CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false);
+                }
                 //Hit rock node
                 FindObjectOfType<effectManager>().CMD_SpawnEffect(0, hit.point, Quaternion.LookRotation(hit.normal));
                 FindObjectOfType<resourceManager>().CMD_HitNode(hit.collider.GetComponent<harvestableNode>().id, GetComponent<NetworkIdentity>(), currentData.weaponId);
@@ -213,6 +213,11 @@ public class playerWeapons : NetworkBehaviour
             }
             if (hit.collider.GetComponent<Terrain>())
             {
+                //Animation confirm
+                if (currentData.anim_attack_hit != null)
+                {
+                    CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false);
+                }
                 //Hit terrain & possible tree
                 resourceManager.harvestableTree tar = FindObjectOfType<resourceManager>().GetTreeWithPOS(hit.point);
                 if (tar != null)
@@ -226,11 +231,16 @@ public class playerWeapons : NetworkBehaviour
             {
                 if (GetComponent<NetworkIdentity>() != hit.collider.GetComponentInParent<NetworkIdentity>())
                 {
+                    //Animation confirm
+                    if (currentData.anim_attack_hit != null)
+                    {
+                        CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false);
+                    }
                     hit.collider.GetComponentInParent<NetworkIdentity>().GetComponentInParent<playerHealth>().CMD_TakeDamage(currentData.ray_damage * hit.collider.GetComponent<playerHitbox>().multiplier);
                     FindObjectOfType<effectManager>().CMD_SpawnEffect(2, hit.point, Quaternion.identity);
                     break;
                 }
-                
+
             }
         }
 
@@ -241,7 +251,7 @@ public class playerWeapons : NetworkBehaviour
     public void ANIM_AttackHit()
     {
         if (!hasAuthority) { return; }
-        if (currentData.anim_attack_hit != null && currentData.fireType == FireType.raycast)
+        if (currentData.anim_attack_hit != null && currentData.fireType == (int)FireType.raycast)
         {
             RaycastAttack();
 

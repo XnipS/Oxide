@@ -6,6 +6,12 @@ public class deployGhost : MonoBehaviour
 {
     public LayerMask mask;
 
+    void Start () {
+        if(!GetComponent<Collider>().isTrigger) {
+            Debug.LogError("Ghost collider is not a trigger!");
+        }
+    }
+
     public bool SpaceTestCanFit()
     {
         if (Test())

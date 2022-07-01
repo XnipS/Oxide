@@ -118,35 +118,83 @@ public class resourceManager : NetworkBehaviour
         return null;
     }
 
-    void HarvestTree(int damage, int bonus, NetworkIdentity human, harvestableTree target)
+    void HarvestTree(int damage, int bonus, float multiplier, NetworkIdentity human, harvestableTree target)
     {
         //Update tree array
         RPC_TreeUpdate(target.myId, Mathf.Clamp(target.health - damage, 0, target.maxHealth));
         //Add item to inventory
         inv_item item = inv_item.CreateInstance<inv_item>();
         item.id = tree.resource_id;
-        item.amount = ((tree.resource_totalAmount / target.maxHealth) * damage) + Random.Range(0, bonus);
+        item.amount = 750 / 25;
+        item.amount *= Mathf.CeilToInt(multiplier);
+        item.amount += Random.Range(0, bonus);
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
-    void HarvestNode(int damage, int bonus, NetworkIdentity human, harvestableNode target)
+    void HarvestNode(int damage, int bonus, float multiplier, NetworkIdentity human, harvestableNode target)
     {
         //Update node array
-        RPC_NodeUpdate(target.id, Mathf.Clamp(target.health - 4, 0, 100));
+        RPC_NodeUpdate(target.id, Mathf.Clamp(target.health - damage, 0, target.maxHealth));
         //Add item to inventory
         inv_item item = inv_item.CreateInstance<inv_item>();
-        switch (Random.Range(0, 3))
+        switch (target.myType)
         {
             case 0:
-                item.id = 5;
+                switch (Random.Range(0, 625)) //626 for hq
+                {
+                    case < 500:
+                        item.id = 5;
+                        item.amount = 20; //500 total / damage (25) 
+                        break;
+                    case < 600:
+                        item.id = 9;
+                        item.amount = 4;
+                        break;
+                    case < 625:
+                        item.id = 8; //sulfur
+                        item.amount = 1;
+                        break;
+                }
                 break;
-            case 1:
-                item.id = 8;
+            case 1://sulfur node
+                switch (Random.Range(0, 750)) //751 for hq
+                {
+                    case < 500:
+                        item.id = 5;
+                        item.amount = 20; //500 total / damage (25) 
+                        break;
+                    case < 550:
+                        item.id = 9;
+                        item.amount = 2;
+                        break;
+                    case < 750:
+                        item.id = 8; //sulfur
+                        item.amount = 8;
+                        break;
+                }
                 break;
-            case 2:
-                item.id = 9;
+            case 2://metal node
+                switch (Random.Range(0, 1025)) //1028 for hq
+                {
+                    case < 500:
+                        item.id = 5;
+                        item.amount = 20; //500 total / damage (25) 
+                        break;
+                    case < 1000:
+                        item.id = 9;
+                        item.amount = 20;
+                        break;
+                    case < 1025:
+                        item.id = 8; //sulfur
+                        item.amount = 1;
+                        break;
+                }
                 break;
         }
-        item.amount = ((target.resource_totalAmount / target.maxHealth) * damage) + Random.Range(0, 5);
+        //Multiplier
+        item.amount *= Mathf.CeilToInt(multiplier);
+        //Bonus
+        item.amount += Random.Range(0, bonus);
+        //Output
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
     void HarvestHemp(NetworkIdentity human, pickableNode target)
@@ -180,13 +228,13 @@ public class resourceManager : NetworkBehaviour
             switch (weaponId)
             {
                 case 8://Rock 
-                    HarvestTree(2, 2, human, target);
+                    HarvestTree(2, 2, .5f, human, target);
                     break;
                 case 4://Stone hatchet 
-                    HarvestTree(4, 5, human, target);
+                    HarvestTree(4, 4, .8f, human, target);
                     break;
                 case 5://metal hatchet
-                    HarvestTree(6, 10, human, target);
+                    HarvestTree(5, 5, 1f, human, target);
                     break;
                 default:
                     //Invalid tool
@@ -226,13 +274,13 @@ public class resourceManager : NetworkBehaviour
             switch (weaponId)
             {
                 case 8://Rock
-                    HarvestNode(3, 2, human, target);
+                    HarvestNode(2, 2, .5f, human, target);
                     break;
                 case 2://Stone pick
-                    HarvestNode(6, 5, human, target);
+                    HarvestNode(4, 4, .8f, human, target);
                     break;
                 case 3://Metal pick
-                    HarvestNode(12, 10, human, target);
+                    HarvestNode(5, 5, 1f, human, target);
                     break;
                 default:
                     //Invalid tool

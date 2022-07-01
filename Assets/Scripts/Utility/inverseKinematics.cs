@@ -28,12 +28,15 @@ public class inverseKinematics : MonoBehaviour
     {
         Vector3 pos = input.position;
         Quaternion rot = Quaternion.AngleAxis(angle, axis); // get the desired rotation
-        Vector3 dir = pos - center; // find current direction relative to center
-        dir = rot * dir; // rotate the direction
-        if ((center + dir) != new Vector3(float.NaN, float.NaN, float.NaN))
+        if (float.IsNaN(rot.x))
         {
-            input.position = center + dir; // define new position
+            //Debug.LogError("Caught NaN quaternion.");
+            return;
         }
+        Vector3 dir = pos - center; // find current direction relative to center
+        //Debug.Log("[IK] Center = " + center + " Dir = " + dir + "Rot =" + rot);
+        dir = rot * dir; // rotate the direction
+        input.position = center + dir; // define new position
         // rotate object to keep looking at the center:
         Quaternion myRot = input.rotation;
         input.rotation *= Quaternion.Inverse(myRot) * rot * myRot;

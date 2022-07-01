@@ -91,7 +91,7 @@ PlayerSettings:
   resizableWindow: 0
   useMacAppStoreValidation: 0
   macAppStoreCategory: public.app-category.games
-  gpuSkinning: 0
+  gpuSkinning: 1
   xboxPIXTextureCapture: 0
   xboxEnableAvatar: 0
   xboxEnableKinect: 0
@@ -514,13 +514,13 @@ PlayerSettings:
     m_APIs: 0b00000008000000
     m_Automatic: 0
   - m_BuildTarget: LinuxStandaloneSupport
-    m_APIs: 1500000011000000
+    m_APIs: 15000000
     m_Automatic: 0
   - m_BuildTarget: MacStandaloneSupport
-    m_APIs: 1000000011000000
+    m_APIs: 10000000
     m_Automatic: 0
   - m_BuildTarget: WindowsStandaloneSupport
-    m_APIs: 1500000011000000
+    m_APIs: 15000000
     m_Automatic: 0
   m_BuildTargetVRSettings: []
   openGLRequireES31: 0

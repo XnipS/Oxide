@@ -4,7 +4,7 @@ using Mirror;
 public class connected_client : NetworkBehaviour
 {
     [HideInInspector]
-    public playerMovement myPlayer = null;
+    public GameObject myPlayer = null;
     void Start()
     {
         if (hasAuthority)

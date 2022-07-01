@@ -1,0 +1,16 @@
+{
+    "name": "Oxide.Discord",
+    "rootNamespace": "",
+    "references": [
+        "GUID:145d87b8e2b5ed962b4fcf86b8453917"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -23,14 +23,16 @@ public class sunManager : NetworkBehaviour
         float normal = Mathf.Sin(Mathf.Deg2Rad * (val % 360));
         //Apply intensity
         sun.intensity = Mathf.Clamp(normal * 4f, 0, 2f);
-        //Apply ambient lighting
+        //Apply ambient lighting and fog
         if (normal > 0)
         {
             RenderSettings.ambientLight = day.Evaluate(Mathf.Clamp01(normal));
+            RenderSettings.fogColor = day.Evaluate(Mathf.Clamp01(normal));
         }
         else
         {
             RenderSettings.ambientLight = night;
+            RenderSettings.fogColor = night;
         }
         //Rotate sun
         transform.rotation = Quaternion.Euler(val, -30, 0);

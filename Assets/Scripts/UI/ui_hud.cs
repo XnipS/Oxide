@@ -13,8 +13,6 @@ public class ui_hud : MonoBehaviour
 
     public void UpdateStatusHud(statusType type, float amount)
     {
-        ui_manager manager = FindObjectOfType<ui_manager>();
-        int max = manager.maxStats[type];
       //  Debug.Log(amount);
         switch (type)
         {

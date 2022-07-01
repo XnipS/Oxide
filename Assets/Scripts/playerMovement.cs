@@ -269,7 +269,7 @@ public class playerMovement : NetworkBehaviour
         {
             if (man.GetComponent<NetworkIdentity>().connectionToClient == GetComponent<NetworkIdentity>().connectionToClient)
             {
-                man.myPlayer = this;
+                man.myPlayer = gameObject;
             }
         }
         base.OnStartAuthority();

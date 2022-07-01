@@ -8,10 +8,9 @@ public class harvestableNode : MonoBehaviour
     public GameObject varientShiftEffect;
     [HideInInspector]
     public int id;
+    public int myType;
     public int maxHealth = 100;
     public int health = 100;
-    public int resource_id;
-    public int resource_totalAmount;
     int lastModel = 0;
 
     public void UpdateNode(int newHp)

@@ -10,7 +10,7 @@ public class inv_item_data : ScriptableObject
     public Sprite icon;
     //EQUIPPABLE
     public int weaponId = 0;
-    public playerWeapons.FireType fireType;
+    public int fireType;
     public GameObject projectile;
     public float ray_range = 2f;
     public float ray_damage = 20f;
