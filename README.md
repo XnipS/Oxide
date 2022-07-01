@@ -2,7 +2,7 @@
 
 ![Oxide Logo](https://drive.google.com/uc?export=view&id=1AveHQy8IlCIktX_c_tb2MK2D6PS0oUUv)
 
-# DevLog - v0.2.7
+# DevLog - v0.2.9
 
 ### Player Basics 0.1
 
@@ -23,7 +23,7 @@ Storage✔️\
 Animations✔️\
 Syncing✔️
 
-### Items 0.3
+### Item Functionality 0.3
 
 Tools✔️\
 Harvest Rocks✔️\
@@ -32,12 +32,25 @@ Crafting✔️\
 Deployables✔️\
 Weapons✔️\
 Health & Damage✔️\
-Status Effects\
-Clothing\
+Basic Cooking✔️\
+Playtest Patch 001✔️\
+Object Health\
 Animations\
 Syncing
 
-### Building 0.4
+### Survival System 0.4
+
+Animals\
+Lootable Corpses\
+Respawn points\
+Loot tables\
+Hunger & Eating\
+Thirst & Drinking\
+Clothing\
+Temperature changes\
+Bleeding
+
+### Building System 0.5
 
 Placing\
 Upgrading\
@@ -45,7 +58,7 @@ Breaking\
 Animations\
 Syncing
 
-### UI/Menus 0.5
+### UI/Menus 0.6
 
 Mainmenu\
 Sidemenu\

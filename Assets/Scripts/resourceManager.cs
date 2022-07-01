@@ -126,7 +126,7 @@ public class resourceManager : NetworkBehaviour
         inv_item item = inv_item.CreateInstance<inv_item>();
         item.id = tree.resource_id;
         item.amount = 750 / 25;
-        item.amount *= Mathf.CeilToInt(multiplier);
+        item.amount = Mathf.CeilToInt(item.amount * multiplier);
         item.amount += Random.Range(0, bonus);
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
     }
@@ -191,7 +191,7 @@ public class resourceManager : NetworkBehaviour
                 break;
         }
         //Multiplier
-        item.amount *= Mathf.CeilToInt(multiplier);
+        item.amount = Mathf.CeilToInt(item.amount * multiplier);
         //Bonus
         item.amount += Random.Range(0, bonus);
         //Output

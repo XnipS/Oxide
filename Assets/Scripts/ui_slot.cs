@@ -14,6 +14,8 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     public int slot;
     //[HideInInspector]
     public bool storage;
+    bool hover = false;
+    PointerEventData lastData;
     void Start()
     {
         startScale = gameObject.transform.localScale;
@@ -40,22 +42,22 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
             icon.enabled = false;
         }
     }
+    void Update()
+    {
+        if (hover)
+        {
+           
+        }
+    }
     public void OnBeginDrag(PointerEventData eventData)
     {
-        GetComponentInParent<ui_inventory>().PickedItem(this, storage);
+
     }
 
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (eventData.pointerEnter && eventData.pointerEnter.GetComponent<ui_slot>())
-        {
-            GetComponentInParent<ui_inventory>().DroppedItem(eventData.pointerEnter.GetComponent<ui_slot>(), eventData.pointerEnter.GetComponent<ui_slot>().storage);
-        }
-        else
-        {
-            GetComponentInParent<ui_inventory>().StopDrag(true);
-        }
+
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -70,21 +72,21 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
 
     public void OnDrag(PointerEventData eventData)
     {
-        
+
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-       
+
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        
+
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        
+
     }
 }

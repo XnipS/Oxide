@@ -23,9 +23,9 @@ public class ui_inventory : MonoBehaviour
     Sprite[] icons;
     //PickedItem
     public ui_slotCursor cursor;
-    bool picked_picking;
+    public bool picked_picking;
     ui_slot picked_slot;
-    inv_item picked_inv;
+    public inv_item picked_inv;
     bool picked_storage;
     int currentStorageSlots;
     public itemStorage currentStorage;
@@ -227,6 +227,7 @@ public class ui_inventory : MonoBehaviour
     }
     public void OpenStorage(List<inv_item> store, int slotCount, itemStorage obj)
     {
+        //Variables
         currentStorageSlots = slotCount;
         currentStorage = obj;
         storage = store;

@@ -15,6 +15,7 @@ public class islandGeneratorManager : MonoBehaviour
     public float noiseVerticalScale;
     public float pass1Weight;
     public float pass2Weight;
+    public float pass3Weight;
     public float maxHeight_wetbeach;
     public float maxHeight_drybeach;
     public float maxHeight_topstone;
@@ -92,21 +93,41 @@ public class islandGeneratorManager : MonoBehaviour
         {
             for (int y = 0; y < islandSize; y++)
             {
+                float total = 0;
                 //First Pass - randomness
                 float xCoord = ((float)x / (float)islandSize * (float)noiseScale);//+ (float)transform.position.x;
                 float yCoord = ((float)y / (float)islandSize * (float)noiseScale);//+ (float)transform.position.z;
-                float noise = Mathf.PerlinNoise(xCoord, yCoord);
-                noise *= pass1Weight;
+
+                total += Unity_Voronoi_float(new Vector2(xCoord * 0.5f, yCoord * 0.5f), 30f, 1f) * pass3Weight;
+
+                //Noise 1
+                float noise = Mathf.PerlinNoise(xCoord * 0.5f, yCoord * 0.5f);
+                noise *= (1 / yScale) * (pass1Weight * 1f);
+                total += noise;
+                //Noise 2
+                noise = Mathf.PerlinNoise(xCoord * 1, yCoord * 1);
+                noise *= (1 / yScale) * (pass1Weight * .5f);
+                total -= noise;
+                //Noise 3
+                noise = Mathf.PerlinNoise(xCoord * 10, yCoord * 10);
+                noise *= (1 / yScale) * (pass1Weight * .3f);
+                total += noise;
+                //Noise 3
+                noise = Mathf.PerlinNoise(xCoord * 20, yCoord * 20);
+                noise *= (1 / yScale) * (pass1Weight * .05f);
+                total += noise;
 
                 //Second Pass - island formation
-                float centreDistance = Vector2.Distance(new Vector2(x, y), new Vector2(islandSize / 2, islandSize / 2));
+                //float centreDistance = Vector2.Distance(new Vector2(x, y), new Vector2(islandSize / 2, islandSize / 2));
+                float centreDistance = Vector2.Distance(new Vector2(x, y), new Vector2(islandSize, islandSize));
+                centreDistance *= 1.25f;
                 centreDistance /= islandSize;
                 centreDistance = (centreDistance * -1) + 1;
                 centreDistance *= pass2Weight;
-                noise += centreDistance;
+                total += centreDistance;
 
                 //Apply
-                rawData[x, y] = noise;
+                rawData[x, y] = total;
             }
         }
         raw = rawData;
@@ -302,26 +323,26 @@ public class islandGeneratorManager : MonoBehaviour
         //Debug.Log(data.heightmapScale.y);
         if (surface == 2) //stone
         {
-            if (Random.Range(0f, 1f) > 0.99f)
+            if (Random.Range(0f, 1f) > 0.999f)
             {
 
                 float xx = transform.position.z + y;
                 float yy = transform.position.x + x;
                 float zz = data.GetHeight((int)y, (int)x) + transform.position.y;//data.GetHeight((int)(x * data.alphamapResolution), (int)(y * data.alphamapResolution));
-                GameObject g = Instantiate(rockNodes[Random.Range(0,3)], new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
+                GameObject g = Instantiate(rockNodes[Random.Range(0, 3)], new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
                 g.transform.up = data.GetInterpolatedNormal(y * (1f / data.heightmapResolution), x * (1f / data.heightmapResolution));
                 g.transform.SetParent(this.transform);
             }
         }
         if (surface == 1) //dirt
         {
-            if (Random.Range(0f, 1f) > 0.99f)
+            if (Random.Range(0f, 1f) > 0.999f)
             {
 
                 float xx = transform.position.z + y;
                 float yy = transform.position.x + x;
                 float zz = data.GetHeight((int)y, (int)x) + transform.position.y;//data.GetHeight((int)(x * data.alphamapResolution), (int)(y * data.alphamapResolution));
-                GameObject g = Instantiate(rockNodes[Random.Range(0,3)], new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
+                GameObject g = Instantiate(rockNodes[Random.Range(0, 3)], new Vector3(xx, zz, yy), Quaternion.Euler(0, Random.Range(0, 360), 0));
                 g.transform.up = data.GetInterpolatedNormal(y * (1f / data.heightmapResolution), x * (1f / data.heightmapResolution));
                 g.transform.SetParent(this.transform);
             }
@@ -375,26 +396,34 @@ public class islandGeneratorManager : MonoBehaviour
                             }
                             else
                             {
-                                //grass
-
-                                if (GetTerrainNoise(50, x, y) > 0.3f)
+                                if (GetTerrainNoise(20, x, y) > 0.7f)
                                 {
-                                    //grass
-                                    if (steepness < 25f)
-                                    {
-                                        GenerateGrass(x, y, 3);
-                                        SpawnHemp(x, y, terrainData, 3);
-                                    }
+                                    //stone
+                                    SpawnHarvestableRock(x, y, terrainData, 2);
+                                    GenerateGrass(x, y, 2);
                                 }
                                 else
                                 {
-                                    //dirt
-                                    if (steepness < 25f)
+                                    //grass
+                                    if (GetTerrainNoise(15, x, y) > 0.4f)
                                     {
-                                        GenerateGrass(x, y, 1);
+                                        //grass
+                                        if (steepness < 25f)
+                                        {
+                                            GenerateGrass(x, y, 3);
+                                            SpawnHemp(x, y, terrainData, 3);
+                                        }
                                     }
-                                     SpawnShroom(x, y, terrainData, 3);
-                                    SpawnHarvestableRock(x, y, terrainData, 1);
+                                    else
+                                    {
+                                        //dirt
+                                        if (steepness < 25f)
+                                        {
+                                            GenerateGrass(x, y, 1);
+                                        }
+                                        SpawnShroom(x, y, terrainData, 3);
+                                        SpawnHarvestableRock(x, y, terrainData, 1);
+                                    }
                                 }
                             }
                         }
@@ -480,26 +509,39 @@ public class islandGeneratorManager : MonoBehaviour
                         else
                         {
                             //grass
-
-                            if (GetTerrainNoise(50, x, y) > 0.3f)
+                            if (GetTerrainNoise(20, x, y) > 0.7f)
                             {
-                                //grass
+                                //stone
                                 splatWeights[0] = 0f;//sand
                                 splatWeights[1] = 0f;//dirt
-                                splatWeights[2] = 0f;//stone
-                                splatWeights[3] = 1f;//grass
-                                splatWeights[4] = 0f;//snow
-                                splatWeights[5] = 0f;//wetsand
-                            }
-                            else
-                            {
-                                //dirt
-                                splatWeights[0] = 0f;//sand
-                                splatWeights[1] = 1f;//dirt
                                 splatWeights[2] = 0f;//stone
                                 splatWeights[3] = 0f;//grass
                                 splatWeights[4] = 0f;//snow
                                 splatWeights[5] = 0f;//wetsand
+                                splatWeights[2] = 1f;
+                            }
+                            else
+                            {
+                                if (GetTerrainNoise(15, x, y) > 0.4f)
+                                {
+                                    //grass
+                                    splatWeights[0] = 0f;//sand
+                                    splatWeights[1] = 0f;//dirt
+                                    splatWeights[2] = 0f;//stone
+                                    splatWeights[3] = 1f;//grass
+                                    splatWeights[4] = 0f;//snow
+                                    splatWeights[5] = 0f;//wetsand
+                                }
+                                else
+                                {
+                                    //dirt
+                                    splatWeights[0] = 0f;//sand
+                                    splatWeights[1] = 1f;//dirt
+                                    splatWeights[2] = 0f;//stone
+                                    splatWeights[3] = 0f;//grass
+                                    splatWeights[4] = 0f;//snow
+                                    splatWeights[5] = 0f;//wetsand
+                                }
                             }
                         }
                     }
@@ -560,6 +602,39 @@ public class islandGeneratorManager : MonoBehaviour
         // Finally assign the new splatmap to the terrainData:
         raw = splatmapData;
     }
+    float Unity_Voronoi_float(Vector2 UV, float AngleOffset, float CellDensity)
+    {
+        float Out = 0;
+        // Cells = 0;
+        Vector2 g = new Vector2(Mathf.Floor(UV.x * CellDensity), Mathf.Floor(UV.y * CellDensity));
+        Vector2 f = new Vector2((UV.x * CellDensity) % 1f, (UV.y * CellDensity) % 1f);
+        float t = 8.0f;
+        Vector3 res = new Vector3(8.0f, 0.0f, 0.0f);
+
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                Vector2 lattice = new Vector2(x, y);
+                Vector2 offset = unity_voronoi_noise_randomVector(lattice + g, AngleOffset);
+                float d = Vector2.Distance(lattice + offset, f);
+                if (d < res.x)
+                {
+                    res = new Vector3(d, offset.x, offset.y);
+                    Out = res.x;
+                    // Cells = res.y;
+                }
+            }
+        }
+        return Out;
+    }
+    Vector2 unity_voronoi_noise_randomVector(Vector2 UV, float offset)
+    {
+        Vector4 m = new Vector4(15.27f, 47.63f, 99.41f, 89.98f);
+        Vector4 x = new Vector4(UV.x, UV.y, 0, 0);
+        //UV = (Mathf.Sin(Vector4.Dot (x, m)) * 46839.32) % 1f;
+        return new Vector2(Mathf.Sin(UV.y * +offset) * 0.5f + 0.5f, Mathf.Cos(UV.x * offset) * 0.5f + 0.5f);
+    }
 }
 
 [CustomEditor(typeof(islandGeneratorManager))]
@@ -597,6 +672,8 @@ public class islandGeneratorEditor : Editor
             man.GenerateIsland();
         }
     }
+
+
 }
 
 public enum HeightmapResolution

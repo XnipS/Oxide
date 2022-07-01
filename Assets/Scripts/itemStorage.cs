@@ -28,8 +28,8 @@ public class itemStorage : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void CMD_UpdateStorage(List<inv_item> str, int slo)
     {
-        storage = str;
-        slots = slo;
+        //storage = str;
+        //slots = slo;
         RPC_UpdateStorage(str, slo);
     }
 
@@ -38,13 +38,30 @@ public class itemStorage : NetworkBehaviour
     {
         if (inv.inventoryStatus && inv.currentStorage == this)
         {
-            Debug.Log("HERE");
-            storage = str;
-            slots = slo;
-            //inv.CloseInventory();
-            // inv.OpenInventory();
-            inv.CloseStorage();
-            inv.OpenStorage(storage, slots, this);
+
+            if (inv.picked_picking && storage.Contains(inv.picked_inv))
+            {
+                storage = str;
+                slots = slo;
+                foreach (inv_item t in storage)
+                {
+                    if (t.slot == inv.picked_inv.slot)
+                    {
+                        inv.picked_inv = t;
+                    }
+                }
+
+                inv.CloseStorage();
+                inv.OpenStorage(storage, slots, this);
+            }
+            else
+            {
+                storage = str;
+                slots = slo;
+                inv.CloseStorage();
+                inv.OpenStorage(storage, slots, this);
+            }
+
         }
         else
         {
