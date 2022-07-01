@@ -1,10 +1,12 @@
 using UnityEngine;
+using System.Collections;
 using UnityEditor;
 #if UNITY_EDITOR
 public class iconGenerator : MonoBehaviour
 {
     public Camera mainCam;
     public int resolution;
+    public GameObject[] obs;
 
     public static string ScreenShotName(int id)
     {
@@ -15,7 +17,44 @@ public class iconGenerator : MonoBehaviour
             System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
     }
 
-    public void Generate(string str)
+
+    public void IconGen(bool all, string str)
+    {
+        if (all)
+        {
+            StartCoroutine(GenerateAll());
+        }
+        else
+        {
+            StartCoroutine(Generate(str));
+        }
+    }
+
+    IEnumerator GenerateAll()
+    {
+        for (int i = 0; i < obs.Length; i++)
+        {
+            if (i != 0)
+            {
+                DisableAll();
+                obs[i].SetActive(true);
+                yield return Generate(i.ToString());
+            }
+        }
+    }
+
+    void DisableAll()
+    {
+        foreach (GameObject g in obs)
+        {
+            if (g != null)
+            {
+                g.SetActive(false);
+            }
+        }
+    }
+
+    IEnumerator Generate(string str)
     {
         int id = int.Parse(str);
         RenderTexture rt = new RenderTexture(resolution, resolution, 24);
@@ -29,8 +68,8 @@ public class iconGenerator : MonoBehaviour
         DestroyImmediate(rt);
         byte[] bytes = screenShot.EncodeToPNG();
         string filename = ScreenShotName(id);
-        System.IO.File.WriteAllBytes(filename, bytes);
-        Debug.Log(string.Format("Took screenshot to: {0}", filename));
+        yield return System.IO.File.WriteAllBytesAsync(filename, bytes);
+        //Debug.Log(string.Format("Took screenshot to: {0}", filename));
     }
 }
 
@@ -48,6 +87,10 @@ public class iconGenerator_editor : Editor
             window.script = script;
             window.Show();
         }
+        if (GUILayout.Button("Generate ALL"))
+        {
+            script.IconGen(true, "");
+        }
     }
 }
 
@@ -61,7 +104,7 @@ public class iconGenerator_editor_popup : EditorWindow
         input_id = EditorGUILayout.TextField("", input_id);
         if (GUILayout.Button("Done!"))
         {
-            script.Generate(input_id);
+            script.IconGen(false, input_id);
             this.Close();
         }
     }
