@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 public class ui_craftingSlot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
 {
@@ -8,8 +9,8 @@ public class ui_craftingSlot : MonoBehaviour, IPointerDownHandler, IPointerClick
     public Image icon;
     [HideInInspector]
     public Sprite[] icons;
-    public Text bigText;
-    public Text smallText;
+    public TMP_Text bigText;
+    public TMP_Text smallText;
     [HideInInspector]
     public int slot;
     public inv_recipe myRec;

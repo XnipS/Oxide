@@ -3,7 +3,8 @@
 
 /UserSettings/
 /.vscode/
-push.sh
+*.sh
+*.xcf
 Assets/*
 !Assets/Scripts/
 !/Assets/Scripts/Editor

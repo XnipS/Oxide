@@ -1,6 +1,7 @@
 using UnityEngine.UI;
 using UnityEngine;
 using Mirror;
+using TMPro;
 
 public class ui_hoverObject : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class ui_hoverObject : MonoBehaviour
     [HideInInspector]
     public playerInventory player = null;
     Camera mainCam;
-    public Text itemText;
+    public TMP_Text itemText;
     public LayerMask mask;
 
     void Start()

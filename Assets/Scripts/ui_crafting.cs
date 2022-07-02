@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using TMPro;
 public class ui_crafting : MonoBehaviour
 {
     [HideInInspector]
@@ -15,8 +16,8 @@ public class ui_crafting : MonoBehaviour
     public GameObject tab_prefab;
     public Transform tab_transform;
     ui_crafting_tab[] tab_objs;
-    public Text tab_title;
-    public Text tab_info;
+    public TMP_Text tab_title;
+    public TMP_Text tab_info;
     //Panels
     public Transform pan_transform;
     public GameObject pan_prefab;

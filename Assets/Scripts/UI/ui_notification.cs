@@ -1,11 +1,11 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 public class ui_notification : MonoBehaviour
 {
     public Image img;
-    public Text tex;
+    public TMP_Text tex;
     public Image icon;
     public enum NotifyIconType
     {

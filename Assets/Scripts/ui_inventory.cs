@@ -82,6 +82,19 @@ public class ui_inventory : MonoBehaviour
         return (needed <= 0);
     }
 
+     public int HowMuch(int itemId)
+    {
+        int has = 0;
+        foreach (inv_item it in invent)
+        {
+            if (it.id == itemId)
+            {
+                has += it.amount;
+            }
+        }
+        return (has);
+    }
+
     public void DestroyItem(int id, int amount)
     {
         //Find available slot

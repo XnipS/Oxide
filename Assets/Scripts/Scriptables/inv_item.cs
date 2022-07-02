@@ -5,4 +5,7 @@ public class inv_item : ScriptableObject
     public int id;
     public int slot;
     public int amount;
+    public int ammoLoaded;
+    public float durability;
+    public bool blueprint;
 }

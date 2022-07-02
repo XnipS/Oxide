@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using Cinemachine;
 
 public class playerWeapons : NetworkBehaviour
 {
@@ -18,15 +19,20 @@ public class playerWeapons : NetworkBehaviour
     public bool isAiming;
     public int currentWeapon;
     inv_item_data currentData;
+    inv_item myItem;
     ui_inventory myInv;
     float cooldown;
     public LayerMask mask;
+    float viewmodelFov;
+    public smoothMouseLook vert1;
+    public smoothMouseLook vert2;
     [SyncVar]
     string current_aimAnim = "";
     void Start()
     {
         anim = GetComponent<Animation>();
         myInv = FindObjectOfType<ui_inventory>();
+        viewmodelFov = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView;
         UpdateViewmodels(0);
     }
     void Update()
@@ -34,12 +40,30 @@ public class playerWeapons : NetworkBehaviour
         //Animation
         if (current_aimAnim != "")
         {
-            anim[current_aimAnim].layer = 10;
+            anim[current_aimAnim].layer = 9;
             anim.CrossFade(current_aimAnim, 0.1f);
+        }
+        else if (currentData != null && currentData.anim_aim != null)
+        {
+            anim.Stop(currentData.anim_aim.name);
         }
         //Check if mine and inv is closed
         if (!hasAuthority) { return; }
         if (myInv.inventoryStatus) { return; }
+        //Viewmodel Camera Fov
+        GetComponent<playerMovement>().viewmodelCam.fieldOfView = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView;
+        //Reload
+        if (Input.GetKeyDown(KeyCode.R) && currentData.maxAmmo > 0 && myInv.HowMuch(currentData.ammo) > 0)
+        {
+            if (currentData.anim_reload != null)
+            {
+                CMD_PlayWeaponAnimation(currentData.anim_reload.name, currentData.weaponId, false);
+            }
+            else
+            {
+                //ANIM_ReloadComplete();
+            }
+        }
         //Get slot number input
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -71,7 +95,16 @@ public class playerWeapons : NetworkBehaviour
         {
             cooldown -= Time.deltaTime;
         }
-
+        //Aim Fov
+        CinemachineVirtualCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject.GetComponent<CinemachineVirtualCamera>();
+        if (isAiming)
+        {
+            cam.m_Lens.FieldOfView = Mathf.Lerp(cam.m_Lens.FieldOfView, viewmodelFov + currentData.deltaFov, Time.deltaTime * 5f);
+        }
+        else
+        {
+            cam.m_Lens.FieldOfView = Mathf.Lerp(cam.m_Lens.FieldOfView, viewmodelFov, Time.deltaTime * 5f);
+        }
         //Past here only if weapon valid
         if (currentData == null || currentData.weaponId == 0) { return; }
         if (currentData.anim_aim != null)
@@ -152,9 +185,10 @@ public class playerWeapons : NetworkBehaviour
         }
         if (currentData.ammo != 0)
         {
-            if (myInv.HasEnough(currentData.ammo, 1))
+            if (myItem.ammoLoaded > 0)
             {
-                myInv.DestroyItem(currentData.ammo, 1);
+                myItem.ammoLoaded--;
+                myInv.UpdateBelt();
                 Fire();
             }
         }
@@ -169,12 +203,23 @@ public class playerWeapons : NetworkBehaviour
     void Fire()
     {
         cooldown = currentData.cooldown;
-        CMD_PlayWeaponAnimation(currentData.anim_attack.name, currentData.weaponId, false);
+        if (currentData.anim_aim_fire != null && isAiming)
+        {
+            CMD_PlayWeaponAnimation(currentData.anim_aim_fire.name, currentData.weaponId, false);
+        }
+        else
+        {
+            CMD_PlayWeaponAnimation(currentData.anim_attack.name, currentData.weaponId, false);
+        }
         if (currentData.aimRequiredToShoot)
         {
             isAiming = false;
             CMD_PlayWeaponAnimation("", currentData.weaponId, true);
         }
+        //Apply recoil
+        GetComponent<smoothMouseLook>().rotationX += Random.Range(-currentData.recoil_std.x, currentData.recoil_std.x) + Random.Range(-currentData.recoil_rnd.x, currentData.recoil_rnd.x);
+        vert1.rotationY += currentData.recoil_std.y + Random.Range(0, currentData.recoil_rnd.y);
+        vert2.rotationY = vert1.rotationY;
         if (currentData.anim_attack_hit == null)
         {
             switch (currentData.fireType)
@@ -243,9 +288,21 @@ public class playerWeapons : NetworkBehaviour
 
             }
         }
-
-
-
+    }
+    public void ANIM_ReloadComplete()
+    {
+        if (!hasAuthority) { return; }
+        if (currentData.maxAmmo > 0)
+        {
+            int hm = myInv.HowMuch(currentData.ammo);
+            if (hm > 0)
+            {
+                int take = Mathf.Min(hm, currentData.maxAmmo - myItem.ammoLoaded);
+                myInv.DestroyItem(currentData.ammo, take);
+                myItem.ammoLoaded += take;
+                myInv.UpdateBelt();
+            }
+        }
     }
 
     public void ANIM_AttackHit()
@@ -254,14 +311,13 @@ public class playerWeapons : NetworkBehaviour
         if (currentData.anim_attack_hit != null && currentData.fireType == (int)FireType.raycast)
         {
             RaycastAttack();
-
         }
-
     }
     void EquipSlot(int id)
     {
         //Delete
         GetComponent<playerDeployables>().CancelGhost();
+        current_aimAnim = "";
         //Check if slot populated
         inv_item occupied = null;
         foreach (inv_item it in myInv.invent)
@@ -276,6 +332,7 @@ public class playerWeapons : NetworkBehaviour
         if (currentData == null)
         {
             currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
+            myItem = occupied;
             if (currentData.weaponId != 0)
             {
                 CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId, false);
@@ -294,6 +351,7 @@ public class playerWeapons : NetworkBehaviour
         if (currentData.id != occupied.id)
         {
             currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
+            myItem = occupied;
             if (currentData.weaponId != 0)
             {
                 CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId, false);

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 using Mirror;
 
@@ -12,8 +13,8 @@ public class oxideNetworkManagerHUD : MonoBehaviour
     public Button btn_host;
     public Button btn_stop;
     public Button btn_client;
-    public InputField inp_ip;
-    public Text txt_connStatus;
+    public TMP_InputField inp_ip;
+    public TMP_Text txt_connStatus;
     public GameObject unconnected;
     public GameObject connected;
 

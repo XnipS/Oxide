@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
@@ -9,7 +10,8 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     public Image icon;
     [HideInInspector]
     public Sprite[] icons;
-    public Text text;
+    public TMP_Text text;
+    public Slider durability;
     [HideInInspector]
     public int slot;
     //[HideInInspector]
@@ -23,15 +25,22 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     }
     public void UpdateIconData(inv_item data)
     {
-        if (data.amount != 0)
+        Debug.Log(data.amount);
+        if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmmo != 0)
         {
-            text.enabled = true;
+            text.text = data.ammoLoaded + "/" + FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmmo;
+        }
+        else
+        if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmount > 1)
+        {
             text.text = data.amount.ToString();
         }
         else
         {
-            text.enabled = false;
+            text.text = "";
         }
+        durability.value = data.durability;
+        durability.maxValue = FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxDurability;
         if (data.id != 0)
         {
             icon.enabled = true;
@@ -46,7 +55,7 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     {
         if (hover)
         {
-           
+
         }
     }
     public void OnBeginDrag(PointerEventData eventData)
