@@ -43,7 +43,6 @@ public class ui_inventory : MonoBehaviour
         icons = FindObjectOfType<itemDictionary>().icons;
         //Update
         UpdateBelt();
-
     }
 
     void Update()

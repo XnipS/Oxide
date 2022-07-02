@@ -11,6 +11,8 @@ public class ui_hoverObject : MonoBehaviour
     public playerInventory player = null;
     Camera mainCam;
     public TMP_Text itemText;
+    public Slider healthSlider;
+    public TMP_Text healthText;
     public LayerMask mask;
 
     void Start()
@@ -72,13 +74,31 @@ public class ui_hoverObject : MonoBehaviour
                         str = "Pick Shroom";
                         break;
                 }
-
                 itemText.text = str;
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     FindObjectOfType<resourceManager>().CMD_PickNode(hit.collider.GetComponent<pickableNode>().id, player.GetComponent<NetworkIdentity>());
                 }
             }
+            if (hit.collider.GetComponent<objectHealth>() != null)
+            {
+                objectHealth ob = hit.collider.GetComponent<objectHealth>();
+                healthSlider.gameObject.SetActive(true);
+                healthText.enabled = true;
+                healthSlider.maxValue = ob.maxHealth;
+                healthSlider.value = ob.currentHealth;
+                healthText.text = ob.currentHealth.ToString() + "/" + ob.maxHealth.ToString();
+            }
+            else
+            {
+                healthSlider.gameObject.SetActive(false);
+                healthText.enabled = false;
+            }
+        }
+        else
+        {
+            healthSlider.gameObject.SetActive(false);
+            healthText.enabled = false;
         }
         itemText.enabled = hover;
     }

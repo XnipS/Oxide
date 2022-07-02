@@ -285,6 +285,17 @@ public class playerWeapons : NetworkBehaviour
                     FindObjectOfType<effectManager>().CMD_SpawnEffect(2, hit.point, Quaternion.identity);
                     break;
                 }
+            }
+            if (hit.collider.GetComponent<objectHealth>())
+            {
+
+                //Animation confirm
+                if (currentData.anim_attack_hit != null)
+                {
+                    CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false);
+                }
+                hit.collider.GetComponent<objectHealth>().CMD_TakeDamage(currentData.ray_damage);
+                break;
 
             }
         }

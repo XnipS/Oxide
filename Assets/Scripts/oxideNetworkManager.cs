@@ -9,6 +9,7 @@ using Mirror;
 
 public class oxideNetworkManager : NetworkManager
 {
+    public string playerName = "Survivor";
     // Overrides the base singleton so we don't
     // have to cast to this type everywhere.
     public static new oxideNetworkManager singleton { get; private set; }

@@ -48,9 +48,9 @@ public class playerDeployables : NetworkBehaviour
                 Quaternion rot = Quaternion.LookRotation(-transform.forward, hit.normal);
                 currentGhost.transform.rotation = rot;
                 bool can = currentGhost.GetComponent<deployGhost>().SpaceTestCanFit();
-                              if (Input.GetKeyDown(KeyCode.Mouse0) && can)
+                if (Input.GetKeyDown(KeyCode.Mouse0) && can)
                 {
-                    CMD_PlaceDeployable(currentId, hit.point, rot);
+                    CMD_PlaceDeployable(currentId, hit.point, rot, GetComponent<NetworkIdentity>());
                     FindObjectOfType<ui_inventory>().DestroyItem(realId, 1);
                     CancelGhost();
                 }
@@ -64,16 +64,21 @@ public class playerDeployables : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
-    public void CMD_PlaceDeployable(int id, Vector3 pos, Quaternion rot)
+    public void CMD_PlaceDeployable(int id, Vector3 pos, Quaternion rot, NetworkIdentity owner)
     {
         GameObject g = Instantiate(deployables[id].prefab_network, pos, rot);
         NetworkServer.Spawn(g);
-        RPC_PlaceDeployable(pos);
+        RPC_PlaceDeployable(pos, g.GetComponent<NetworkIdentity>(), owner);
     }
 
     [ClientRpc]
-    public void RPC_PlaceDeployable(Vector3 pos)
+    public void RPC_PlaceDeployable(Vector3 pos, NetworkIdentity id, NetworkIdentity owner)
     {
         Instantiate(effect, pos, Quaternion.identity);
+        if (!hasAuthority) { return; }
+        if (id.GetComponent<sleepingBag>() != null)
+        {
+            id.GetComponent<sleepingBag>().owner = FindObjectOfType<oxideNetworkManager>().playerName;
+        }
     }
 }

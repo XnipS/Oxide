@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.IO;
 using UnityEngine.UI;
 using Mirror;
 
@@ -17,7 +18,8 @@ public class oxideNetworkManagerHUD : MonoBehaviour
     public TMP_Text txt_connStatus;
     public GameObject unconnected;
     public GameObject connected;
-
+    public TMP_InputField inp_name;
+    string myName;
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.H))
@@ -28,6 +30,24 @@ public class oxideNetworkManagerHUD : MonoBehaviour
 
     void Start()
     {
+        myName = "Survivor";
+        string path = Application.persistentDataPath + "/saved.nip";
+        if (File.Exists(path))
+        {
+            string[] data = ReadSettings();
+            inp_ip.text = data[0];
+            inp_name.text = data[1];
+            myName = data[1];
+            FindObjectOfType<oxideNetworkManager>().playerName = data[1];
+        }
+        else
+        {
+            string[] data = new string[2];
+            data[0] = "localhost";
+            data[1] = "Survivor";
+            WriteSettings(data);
+        }
+
         //Update the canvas text if you have manually changed network managers address from the game object before starting the game scene
         if (NetworkManager.singleton.networkAddress != "localhost") { inp_ip.text = NetworkManager.singleton.networkAddress; }
 
@@ -70,6 +90,10 @@ public class oxideNetworkManagerHUD : MonoBehaviour
     }
     void UpdateUI()
     {
+        string[] data = new string[2];
+        data[0] = inp_ip.text;
+        data[1] = inp_name.text;
+        WriteSettings(data);
         if (!NetworkClient.isConnected && !NetworkServer.active)
         {
             if (NetworkClient.active)
@@ -109,5 +133,31 @@ public class oxideNetworkManagerHUD : MonoBehaviour
     {
         NetworkManager.singleton.StartClient();
         UpdateUI();
+    }
+
+    public static void WriteSettings(string[] data)
+    {
+        string path = Application.persistentDataPath + "/saved.nip";
+        //Write some text to the test.txt file
+        StreamWriter writer = new StreamWriter(path, false);
+        string write = "";
+        foreach (string s in data)
+        {
+            write += s + "\n";
+        }
+        writer.Write(write);
+        writer.Close();
+        StreamReader reader = new StreamReader(path);
+        reader.Close();
+    }
+    public static string[] ReadSettings()
+    {
+        string path = Application.persistentDataPath + "/saved.nip";
+        //Read the text from directly from the test.txt file
+        StreamReader reader = new StreamReader(path);
+        string input = reader.ReadToEnd();
+        string[] output = input.Split("\n");
+        reader.Close();
+        return output;
     }
 }

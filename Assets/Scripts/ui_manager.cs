@@ -16,8 +16,12 @@ public class ui_manager : MonoBehaviour
 
     void Update()
     {
-        if(lastPlayer == null) {
+        if (lastPlayer == null)
+        {
             CloseAll();
+            //Cursor
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
         if (lastPlayer != player)
         {
@@ -53,7 +57,7 @@ public class ui_manager : MonoBehaviour
     {
         inventory.CloseInventory();
         crafting.UpdateCraftingUI(false);
-            //Delete data
+        //Delete data
         inventory.currentStorage = null;
         inventory.currentStorageSlots = 0;
     }

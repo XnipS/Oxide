@@ -25,7 +25,7 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     }
     public void UpdateIconData(inv_item data)
     {
-        Debug.Log(data.amount);
+        //Debug.Log(data.amount);
         if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmmo != 0)
         {
             text.text = data.ammoLoaded + "/" + FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmmo;
