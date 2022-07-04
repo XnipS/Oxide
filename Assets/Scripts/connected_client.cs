@@ -40,7 +40,7 @@ public class connected_client : NetworkBehaviour
             if (myPlayer == null)
             {
                 //Respawn
-                Debug.Log(rnd + " - " + pos + " - " + GetComponent<NetworkIdentity>().connectionToClient);
+                //Debug.Log(rnd + " - " + pos + " - " + GetComponent<NetworkIdentity>().connectionToClient);
                 FindObjectOfType<respawn_manager>().CMD_SpawnPlayer(pos, rnd, GetComponent<NetworkIdentity>().connectionToClient);
             }
         }

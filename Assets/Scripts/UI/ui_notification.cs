@@ -9,12 +9,12 @@ public class ui_notification : MonoBehaviour
     public Image icon;
     public enum NotifyIconType
     {
-        none = 0, plus = 1
+        none = 0, plus = 1, minus = 2, learn = 3
     }
     public NotifyIconType type;
     public enum NotifyColourType
     {
-        green = 0
+        green = 0, red = 1, blue = 2
     }
     public Color[] colors;
     public Sprite[] icons;

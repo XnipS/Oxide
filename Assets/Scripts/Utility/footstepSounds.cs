@@ -106,45 +106,53 @@ public class footstepSounds : MonoBehaviour
     int CheckTexture(Terrain ter, Vector2 convertedPos)
     {
         float[,,] aMap = ter.terrainData.GetAlphamaps((int)convertedPos.x, (int)convertedPos.y, 1, 1);
-        if (aMap[0, 0, 5] > 0)
+        if (aMap[0, 0, 6] > 0)
         {
-            return 0;
+            return 4;
 
         }
         else
         {
-            if (aMap[0, 0, 4] > 0)
+            if (aMap[0, 0, 5] > 0)
             {
-                return 5;
+                return 0;
 
             }
             else
             {
-                if (aMap[0, 0, 3] > 0)
+                if (aMap[0, 0, 4] > 0)
                 {
-                    return 2;
+                    return 5;
+
                 }
                 else
                 {
-                    if (aMap[0, 0, 2] > 0)
+                    if (aMap[0, 0, 3] > 0)
                     {
-                        return 4;
+                        return 2;
                     }
                     else
                     {
-                        if (aMap[0, 0, 1] > 0)
+                        if (aMap[0, 0, 2] > 0)
                         {
-                            return 1;
+                            return 4;
                         }
                         else
                         {
-                            if (aMap[0, 0, 0] > 0)
+                            if (aMap[0, 0, 1] > 0)
                             {
-                                return 0;
+                                return 1;
                             }
                             else
                             {
-                                return 0;
+                                if (aMap[0, 0, 0] > 0)
+                                {
+                                    return 0;
+                                }
+                                else
+                                {
+                                    return 0;
+                                }
                             }
                         }
                     }

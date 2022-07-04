@@ -8,6 +8,7 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
 {
     Vector2 startScale;
     public Image icon;
+    public GameObject bp;
     [HideInInspector]
     public Sprite[] icons;
     public TMP_Text text;
@@ -25,7 +26,35 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     }
     public void UpdateIconData(inv_item data)
     {
-        //Debug.Log(data.amount);
+        
+        //Check if has item
+        if (data.id == 0)
+        {
+            bp.SetActive(false); //Hide bp
+            icon.enabled = false;//Hide icon
+            durability.gameObject.SetActive(false);//Hide durability
+            text.text = "";//Hide text
+            return;
+        }
+        //Show icon
+        if (data.id != 0)
+        {
+            icon.enabled = true;
+            icon.sprite = icons[data.id];
+        }
+        //Check if bp
+        if (data.blueprint)
+        {
+            durability.gameObject.SetActive(false);//No durability
+            text.text = ""; //No Text
+            bp.SetActive(true); //Show bp
+            return;
+        }
+        else
+        {
+            bp.SetActive(false); //Hide bp
+        }
+        //Decide text value
         if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmmo != 0)
         {
             text.text = data.ammoLoaded + "/" + FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmmo;
@@ -39,17 +68,18 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
         {
             text.text = "";
         }
-        durability.value = data.durability;
-        durability.maxValue = FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxDurability;
-        if (data.id != 0)
+        //Check if has durability
+        if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxDurability > 0)
         {
-            icon.enabled = true;
-            icon.sprite = icons[data.id];
+            durability.gameObject.SetActive(true);
+            durability.value = data.durability;
+            durability.maxValue = FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxDurability;
         }
         else
         {
-            icon.enabled = false;
+            durability.gameObject.SetActive(false);
         }
+
     }
     void Update()
     {

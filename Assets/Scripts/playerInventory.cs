@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using System.Collections.Generic;
 
 public class playerInventory : NetworkBehaviour
 {
@@ -7,13 +8,7 @@ public class playerInventory : NetworkBehaviour
     ui_inventory myInv;
     public AnimationClip anim_pickup;
     public AnimationClip anim_drop;
-    [System.Serializable]
-    public class engramMemory
-    {
-        public int[] itemId;
-        public bool[] learned;
-    }
-    public engramMemory myMemory;
+    public List<int> myMemory;
     void Start()
     {
         if (!hasAuthority) { return; }

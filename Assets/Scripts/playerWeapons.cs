@@ -281,7 +281,7 @@ public class playerWeapons : NetworkBehaviour
                     {
                         CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false);
                     }
-                    hit.collider.GetComponentInParent<NetworkIdentity>().GetComponentInParent<playerHealth>().CMD_TakeDamage(currentData.ray_damage * hit.collider.GetComponent<playerHitbox>().multiplier);
+                    hit.collider.GetComponentInParent<NetworkIdentity>().GetComponentInParent<playerHealth>().CMD_TakeDamage(currentData.ray_damage * hit.collider.GetComponent<playerHitbox>().multiplier, GetComponent<NetworkIdentity>());
                     FindObjectOfType<effectManager>().CMD_SpawnEffect(2, hit.point, Quaternion.identity);
                     break;
                 }
@@ -294,7 +294,7 @@ public class playerWeapons : NetworkBehaviour
                 {
                     CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false);
                 }
-                hit.collider.GetComponent<objectHealth>().CMD_TakeDamage(currentData.ray_damage);
+                hit.collider.GetComponent<objectHealth>().CMD_TakeDamage(currentData.ray_damage, GetComponent<NetworkIdentity>());
                 break;
 
             }
@@ -339,7 +339,12 @@ public class playerWeapons : NetworkBehaviour
             }
         }
         //Update Viewmodels
-        if (occupied == null) { currentData = null; CMD_PlayWeaponAnimation("hands", 0, false); return; }
+        if (occupied == null || occupied.blueprint || (occupied.durability == 0 && FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id).maxDurability > 0))
+        {
+            currentData = null;
+            CMD_PlayWeaponAnimation("hands", 0, false);
+            return;
+        }
         if (currentData == null)
         {
             currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
@@ -391,6 +396,19 @@ public class playerWeapons : NetworkBehaviour
         foreach (GameObject ob in weaponObjects[id].viewmodels)
         {
             ob.SetActive(true);
+        }
+    }
+    public void ANIM_SpawnMuzzleEffect (int id) {
+        snap_muzzle muz = null;
+        foreach(GameObject g in weaponObjects[currentWeapon].viewmodels) {
+            if(g.GetComponentInChildren<snap_muzzle>() != null) {
+                muz = g.GetComponentInChildren<snap_muzzle>();
+            }
+        }
+        if(muz == null) {
+            Debug.LogError("No muzzle found!");
+        }else {
+        FindObjectOfType<effectManager>().CMD_SpawnEffect(id, muz.transform.position, muz.transform.rotation);
         }
     }
     [Command]

@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-
-public class objectHealth : NetworkBehaviour
+public class npcHealth : NetworkBehaviour
 {
     public float maxHealth = 100f;
     [SyncVar]
@@ -26,9 +25,12 @@ public class objectHealth : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RPC_UpdateHealth(float hp, float delta, NetworkIdentity damageDealer )
+    public void RPC_UpdateHealth(float hp, float delta, NetworkIdentity damageDealer)
     {
         currentHealth = hp;
-
+        if (isServer)
+        {
+            GetComponent<ai_huey>().TakeDamageHook(damageDealer);
+        }
     }
 }

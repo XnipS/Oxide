@@ -46,8 +46,8 @@ public class projectile : NetworkBehaviour
 
     void Update()
     {
-        model.transform.position = Vector3.Lerp(model.transform.position, currentPos, Time.deltaTime * 10f);
-        model.transform.rotation = Quaternion.Slerp(model.transform.rotation, Quaternion.LookRotation(currentDir), Time.deltaTime * 10f);
+        model.transform.position = Vector3.Lerp(model.transform.position, currentPos, Time.deltaTime * 25f);
+        model.transform.rotation = Quaternion.Slerp(model.transform.rotation, Quaternion.LookRotation(currentDir), Time.deltaTime * 25f);
     }
 
 
@@ -61,6 +61,14 @@ public class projectile : NetworkBehaviour
             {
                 HitPlayer(hit.collider.GetComponent<playerHitbox>().multiplier, hit.collider.GetComponent<playerHitbox>().id, hit.collider.GetComponentInParent<NetworkIdentity>(), hit.point);
             }
+            else if (hit.collider.GetComponent<objectHealth>())
+            {
+                HitPlayer(0.1f, "", hit.collider.GetComponentInParent<NetworkIdentity>(), hit.point);
+            }
+            if (hit.collider.GetComponent<npcHealth>())
+            {
+                HitPlayer(1f, "", hit.collider.GetComponentInParent<NetworkIdentity>(), hit.point);
+            }
             else
             {
                 FindObjectOfType<effectManager>().CMD_SpawnEffect(3, hit.point, Quaternion.identity);
@@ -73,9 +81,25 @@ public class projectile : NetworkBehaviour
     {
         if (target != owner)
         {
-            target.GetComponentInParent<playerHealth>().CMD_TakeDamage(damage * multiplier);
-            FindObjectOfType<effectManager>().CMD_SpawnEffect(2, pos, Quaternion.identity);
-            NetworkServer.Destroy(gameObject);
+            if (target.GetComponentInParent<playerHealth>())
+            {
+                target.GetComponentInParent<playerHealth>().CMD_TakeDamage(damage * multiplier, owner);
+                FindObjectOfType<effectManager>().CMD_SpawnEffect(2, pos, Quaternion.identity);
+                NetworkServer.Destroy(gameObject);
+            }
+            if (target.GetComponentInParent<objectHealth>())
+            {
+                target.GetComponentInParent<objectHealth>().CMD_TakeDamage(damage * multiplier, owner);
+                FindObjectOfType<effectManager>().CMD_SpawnEffect(2, pos, Quaternion.identity);
+                NetworkServer.Destroy(gameObject);
+            }
+            if (target.GetComponentInParent<npcHealth>())
+            {
+                target.GetComponentInParent<npcHealth>().CMD_TakeDamage(damage * multiplier, owner);
+                FindObjectOfType<effectManager>().CMD_SpawnEffect(2, pos, Quaternion.identity);
+                NetworkServer.Destroy(gameObject);
+            }
+
         }
     }
 

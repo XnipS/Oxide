@@ -10,6 +10,7 @@ public class ui_manager : MonoBehaviour
     };
     public ui_inventory inventory;
     public ui_crafting crafting;
+    public ui_infoPanel info;
     public ui_hud hud;
     public playerInventory player;
     playerInventory lastPlayer;
@@ -57,6 +58,7 @@ public class ui_manager : MonoBehaviour
     {
         inventory.CloseInventory();
         crafting.UpdateCraftingUI(false);
+        info.CloseInfoPanel();
         //Delete data
         inventory.currentStorage = null;
         inventory.currentStorageSlots = 0;

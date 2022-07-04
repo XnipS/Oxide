@@ -16,6 +16,7 @@ public class splashScreen : MonoBehaviour
 
     IEnumerator LoadMenu()
     {
+        yield return new WaitForSeconds(5);
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetScene);
         while (!asyncLoad.isDone)
         {

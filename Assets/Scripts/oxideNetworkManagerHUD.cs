@@ -94,6 +94,7 @@ public class oxideNetworkManagerHUD : MonoBehaviour
         data[0] = inp_ip.text;
         data[1] = inp_name.text;
         WriteSettings(data);
+        FindObjectOfType<oxideNetworkManager>().playerName = data[1];
         if (!NetworkClient.isConnected && !NetworkServer.active)
         {
             if (NetworkClient.active)

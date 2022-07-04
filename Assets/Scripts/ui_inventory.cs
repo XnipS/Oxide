@@ -81,7 +81,7 @@ public class ui_inventory : MonoBehaviour
         return (needed <= 0);
     }
 
-     public int HowMuch(int itemId)
+    public int HowMuch(int itemId)
     {
         int has = 0;
         foreach (inv_item it in invent)
@@ -92,6 +92,53 @@ public class ui_inventory : MonoBehaviour
             }
         }
         return (has);
+    }
+
+    public void DestroyItem(ui_slot slot, bool st)
+    {
+        //Find available slot
+        inv_item occupied = null;
+        if (st)
+        {
+            foreach (inv_item inv in storage)
+            {
+                if (inv.slot == slot.slot)
+                {
+                    occupied = inv;
+                }
+            }
+        }
+        else
+        {
+            foreach (inv_item it in invent)
+            {
+                if (it.slot == slot.slot)
+                {
+                    occupied = it;
+                }
+            }
+        }
+        //Check
+        if (occupied != null)
+        {
+            if (st)
+            {
+                storage.Remove(occupied);
+            }
+            else
+            {
+                invent.Remove(occupied);
+            }
+
+            //Refresh
+            UpdateBelt();
+            UpdateInventory();
+            
+        }
+        else
+        {
+            Debug.LogError("ERR");
+        }
     }
 
     public void DestroyItem(int id, int amount)
@@ -191,7 +238,7 @@ public class ui_inventory : MonoBehaviour
         for (int x = 0; x < belt_count; x++)
         {
             GameObject ga = Instantiate(pre_slot, tra_belt); //Make slots
-            ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
+                                                             // ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
             ga.GetComponent<ui_slot>().slot = x + 24; //Assign slot number
             ga.GetComponent<ui_slot>().icons = icons; //Assing icons
             ga.GetComponent<ui_slot>().storage = false; //My or other inventory
@@ -220,7 +267,7 @@ public class ui_inventory : MonoBehaviour
         for (int x = 0; x < bag_count; x++)
         {
             GameObject ga = Instantiate(pre_slot, tra_bag); //Make slots
-            ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
+            //ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
             ga.GetComponent<ui_slot>().slot = x; //Assign slot number
             ga.GetComponent<ui_slot>().icons = icons; //Assing icons
             ga.GetComponent<ui_slot>().storage = false; //My or other inventory
@@ -247,7 +294,7 @@ public class ui_inventory : MonoBehaviour
         for (int x = 0; x < slotCount; x++)
         {
             GameObject ga = Instantiate(pre_slot, tra_box); //Make slots
-            ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
+                                                            // ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
             ga.GetComponent<ui_slot>().slot = x; //Assign slot number
             ga.GetComponent<ui_slot>().icons = icons; //Assing icons
             ga.GetComponent<ui_slot>().storage = true; //My or other inventory
@@ -332,8 +379,12 @@ public class ui_inventory : MonoBehaviour
         picked_storage = store; //Define
         cursor.GetComponentInChildren<Image>().enabled = true; //Enable cursor
         cursor.GetComponentInChildren<Image>().sprite = icons[picked_inv.id]; //Set Icon
-        input.icon.enabled = false;
-        input.text.enabled = false;
+        if (input.icon != null)
+        {
+            input.icon.enabled = false;
+            input.text.enabled = false;
+        }
+        FindObjectOfType<ui_infoPanel>().UpdateInfoPanel(picked_inv, store, input);
     }
     //Successful drop on slot
     public void DroppedItem(ui_slot newSlot, bool store)

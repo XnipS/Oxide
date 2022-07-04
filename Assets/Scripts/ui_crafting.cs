@@ -74,11 +74,11 @@ public class ui_crafting : MonoBehaviour
         foreach (inv_recipe r in selected)
         {
             bool shown = false;
-            for (int i = 0; i < player.myMemory.itemId.Length; i++)
+            for (int i = 0; i < player.myMemory.Count; i++)
             {
-                if (player.myMemory.itemId[i] == r.outputItem)
+                if (player.myMemory[i] == r.outputItem)
                 {
-                    shown = player.myMemory.learned[i];
+                    shown = true;
                 }
             }
             if (shown)

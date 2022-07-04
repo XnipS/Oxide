@@ -176,9 +176,12 @@ public class islandGeneratorManager : MonoBehaviour
         tree.position = new Vector3(xx, zz, yy);
         tree.prototypeIndex = type;
         tree.widthScale = 1;
+        tree.color = Color.white;
+        tree.lightmapColor = Color.white;
+       // tree.rotation = 0;
         tree.heightScale = 1;
-        data.treePrototypes[type].prefab.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
-        tree.rotation = Random.Range(0, 360);
+        //data.treePrototypes[type].prefab.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+        tree.rotation = Random.Range(0,2 * Mathf.PI);
         GetComponent<Terrain>().AddTreeInstance(tree);
     }
 
@@ -288,8 +291,7 @@ public class islandGeneratorManager : MonoBehaviour
                 SpawnTree(x, y, 9);
             }
         }
-
-        GetComponent<Terrain>().Flush();
+       // GetComponent<Terrain>().Flush();
     }
 
     void SpawnHemp(float x, float y, TerrainData data, int surface)

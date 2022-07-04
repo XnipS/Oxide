@@ -7,30 +7,31 @@ public class playerHealth : NetworkBehaviour
     public float maxHealth = 100f;
     [SyncVar]
     public float currentHealth = 100f;
+    public int gibs;
 
-    public connected_client myClient;
+
 
     [Command(requiresAuthority = false)]
-    public void CMD_TakeDamage(float damage)
+    public void CMD_TakeDamage(float damage, NetworkIdentity damageDealer)
     {
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
-        RPC_UpdateHealth(currentHealth, -damage);
+        RPC_UpdateHealth(currentHealth, -damage, damageDealer);
         if (currentHealth == 0)
         {
-            FindObjectOfType<effectManager>().CMD_SpawnEffect(4, transform.position, transform.rotation);
+            FindObjectOfType<effectManager>().CMD_SpawnEffect(gibs, transform.position, transform.rotation);
             NetworkServer.Destroy(this.gameObject);
         }
     }
 
     [ClientRpc]
-    public void RPC_UpdateHealth(float hp, float delta)
+    public void RPC_UpdateHealth(float hp, float delta, NetworkIdentity damageDealer)
     {
         currentHealth = hp;
         if (hasAuthority)
         {
             FindObjectOfType<ui_hud>().UpdateStatusHud(ui_hud.statusType.health, currentHealth);
         }
-    }
 
+    }
 }

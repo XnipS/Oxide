@@ -7,6 +7,7 @@ public class inv_item_data : ScriptableObject
     public int id;
     public int maxAmount = 1;
     public string title;
+    public string description = "No description";
     public Sprite icon;
     [Header("EQUIPPABLE")]//////////////////////////////////////
     public int weaponId = 0;
