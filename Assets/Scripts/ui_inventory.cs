@@ -26,7 +26,7 @@ public class ui_inventory : MonoBehaviour
     public bool picked_picking;
     ui_slot picked_slot;
     public inv_item picked_inv;
-    bool picked_storage;
+    public bool picked_storage;
     public int currentStorageSlots;
     public itemStorage currentStorage;
 
@@ -251,6 +251,9 @@ public class ui_inventory : MonoBehaviour
             {
                 belt[inv.slot - 24].UpdateIconData(inv);
             }
+        }
+        if(player) {
+            player.GetComponent<playerWeapons>().EquipSlot(player.GetComponent<playerWeapons>().currentBeltSlot);
         }
     }
 

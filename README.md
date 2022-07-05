@@ -2,7 +2,7 @@
 
 ![Oxide Logo](https://drive.google.com/uc?export=view&id=1AveHQy8IlCIktX_c_tb2MK2D6PS0oUUv)
 
-# DevLog - v0.2.11
+# DevLog - v0.2.13
 
 ### Player Basics 0.1
 
@@ -36,6 +36,8 @@ Basic Cooking✔️\
 Playtest Patch 001✔️\
 Object Health✔️\
 Blueprints✔️\
+Heli✔️\
+Playtest Patch 002✔️\
 Durability
 
 ### Survival System 0.4

@@ -291,7 +291,7 @@ public class islandGeneratorManager : MonoBehaviour
                 SpawnTree(x, y, 9);
             }
         }
-       // GetComponent<Terrain>().Flush();
+       GetComponent<Terrain>().Flush();
     }
 
     void SpawnHemp(float x, float y, TerrainData data, int surface)

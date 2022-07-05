@@ -30,7 +30,10 @@ public class npcHealth : NetworkBehaviour
         currentHealth = hp;
         if (isServer)
         {
-            GetComponent<ai_huey>().TakeDamageHook(damageDealer);
+            if (GetComponent<ai_huey>())
+            {
+                GetComponent<ai_huey>().TakeDamageHook(damageDealer);
+            }
         }
     }
 }

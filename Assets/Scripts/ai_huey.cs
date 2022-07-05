@@ -48,11 +48,11 @@ public class ai_huey : NetworkBehaviour
 
     public void TakeDamageHook(NetworkIdentity damager)
     {
+        if(damager == null) {Debug.Log("[AI] Unkown damager networkIdentity"); return;}
         currentTarget = damager;
         waypoint.x = currentTarget.transform.position.x;
         waypoint.z = currentTarget.transform.position.z;
         waypoint.y = 0;
-        Debug.Log("HIT HELI");
     }
 
     IEnumerator TurretThink()

@@ -21,7 +21,7 @@ public class itemCooker : NetworkBehaviour
     {
         storage = GetComponent<itemStorage>();
     }
-
+    [Command(requiresAuthority = false)]
     public void CMD_AttemptToToggle()
     {
         //Turn on/off
@@ -81,33 +81,35 @@ public class itemCooker : NetworkBehaviour
             wa.id = m_waste;
             storage.GiveItem(wa);
         }
-        //Do recipes
-        foreach (inv_recipe rep in m_cookingRecipes)
+        //Foreach item/slot in furnace
+        for (int i = 0; i < storage.storage.Count; i++)
         {
-            //Check if can afford
-            bool can = true;
-            for (int x = 0; x < rep.inputItems.Length; x++)
+            //Do recipes
+            foreach (inv_recipe rep in m_cookingRecipes)
             {
-                //Check if afford
-                if (!storage.HasEnough(rep.inputItems[x], rep.inputAmount[x]))
+                //Check input id
+                if (storage.storage[i].id == rep.inputItems[0])
                 {
-                    can = false;
+                    //Check input amount
+                    if (storage.storage[i].amount >= rep.inputAmount[0])
+                    {
+                        //Remove input item
+                        storage.storage[i].amount -= rep.inputAmount[0];
+                        //Check if empty
+                        if(storage.storage[i].amount <= 0) {
+                            storage.storage.Remove(storage.storage[i]);
+                        }
+                        //Give output
+                        inv_item it = inv_item.CreateInstance<inv_item>();
+                        it.amount = rep.outputAmount;
+                        it.id = rep.outputItem;
+                        storage.GiveItem(it);
+                    }
                 }
-            }
-            if (can)
-            {
-                //Remove input
-                for (int x = 0; x < rep.inputItems.Length; x++)
-                {
-                    storage.DestroyItem(rep.inputItems[x], rep.inputAmount[x]);
-                }
-                //Give output
-                inv_item it = inv_item.CreateInstance<inv_item>();
-                it.amount = rep.outputAmount;
-                it.id = rep.outputItem;
-                storage.GiveItem(it);
+
             }
         }
+
         storage.CMD_UpdateStorage(storage.storage, storage.slots);
     }
 

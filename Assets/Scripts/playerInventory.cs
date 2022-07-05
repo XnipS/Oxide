@@ -35,12 +35,12 @@ public class playerInventory : NetworkBehaviour
             myInv.GiveItem(data);
             if (fromGround)
             {
-                GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_pickup.name, GetComponent<playerWeapons>().currentWeapon, false);
+                GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_pickup.name, GetComponent<playerWeapons>().currentWeapon, false, false);
             }
         }
     }
     public void DropItemAnimation()
     {
-        GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_drop.name, GetComponent<playerWeapons>().currentWeapon, false);
+        GetComponent<playerWeapons>().CMD_PlayWeaponAnimation(anim_drop.name, GetComponent<playerWeapons>().currentWeapon, false, false);
     }
 }

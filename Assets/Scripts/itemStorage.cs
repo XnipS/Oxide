@@ -38,8 +38,7 @@ public class itemStorage : NetworkBehaviour
     {
         if (inv.inventoryStatus && inv.currentStorage == this)
         {
-
-            if (inv.picked_picking && storage.Contains(inv.picked_inv))
+            if (inv.picked_picking && inv.picked_storage)
             {
                 storage = str;
                 slots = slo;
@@ -50,7 +49,6 @@ public class itemStorage : NetworkBehaviour
                         inv.picked_inv = t;
                     }
                 }
-
                 inv.CloseStorage();
                 inv.OpenStorage(storage, slots, this);
             }

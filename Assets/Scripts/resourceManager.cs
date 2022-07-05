@@ -248,11 +248,20 @@ public class resourceManager : NetworkBehaviour
         //Get tree
         harvestableTree target = GetTreeWithID(id);
         target.health = newHp;
+        //Debug.Log("[RM] ID: " + id + "HP: " + newHp + "POS: " + target.pos + "TerrainID: " + target.terrainId);
         if (target.health == 0)
         {
             //Get and remove instance from array
             List<TreeInstance> instances = new List<TreeInstance>(terrains[target.terrainId].terrainData.treeInstances);
-            instances.Remove(target.instance);
+            //Debug.Log("[RM] Tree chopped: " + instances.Contains(target.instance));
+            //Find instance at pos (Error -> #2)
+            TreeInstance[] targetedTrees = instances.Where(x => x.position == target.instance.position).ToArray();
+            if (targetedTrees.Length != 1)
+            {
+                Debug.LogError("[RM] Trees at target pos != 1");
+            }
+            //Remove the tree
+            instances.Remove(targetedTrees[0]);
             //Refresh collider
             TerrainCollider terrainCollider = terrains[target.terrainId].GetComponent<TerrainCollider>();
             terrainCollider.enabled = false;
