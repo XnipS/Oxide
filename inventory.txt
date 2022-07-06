@@ -73,3 +73,99 @@ Dense forest
 ##########TREES##########
 1000 max big tree
 550 max small tree
+##########Common##########
+Large Furnace
+Large Wood Box
+Leather Gloves
+Machete
+Medical Syringe
+Metal Hori Embrasure
+Metal Vert Embrasure
+Pistol Bullet
+Shelves
+Sword
+Barricade
+Stone spear
+Water bucket
+Wood armor pants
+Wood chestplate
+Wood shutters
+Wood floor spikes
+##########Uncommon##########
+Shotgun bucksot
+Rifle ammo
+Guitar
+Barbed Wood Barricade
+Beancan grenade
+Bed
+Bone armor pants
+Bone jacket
+Boonie hat
+Bucket helmet
+Ceiling light
+Crossbow
+Explosives
+Hatchet
+Hazmat Boots
+Hazmat Gloves
+Hazmat Jacket
+Hazmat Pants
+High External Wood Gate
+High External Wood Wall
+Balaclava
+Jacket
+Lantern
+Large Medkit
+Large Water Catcher
+Large Wood sign
+Metal Barricade
+Miners Hat
+Mining Quarry
+Metal window bars
+revolver
+riot helmet
+salvaged axe
+salvaged hammer
+sandbags
+Small oil refinery
+Snap Trap
+Survey Charge
+Water barrel
+##########Rare##########
+Coffee can helmet
+Concrete barricade
+F1 Grenade
+Flame thrower
+Hazmat helmet
+Land Mine
+Longsword
+Mace
+Pick AXe
+Pump shotgun
+Road sign jacket
+Road sign kilt
+Rocket
+Salveaged cleaver
+salvaged icepick
+Semi pistol
+Semi rifle
+Snow jacket
+Thompson
+##########Extremely Rare##########
+4x Scope
+AK
+Turret
+Bolty
+Custom Smg
+Stone high external wall
+Stone high external gate
+Holosight
+Metal chest plate
+Metal face plate
+Muzzle boost
+Muzzle brake
+Rocket launcher
+Silencer
+C4
+Laser sight
+Flashlight
