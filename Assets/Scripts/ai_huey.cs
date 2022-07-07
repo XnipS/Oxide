@@ -5,6 +5,7 @@ using Mirror;
 public class ai_huey : NetworkBehaviour
 {
     public GameObject m_bullet;
+    public GameObject m_rocket;
     public int m_bulletEffect;
     public GameObject m_turret;
     [SyncVar]
@@ -20,6 +21,7 @@ public class ai_huey : NetworkBehaviour
     public float m_speed;
     NetworkIdentity currentTarget = null;
     Vector3 waypoint = Vector3.zero;
+    float rocketBurstCooldown;
     // Start is called before the first frame update
     void Start()
     {
@@ -48,7 +50,7 @@ public class ai_huey : NetworkBehaviour
 
     public void TakeDamageHook(NetworkIdentity damager)
     {
-        if(damager == null) {Debug.Log("[AI] Unkown damager networkIdentity"); return;}
+        if (damager == null) { Debug.Log("[AI] Unkown damager networkIdentity"); return; }
         currentTarget = damager;
         waypoint.x = currentTarget.transform.position.x;
         waypoint.z = currentTarget.transform.position.z;
@@ -72,12 +74,26 @@ public class ai_huey : NetworkBehaviour
                 }
                 else
                 {
+                    if (rocketBurstCooldown > 0)
+                    {
+                        rocketBurstCooldown -= Time.deltaTime;
+                    }
                     turret_target = Quaternion.LookRotation((currentTarget.transform.position + Vector3.up) - m_turret.transform.position);
                     if (Physics.Raycast(m_turret.transform.position + m_turret.transform.forward, turret_target * Vector3.forward, out RaycastHit hit, 1000f))
                     {
                         if (hit.collider.GetComponent<NetworkIdentity>() && hit.collider.GetComponent<NetworkIdentity>() == currentTarget)
                         {
-                            
+                            if (rocketBurstCooldown <= 0)
+                            {
+                                rocketBurstCooldown = 10f;
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    GameObject x = Instantiate(m_rocket, m_turret.transform.position, turret_target);
+                                    NetworkServer.Spawn(x);
+                                    FindObjectOfType<effectManager>().CMD_SpawnEffect(9, m_turret.transform.position, turret_target);
+                                    yield return new WaitForSeconds(.25f);
+                                }
+                            }
                             yield return new WaitForSeconds(.1f);
                             GameObject g = Instantiate(m_bullet, m_turret.transform.position, turret_target);
                             NetworkServer.Spawn(g);

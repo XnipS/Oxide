@@ -9,6 +9,7 @@ public class objectHealth : NetworkBehaviour
     [SyncVar]
     public float currentHealth = 100f;
     public int gibs;
+    public int hitEffect;
 
 
 
@@ -20,6 +21,9 @@ public class objectHealth : NetworkBehaviour
         RPC_UpdateHealth(currentHealth, -damage, damageDealer);
         if (currentHealth == 0)
         {
+            if(GetComponent<lootBarrel>()) {
+                GetComponent<lootBarrel>().SpawnLoot();
+            }
             FindObjectOfType<effectManager>().CMD_SpawnEffect(gibs, transform.position, transform.rotation);
             NetworkServer.Destroy(this.gameObject);
         }
@@ -29,6 +33,5 @@ public class objectHealth : NetworkBehaviour
     public void RPC_UpdateHealth(float hp, float delta, NetworkIdentity damageDealer )
     {
         currentHealth = hp;
-
     }
 }

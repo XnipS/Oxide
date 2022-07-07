@@ -147,6 +147,7 @@ public class ui_crafting : MonoBehaviour
         inv_item it = inv_item.CreateInstance<inv_item>();
         it.amount = recipe.outputAmount;
         it.id = recipe.outputItem;
+        it.durability = FindObjectOfType<itemDictionary>().GetDataFromItemID(it.id).maxDurability;
         inventory.GiveItem(it);
         //Refresh
         inventory.CloseInventory();

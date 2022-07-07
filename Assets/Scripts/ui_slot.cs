@@ -26,7 +26,7 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     }
     public void UpdateIconData(inv_item data)
     {
-        
+
         //Check if has item
         if (data.id == 0)
         {
@@ -72,8 +72,9 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
         if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxDurability > 0)
         {
             durability.gameObject.SetActive(true);
-            durability.value = data.durability;
             durability.maxValue = FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxDurability;
+            durability.value = data.durability;
+            //Debug.Log("[UI] Current: " + durability.value + "Max: " + durability.maxValue);
         }
         else
         {

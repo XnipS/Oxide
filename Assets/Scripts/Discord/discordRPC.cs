@@ -14,22 +14,23 @@ public class discordRPC : MonoBehaviour
     {
         Debug.Log("start");
 
-            discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
-            UpdatePresence();
-            SceneManager.sceneLoaded += LoadScene;
+        discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
+        UpdatePresence();
+        SceneManager.sceneLoaded += LoadScene;
     }
     void Update()
     {
-            discord.RunCallbacks();
+        discord.RunCallbacks();
     }
 
-    void OnDisable()
+    void OnApplicationQuit()
     {
         Debug.Log("Disposed Discord!");
         discord.Dispose();
     }
 
-    void LoadScene (Scene scene, LoadSceneMode mode) {
+    void LoadScene(Scene scene, LoadSceneMode mode)
+    {
         UpdatePresence();
     }
 
@@ -100,7 +101,7 @@ public class discordRPC_editor : EditorWindow
         Discord.Activity activity;
         activity = new Discord.Activity
         {
-            Details = "Oxide Editor v"  + Application.version,
+            Details = "Oxide Editor v" + Application.version,
             State = "In Unity Editor",
             Assets = new ActivityAssets
             {

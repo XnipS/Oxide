@@ -157,7 +157,6 @@ public class playerWeapons : NetworkBehaviour
                 if (Input.GetKey(KeyCode.Mouse0))
                 {
                     DoFireChecks();
-
                 }
             }
             else
@@ -165,7 +164,6 @@ public class playerWeapons : NetworkBehaviour
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     DoFireChecks();
-
                 }
             }
         }
@@ -173,6 +171,22 @@ public class playerWeapons : NetworkBehaviour
 
     void DoFireChecks()
     {
+        //Final check 
+        if(currentData == null){return;}
+        //Check durability
+        if (currentData.maxDurability > 0)
+        {
+            if (myItem.durability > 0)
+            {
+                myItem.durability -= currentData.durabilityOnUse;
+                myInv.UpdateBelt();
+            }
+            else
+            {
+                return;
+            }
+        }
+        //Check aim required eg bow
         if (currentData.aimRequiredToShoot)
         {
             if (current_aimAnim == "")
@@ -180,6 +194,7 @@ public class playerWeapons : NetworkBehaviour
                 return;
             }
         }
+        //Check ammo
         if (currentData.ammo != 0)
         {
             if (myItem.ammoLoaded > 0)
@@ -191,32 +206,30 @@ public class playerWeapons : NetworkBehaviour
         }
         else
         {
-
             Fire();
-
         }
     }
 
     void Fire()
     {
+        //Apply cooldown
         cooldown = currentData.cooldown;
+        //Use aim fire animation or not
         if (currentData.anim_aim_fire != null && isAiming)
         {
-            CMD_PlayWeaponAnimation(currentData.anim_aim_fire.name, currentData.weaponId, false, true);
+            CMD_PlayWeaponAnimation(currentData.anim_aim_fire.name, currentData.weaponId, false, false);
         }
         else
         {
-            CMD_PlayWeaponAnimation(currentData.anim_attack.name, currentData.weaponId, false, true);
+            CMD_PlayWeaponAnimation(currentData.anim_attack.name, currentData.weaponId, false, false);
         }
+        //Stop aiming after use eg bow
         if (currentData.aimRequiredToShoot)
         {
             isAiming = false;
             CMD_PlayWeaponAnimation(currentData.anim_aim.name, currentData.weaponId, true, false);
         }
-        //Apply recoil
-        GetComponent<smoothMouseLook>().rotationX += Random.Range(-currentData.recoil_std.x, currentData.recoil_std.x) + Random.Range(-currentData.recoil_rnd.x, currentData.recoil_rnd.x);
-        vert1.rotationY += currentData.recoil_std.y + Random.Range(0, currentData.recoil_rnd.y);
-        vert2.rotationY = vert1.rotationY;
+        //Attack
         if (currentData.anim_attack_hit == null)
         {
             switch (currentData.fireType)
@@ -228,6 +241,10 @@ public class playerWeapons : NetworkBehaviour
                     }
                     break;
                 case (int)FireType.projectile:
+                    //Apply recoil
+                    GetComponent<smoothMouseLook>().rotationX += Random.Range(-currentData.recoil_std.x, currentData.recoil_std.x) + Random.Range(-currentData.recoil_rnd.x, currentData.recoil_rnd.x);
+                    vert1.rotationY += currentData.recoil_std.y + Random.Range(0, currentData.recoil_rnd.y);
+                    vert2.rotationY = vert1.rotationY;
                     CMD_SpawnProjectile(currentData.id, Camera.main.transform.position + Camera.main.transform.forward, Quaternion.LookRotation(Camera.main.transform.forward));
                     break;
             }
@@ -285,8 +302,8 @@ public class playerWeapons : NetworkBehaviour
             }
             if (hit.collider.GetComponent<objectHealth>())
             {
-
                 //Animation confirm
+                FindObjectOfType<effectManager>().CMD_SpawnEffect(hit.collider.GetComponent<objectHealth>().hitEffect, hit.point, Quaternion.identity);
                 if (currentData.anim_attack_hit != null)
                 {
                     CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false, false);
@@ -318,6 +335,10 @@ public class playerWeapons : NetworkBehaviour
         if (!hasAuthority) { return; }
         if (currentData.anim_attack_hit != null && currentData.fireType == (int)FireType.raycast)
         {
+            //Apply recoil
+            GetComponent<smoothMouseLook>().rotationX += Random.Range(-currentData.recoil_std.x, currentData.recoil_std.x) + Random.Range(-currentData.recoil_rnd.x, currentData.recoil_rnd.x);
+            vert1.rotationY += currentData.recoil_std.y + Random.Range(0, currentData.recoil_rnd.y);
+            vert2.rotationY = vert1.rotationY;
             RaycastAttack();
         }
     }
@@ -327,12 +348,6 @@ public class playerWeapons : NetworkBehaviour
         currentBeltSlot = id;
         //Delete
         GetComponent<playerDeployables>().CancelGhost();
-        //Stop aiming
-        if (current_aimAnim != "")
-        {
-            CMD_PlayWeaponAnimation(currentData.anim_aim.name, currentData.weaponId, true, false);
-            isAiming = false;
-        }
         //Check if slot populated
         inv_item occupied = null;
         foreach (inv_item it in myInv.invent)
@@ -341,6 +356,12 @@ public class playerWeapons : NetworkBehaviour
             {
                 occupied = it;
             }
+        }
+        //Stop aiming
+        if (current_aimAnim != "" && occupied.slot != myItem.slot)
+        {
+            CMD_PlayWeaponAnimation(currentData.anim_aim.name, currentData.weaponId, true, false);
+            isAiming = false;
         }
         //Update Viewmodels
         if (occupied == null || occupied.blueprint || (occupied.durability == 0 && FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id).maxDurability > 0))

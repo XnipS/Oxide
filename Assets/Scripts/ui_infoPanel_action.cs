@@ -10,7 +10,9 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
     public enum actionType
     {
         drop,
-        learn
+        learn,
+        upgrade,
+        reveal
     }
     public actionType myType;
     public Sprite[] icons;
@@ -38,6 +40,14 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                 m_text.text = "Learn";
                 m_image.sprite = icons[1];
                 break;
+            case actionType.upgrade:
+                m_text.text = "Upgrade";
+                m_image.sprite = icons[2];
+                break;
+            case actionType.reveal:
+                m_text.text = "Reveal";
+                m_image.sprite = icons[3];
+                break;
         }
     }
 
@@ -61,6 +71,54 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                     pinv.myMemory.Add(myItem.id);
                     FindObjectOfType<ui_inventory>().DestroyItem(mySlot, myStore);
                     FindObjectOfType<ui_notifyManager>().Notify("Learned!", ui_notification.NotifyColourType.blue, ui_notification.NotifyIconType.learn);
+                }
+                break;
+            case actionType.upgrade:
+                ui_inventory uiinv = FindObjectOfType<ui_inventory>();
+                switch (myItem.id)
+                {
+                    case 30:
+                        if (uiinv.HasEnough(myItem.id, 60))
+                        {
+                            inv_item i = ScriptableObject.CreateInstance<inv_item>();
+                            i.id = 31;
+                            i.amount = 1;
+                            uiinv.DestroyItem(myItem.id, 60);
+                            uiinv.GiveItem(i);
+                        }
+                        else
+                        {
+                            FindObjectOfType<ui_notifyManager>().Notify("Not enough!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.plus);
+                        }
+                        break;
+                    case 31:
+                        if (uiinv.HasEnough(myItem.id, 5))
+                        {
+                            inv_item i = ScriptableObject.CreateInstance<inv_item>();
+                            i.id = 32;
+                            i.amount = 1;
+                            uiinv.DestroyItem(myItem.id, 5);
+                            uiinv.GiveItem(i);
+                        }
+                        else
+                        {
+                            FindObjectOfType<ui_notifyManager>().Notify("Not enough!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.plus);
+                        }
+                        break;
+                    case 32:
+                        if (uiinv.HasEnough(myItem.id, 4))
+                        {
+                            inv_item i = ScriptableObject.CreateInstance<inv_item>();
+                            i.id = 33;
+                            i.amount = 1;
+                            uiinv.DestroyItem(myItem.id, 4);
+                            uiinv.GiveItem(i);
+                        }
+                        else
+                        {
+                            FindObjectOfType<ui_notifyManager>().Notify("Not enough!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.plus);
+                        }
+                        break;
                 }
                 break;
         }

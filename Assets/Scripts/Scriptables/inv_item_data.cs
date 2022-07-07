@@ -26,6 +26,7 @@ public class inv_item_data : ScriptableObject
     public float cooldown = 1f;
     public float deltaFov = 0f;
     public float maxDurability = 0;
+    public float durabilityOnUse = 0;
     [Header("Recoil")]
     public Vector2 recoil_std;
     public Vector2 recoil_rnd;
