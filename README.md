@@ -42,10 +42,8 @@ Durability✔️
 
 ### Survival System 0.4
 
-Animals\
 Lootable Corpses\
-Respawn points\
-Loot tables\
+Animals\
 Hunger & Eating\
 Thirst & Drinking\
 Clothing\
