@@ -100,8 +100,9 @@ public class ai_huey : NetworkBehaviour
                                         GameObject x = Instantiate(m_rocket, m_turret.transform.position, turret_target * rocket_error);
                                         NetworkServer.Spawn(x);
                                         FindObjectOfType<effectManager>().CMD_SpawnEffect(9, m_turret.transform.position, turret_target);
-                                        yield return new WaitForSeconds(.5f);
+                                        yield return new WaitForSeconds(.05f);
                                     }
+                                    yield return new WaitForSeconds(3f);
                                 }
                                 yield return new WaitForSeconds(.1f);
                                 Vector2 bullet_cone = Random.insideUnitCircle * Random.Range(-.5f, .5f);

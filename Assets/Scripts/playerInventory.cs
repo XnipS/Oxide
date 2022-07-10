@@ -8,7 +8,7 @@ public class playerInventory : NetworkBehaviour
     ui_inventory myInv;
     public AnimationClip anim_pickup;
     public AnimationClip anim_drop;
-    public List<int> myMemory;
+
     void Start()
     {
         if (!hasAuthority) { return; }

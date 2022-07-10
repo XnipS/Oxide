@@ -35,6 +35,8 @@ public class ui_inventory : MonoBehaviour
     public bool picked_storage;
     public int currentStorageSlots;
     public itemStorage currentStorage;
+    //Memory
+    public List<int> myMemory;
     //Start
     void Start()
     {
@@ -56,6 +58,7 @@ public class ui_inventory : MonoBehaviour
             newInvent.Add(Instantiate(it));
         }
         invent = newInvent;
+        RefreshInventoryUI();
     }
     //Update
     void Update()
@@ -171,7 +174,7 @@ public class ui_inventory : MonoBehaviour
     public void RefreshStorageUI(int slotCount)
     {
         //Rebuild if slots are different size
-        if (storage.Count != slotCount)
+       // if (storage.Count != slotCount)
         {
             RebuildStorageUI(slotCount);
         }

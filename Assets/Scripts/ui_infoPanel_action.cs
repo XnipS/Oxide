@@ -83,7 +83,7 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                 }
                 break;
             case actionType.learn:
-                playerInventory pinv = FindObjectOfType<ui_inventory>().player.GetComponent<playerInventory>();
+                ui_inventory pinv = FindObjectOfType<ui_inventory>();
                 if (pinv.myMemory.Contains(myItem.id))
                 {
                     FindObjectOfType<ui_notifyManager>().Notify("Already learned!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.learn);

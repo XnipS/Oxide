@@ -55,7 +55,7 @@ public class playerHealth : NetworkBehaviour
             FindObjectOfType<effectManager>().CMD_SpawnEffect(gibs, transform.position, transform.rotation);
             foreach (connected_client client in FindObjectsOfType<connected_client>())
             {
-                if (client.GetComponent<NetworkIdentity>().connectionToServer == GetComponent<NetworkIdentity>().connectionToServer)
+                if (client.GetComponent<NetworkIdentity>().connectionToClient == GetComponent<NetworkIdentity>().connectionToClient)
                 {
                     client.RPC_PlayerDeath(transform.position);
                 }

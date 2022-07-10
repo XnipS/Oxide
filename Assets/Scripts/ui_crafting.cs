@@ -76,9 +76,9 @@ public class ui_crafting : MonoBehaviour
         foreach (inv_recipe r in selected)
         {
             bool shown = false;
-            for (int i = 0; i < player.myMemory.Count; i++)
+            for (int i = 0; i < FindObjectOfType<ui_inventory>().myMemory.Count; i++)
             {
-                if (player.myMemory[i] == r.outputItem)
+                if (FindObjectOfType<ui_inventory>().myMemory[i] == r.outputItem)
                 {
                     shown = true;
                 }
