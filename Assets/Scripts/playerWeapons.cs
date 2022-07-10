@@ -179,7 +179,7 @@ public class playerWeapons : NetworkBehaviour
             if (myItem.durability > 0)
             {
                 myItem.durability -= currentData.durabilityOnUse;
-                myInv.UpdateBelt();
+                myInv.RefreshInventoryUI();
             }
             else
             {
@@ -200,7 +200,7 @@ public class playerWeapons : NetworkBehaviour
             if (myItem.ammoLoaded > 0)
             {
                 myItem.ammoLoaded--;
-                myInv.UpdateBelt();
+                myInv.RefreshInventoryUI();
                 Fire();
             }
         }
@@ -325,7 +325,7 @@ public class playerWeapons : NetworkBehaviour
                 int take = Mathf.Min(hm, currentData.maxAmmo - myItem.ammoLoaded);
                 myInv.DestroyItem(currentData.ammo, take);
                 myItem.ammoLoaded += take;
-                myInv.UpdateBelt();
+                myInv.RefreshInventoryUI();
             }
         }
     }
@@ -364,7 +364,7 @@ public class playerWeapons : NetworkBehaviour
             isAiming = false;
         }
         //Update Viewmodels
-        if (occupied == null || occupied.blueprint || (occupied.durability == 0 && FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id).maxDurability > 0))
+        if (occupied == null || occupied.blueprint || (occupied.durability == 0 && itemDictionary.singleton.GetDataFromItemID(occupied.id).maxDurability > 0))
         {
             currentData = null;
             CMD_PlayWeaponAnimation("hands", 0, false, false);
@@ -372,7 +372,7 @@ public class playerWeapons : NetworkBehaviour
         }
         if (currentData == null)
         {
-            currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
+            currentData = itemDictionary.singleton.GetDataFromItemID(occupied.id);
             myItem = occupied;
             if (currentData.weaponId != 0)
             {
@@ -389,9 +389,9 @@ public class playerWeapons : NetworkBehaviour
             }
         }
         else
-        if (currentData.id != occupied.id || (currentData.id == occupied.id && FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id).placeId != 0))
+        if (currentData.id != occupied.id || (currentData.id == occupied.id && itemDictionary.singleton.GetDataFromItemID(occupied.id).placeId != 0))
         {
-            currentData = FindObjectOfType<itemDictionary>().GetDataFromItemID(occupied.id);
+            currentData = itemDictionary.singleton.GetDataFromItemID(occupied.id);
             myItem = occupied;
             if (currentData.weaponId != 0)
             {
@@ -423,6 +423,18 @@ public class playerWeapons : NetworkBehaviour
             ob.SetActive(true);
         }
     }
+    public void ANIM_UseConsumable () {
+        if(itemDictionary.singleton.GetDataFromItemID(currentData.id).deltaHealth > 0) {
+            //Subtract health
+            GetComponent<playerHealth>().currentHealth += Mathf.Min(itemDictionary.singleton.GetDataFromItemID(currentData.id).deltaHealth, GetComponent<playerHealth>().maxHealth - GetComponent<playerHealth>().currentHealth);
+            //Update ui
+            FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.health, GetComponent<playerHealth>().currentHealth);
+            //Use up one
+            FindObjectOfType<ui_inventory>().DestroyItem(myItem.slot, 1, false);
+            //Reset viewmodel
+            EquipSlot(currentBeltSlot);
+        }
+    }
     public void ANIM_SpawnMuzzleEffect(int id)
     {
         snap_muzzle muz = null;
@@ -445,7 +457,7 @@ public class playerWeapons : NetworkBehaviour
     [Command]
     public void CMD_SpawnProjectile(int type, Vector3 pos, Quaternion rot)
     {
-        GameObject g = Instantiate(FindObjectOfType<itemDictionary>().GetDataFromItemID(type).projectile, pos, rot);
+        GameObject g = Instantiate(itemDictionary.singleton.GetDataFromItemID(type).projectile, pos, rot);
         g.GetComponent<projectile>().owner = GetComponent<NetworkIdentity>();
         NetworkServer.Spawn(g);
     }

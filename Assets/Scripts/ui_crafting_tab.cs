@@ -20,6 +20,6 @@ public class ui_crafting_tab : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        parent.OpenTab(id);
+        StartCoroutine(parent.OpenTab(id));
     }
 }

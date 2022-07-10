@@ -31,6 +31,7 @@ public class playerMovement : NetworkBehaviour
     [SyncVar]
     Quaternion bendRot = Quaternion.identity;
     float Yvelocity;
+    public connected_client myClient;
 
     void Start()
     {
@@ -270,6 +271,7 @@ public class playerMovement : NetworkBehaviour
             if (man.GetComponent<NetworkIdentity>().connectionToClient == GetComponent<NetworkIdentity>().connectionToClient)
             {
                 man.myPlayer = gameObject;
+                myClient = man;
             }
         }
         base.OnStartAuthority();

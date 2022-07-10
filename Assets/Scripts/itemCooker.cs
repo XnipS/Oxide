@@ -112,7 +112,7 @@ public class itemCooker : NetworkBehaviour
 
         storage.CMD_UpdateStorage(storage.storage, storage.slots);
     }
-
+    [ClientRpc]
     public void RPC_UpdateToggle(bool toggle)
     {
         m_flame.SetActive(toggle);

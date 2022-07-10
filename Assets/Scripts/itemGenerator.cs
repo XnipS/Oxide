@@ -31,7 +31,7 @@ public class itemRemote_editor_popup : EditorWindow
         GUILayout.Label("Item Data Dictionary", EditorStyles.boldLabel);
         if (GUILayout.Button("Regenerate"))
         {
-            FindObjectOfType<itemDictionary>().Regenerate();
+            itemDictionary.singleton.Regenerate();
         }
         GUILayout.Label("Recipe Dictionary", EditorStyles.boldLabel);
         if (GUILayout.Button("Regenerate"))

@@ -132,7 +132,7 @@ public class itemStorage : NetworkBehaviour
             }
             else if (taken.id == item.id)
             {
-                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(item.id).maxAmount;
+                int max = itemDictionary.singleton.GetDataFromItemID(item.id).maxAmount;
                 if ((taken.amount + item.amount) > max)
                 {
                     item.amount -= (max - taken.amount);

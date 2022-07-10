@@ -34,7 +34,7 @@ public class iconGenerator : MonoBehaviour
     {
         for (int i = 0; i < obs.Length; i++)
         {
-            if (i != 0)
+            if (i != 0 && i!=30&& i!=31&& i!=32&& i!=33)
             {
                 DisableAll();
                 obs[i].SetActive(true);

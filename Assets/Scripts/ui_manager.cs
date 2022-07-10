@@ -12,6 +12,7 @@ public class ui_manager : MonoBehaviour
     public ui_crafting crafting;
     public ui_infoPanel info;
     public ui_hud hud;
+    [HideInInspector]
     public playerInventory player;
     playerInventory lastPlayer;
 

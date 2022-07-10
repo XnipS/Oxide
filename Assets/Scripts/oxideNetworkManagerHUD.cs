@@ -35,7 +35,9 @@ public class oxideNetworkManagerHUD : MonoBehaviour
         if (File.Exists(path))
         {
             string[] data = ReadSettings();
-            inp_ip.text = data[0];
+            //inp_ip.text = data[0];
+            data[0] = "localhost";
+            inp_ip.text = "localhost";
             inp_name.text = data[1];
             myName = data[1];
             FindObjectOfType<oxideNetworkManager>().playerName = data[1];

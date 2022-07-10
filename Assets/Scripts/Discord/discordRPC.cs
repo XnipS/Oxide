@@ -12,7 +12,7 @@ public class discordRPC : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("start");
+        //Debug.Log("start");
 
         discord = new Discord.Discord(990054065100689468, (System.UInt64)Discord.CreateFlags.Default);
         UpdatePresence();
@@ -25,7 +25,7 @@ public class discordRPC : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        Debug.Log("Disposed Discord!");
+        //Debug.Log("Disposed Discord!");
         discord.Dispose();
     }
 
@@ -65,7 +65,7 @@ public class discordRPC : MonoBehaviour
     {
         if (res == Discord.Result.Ok)
         {
-            Debug.Log("Updated!");
+            //Debug.Log("Updated!");
         }
         else
         {

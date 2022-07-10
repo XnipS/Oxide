@@ -12,7 +12,8 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
         drop,
         learn,
         upgrade,
-        reveal
+        reveal,
+        consume
     }
     public actionType myType;
     public Sprite[] icons;
@@ -69,7 +70,7 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                 else
                 {
                     pinv.myMemory.Add(myItem.id);
-                    FindObjectOfType<ui_inventory>().DestroyItem(mySlot, myStore);
+                    FindObjectOfType<ui_inventory>().DestroyItem(mySlot.slot, myStore);
                     FindObjectOfType<ui_notifyManager>().Notify("Learned!", ui_notification.NotifyColourType.blue, ui_notification.NotifyIconType.learn);
                 }
                 break;

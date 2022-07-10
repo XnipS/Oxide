@@ -33,7 +33,7 @@ public class ui_hoverObject : MonoBehaviour
             {
                 //Detected bag
                 hover = true;
-                string str = FindObjectOfType<itemDictionary>().GetDataFromItemID(hit.collider.GetComponent<droppedItem>().myData.id).title + " (" + hit.collider.GetComponent<droppedItem>().myData.amount + ")";
+                string str = itemDictionary.singleton.GetDataFromItemID(hit.collider.GetComponent<droppedItem>().myData.id).title + " (" + hit.collider.GetComponent<droppedItem>().myData.amount + ")";
                 if(hit.collider.GetComponent<droppedItem>().myData.blueprint) {
                     str = "Pickup: [Blueprint] " + str;
                 }else {

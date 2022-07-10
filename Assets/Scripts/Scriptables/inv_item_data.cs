@@ -39,4 +39,8 @@ public class inv_item_data : ScriptableObject
     public AnimationClip anim_reload;
     [Header("PLACABALE")]//////////////////////////////////////
     public int placeId = 0;
+    [Header("HEALTH EFFECTOR")]//////////////////////////////////////
+    public float deltaHealth = 0f;
+    public float deltaHunger = 0f;
+    public float deltaWater = 0f;
 }

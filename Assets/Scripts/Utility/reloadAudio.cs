@@ -15,6 +15,7 @@ public class reloadAudio : MonoBehaviour
         if (!Application.isPlaying)
         { return; }
         GameObject gam = new GameObject();
+        gam.name = "[Reload Audio]";
         gam.AddComponent<AudioSource>();
         gam.GetComponent<AudioSource>().clip = clip;
         gam.GetComponent<AudioSource>().rolloffMode = AudioRolloffMode.Linear;
@@ -37,6 +38,7 @@ public class reloadAudio : MonoBehaviour
         if (!Application.isPlaying)
         { return; }
         GameObject gam = new GameObject();
+        gam.name = "[Reload Audio]";
         gam.AddComponent<AudioSource>();
         gam.GetComponent<AudioSource>().clip = clip;
         gam.GetComponent<AudioSource>().rolloffMode = AudioRolloffMode.Linear;

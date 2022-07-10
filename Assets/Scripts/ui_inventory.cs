@@ -1,21 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.UI;
 
 public class ui_inventory : MonoBehaviour
 {
+    //Transforms
     public Transform tra_belt;
     public Transform tra_cloth;
     public Transform tra_bag;
     public Transform tra_box;
+    //Prefab
     public GameObject pre_slot;
+    //Inventory size
     public int bag_count;
     public int belt_count;
+    //Storage
     public List<ui_slot> bag;
     public List<ui_slot> belt;
     public List<ui_slot> box;
     public List<inv_item> invent;
     public List<inv_item> storage;
+    public List<inv_item> defaultItems;
     [HideInInspector]
     public bool inventoryStatus;
     [HideInInspector]
@@ -29,22 +35,29 @@ public class ui_inventory : MonoBehaviour
     public bool picked_storage;
     public int currentStorageSlots;
     public itemStorage currentStorage;
-
+    //Start
     void Start()
     {
         //Add initial dev items
+        SetDefaultItems();
+        //Get icons
+        icons = itemDictionary.singleton.icons;
+        //Initialise
+        RebuildInventoryUI();
+        //UpdateItems
+        RefreshInventoryUI();
+    }
+    //Clear inventory to starting items
+    public void SetDefaultItems()
+    {
         List<inv_item> newInvent = new List<inv_item>();
-        foreach (inv_item it in invent)
+        foreach (inv_item it in defaultItems)
         {
             newInvent.Add(Instantiate(it));
         }
         invent = newInvent;
-        //Get icons
-        icons = FindObjectOfType<itemDictionary>().icons;
-        //Update
-        UpdateBelt();
     }
-
+    //Update
     void Update()
     {
         //Icon cursor follow real cursor if active
@@ -61,9 +74,140 @@ public class ui_inventory : MonoBehaviour
             if (Vector3.Distance(currentStorage.gameObject.transform.position, player.transform.position) > 3f)
             {
                 //Delete data
+                CloseStorage();
                 currentStorage = null;
                 currentStorageSlots = 0;
                 StopDrag(false);
+            }
+        }
+    }
+
+    void RebuildInventoryUI()
+    {
+        //Delete Slots in bag
+        foreach (Transform item in tra_bag)
+        {
+            Destroy(item.gameObject);
+        }
+        bag = new List<ui_slot>();
+        //Delete Slots in belt
+        foreach (Transform item in tra_belt)
+        {
+            Destroy(item.gameObject);
+        }
+        belt = new List<ui_slot>();
+        //Generate Slots for bag
+        for (int x = 0; x < bag_count; x++)
+        {
+            GameObject ga = Instantiate(pre_slot, tra_bag); //Make slots
+            ga.GetComponent<ui_slot>().slot = x; //Assign slot number
+            ga.GetComponent<ui_slot>().icons = icons; //Assing icons
+            ga.GetComponent<ui_slot>().storage = false; //My or other inventory
+            bag.Add(ga.GetComponent<ui_slot>()); //Add to list
+        }
+        //Generate Slots for belt
+        for (int x = 0; x < belt_count; x++)
+        {
+            GameObject ga = Instantiate(pre_slot, tra_belt); //Make slots
+            ga.GetComponent<ui_slot>().slot = x + bag_count; //Assign slot number
+            ga.GetComponent<ui_slot>().icons = icons; //Assing icons
+            ga.GetComponent<ui_slot>().storage = false; //My or other inventory
+            belt.Add(ga.GetComponent<ui_slot>()); //Add to list
+        }
+    }
+
+    /*
+    //Populate Slots
+        foreach (inv_item inv in invent)
+        {
+            if (inv.slot < 24)
+            {
+                bag[inv.slot].UpdateIconData(inv);
+            }
+        }
+    */
+
+    public void RefreshInventoryUI()
+    {
+        //Add temps
+        List<ui_slot> temp_bag = new List<ui_slot>(bag);
+        List<ui_slot> temp_belt = new List<ui_slot>(belt);
+        //Refresh if has item
+        foreach (inv_item item in invent)
+        {
+            ui_slot sel = null;
+            if (item.slot >= bag_count)
+            {
+                //Debug.Log(temp_belt.Where(x => (x.slot) == item.slot).ToArray().Length);
+                sel = temp_belt.Where(x => (x.slot) == item.slot).ToArray()[0];
+                sel.UpdateIconData(item);
+                temp_belt.Remove(sel);
+            }
+            else
+            {
+                //Debug.Log(temp_bag.Where(x => (x.slot) == item.slot).ToArray().Length);
+                sel = temp_bag.Where(x => (x.slot) == item.slot).ToArray()[0];
+                sel.UpdateIconData(item);
+                temp_bag.Remove(sel);
+            }
+            sel.UpdateIconData(item);
+        }
+        //Else reset to empty slot
+        foreach (ui_slot slot in temp_bag)
+        {
+            slot.ResetToEmpty();
+        }
+        foreach (ui_slot slot in temp_belt)
+        {
+            slot.ResetToEmpty();
+        }
+        //Refresh belt
+        if (player)
+        {
+            player.GetComponent<playerWeapons>().EquipSlot(player.GetComponent<playerWeapons>().currentBeltSlot);
+        }
+    }
+
+    public void RefreshStorageUI(int slotCount)
+    {
+        //Rebuild if slots are different size
+        if (storage.Count != slotCount)
+        {
+            RebuildStorageUI(slotCount);
+        }
+        //Add temps
+        List<ui_slot> temp_storage = new List<ui_slot>(box);
+        //Refresh if has item
+        foreach (inv_item item in storage)
+        {
+            ui_slot sel = null;
+            sel = temp_storage.Where(x => (x.slot) == item.slot).ToArray()[0];
+            temp_storage.Remove(sel);
+            sel.UpdateIconData(item);
+        }
+        //Else reset to empty slot
+        foreach (ui_slot slot in temp_storage)
+        {
+            slot.ResetToEmpty();
+        }
+    }
+
+    void RebuildStorageUI(int slots)
+    {
+        if (slots != box.Count)
+        {
+            box.Clear();
+            foreach (Transform item in tra_box)
+            {
+                Destroy(item.gameObject);
+            }
+            for (int x = box.Count; x < slots; x++)
+            {
+                GameObject ga = Instantiate(pre_slot, tra_box); //Make slots
+                ga.GetComponent<ui_slot>().slot = x; //Assign slot number
+                ga.GetComponent<ui_slot>().icons = icons; //Assing icons
+                ga.GetComponent<ui_slot>().storage = true; //My or other inventory
+                box.Add(ga.GetComponent<ui_slot>()); //Add to list
             }
         }
     }
@@ -93,8 +237,8 @@ public class ui_inventory : MonoBehaviour
         }
         return (has);
     }
-
-    public void DestroyItem(ui_slot slot, bool st)
+    //Destroy all from select slots
+    public void DestroyItem(int slot, bool st)
     {
         //Find available slot
         inv_item occupied = null;
@@ -102,7 +246,7 @@ public class ui_inventory : MonoBehaviour
         {
             foreach (inv_item inv in storage)
             {
-                if (inv.slot == slot.slot)
+                if (inv.slot == slot)
                 {
                     occupied = inv;
                 }
@@ -112,7 +256,7 @@ public class ui_inventory : MonoBehaviour
         {
             foreach (inv_item it in invent)
             {
-                if (it.slot == slot.slot)
+                if (it.slot == slot)
                 {
                     occupied = it;
                 }
@@ -131,16 +275,74 @@ public class ui_inventory : MonoBehaviour
             }
 
             //Refresh
-            UpdateBelt();
-            UpdateInventory();
-            
+            RefreshInventoryUI();
+
         }
         else
         {
             Debug.LogError("ERR");
         }
     }
+    //Destroy amount from slot
+    public void DestroyItem(int slot, int amt, bool st)
+    {
+        //Find available slot
+        inv_item occupied = null;
+        if (st)
+        {
+            foreach (inv_item inv in storage)
+            {
+                if (inv.slot == slot)
+                {
+                    occupied = inv;
+                }
+            }
+        }
+        else
+        {
+            foreach (inv_item it in invent)
+            {
+                if (it.slot == slot)
+                {
+                    occupied = it;
+                }
+            }
+        }
+        //Check
+        if (occupied != null)
+        {
+            if (st)
+            {
+                if (occupied.amount > 1)
+                {
+                    occupied.amount--;
+                }
+                else
+                {
+                    storage.Remove(occupied);
+                }
+            }
+            else
+            {
+                if (occupied.amount > 1)
+                {
+                     occupied.amount--;
+                }
+                else
+                {
+                    invent.Remove(occupied);
+                }
+            }
 
+            //Refresh
+            RefreshInventoryUI();
+        }
+        else
+        {
+            Debug.LogError("ERR");
+        }
+    }
+    //Destroy from multiple slots
     public void DestroyItem(int id, int amount)
     {
         //Find available slot
@@ -169,9 +371,9 @@ public class ui_inventory : MonoBehaviour
             }
         }
         //Refresh
-        UpdateBelt();
+        RefreshInventoryUI();
     }
-
+    //Give item to inventory to first available slot
     public void GiveItem(inv_item item)
     {
         int count = 0;
@@ -196,7 +398,7 @@ public class ui_inventory : MonoBehaviour
             }
             else if (taken.id == item.id)
             {
-                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(item.id).maxAmount;
+                int max = itemDictionary.singleton.GetDataFromItemID(item.id).maxAmount;
                 if ((taken.amount + item.amount) > max)
                 {
                     item.amount -= (max - taken.amount);
@@ -211,7 +413,8 @@ public class ui_inventory : MonoBehaviour
                 }
             }
         }
-        FindObjectOfType<ui_notifyManager>().Notify("+" + count + " " + FindObjectOfType<itemDictionary>().GetDataFromItemID(item.id).title, ui_notification.NotifyColourType.green, ui_notification.NotifyIconType.plus);
+        RefreshInventoryUI();
+        FindObjectOfType<ui_notifyManager>().Notify("+" + count + " " + itemDictionary.singleton.GetDataFromItemID(item.id).title, ui_notification.NotifyColourType.green, ui_notification.NotifyIconType.plus);
         //Redrop item because inventory is full
         if (player)
         {
@@ -224,39 +427,7 @@ public class ui_inventory : MonoBehaviour
         }
         Debug.LogError("NO PLAYER TO DROP ITEM");
     }
-
-    public void UpdateBelt()
-    {
-        //Delete old UI
-        foreach (Transform item in tra_belt)
-        {
-            Destroy(item.gameObject);
-        }
-        //Clear list
-        belt = new List<ui_slot>();
-        //Generate Slots
-        for (int x = 0; x < belt_count; x++)
-        {
-            GameObject ga = Instantiate(pre_slot, tra_belt); //Make slots
-                                                             // ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
-            ga.GetComponent<ui_slot>().slot = x + 24; //Assign slot number
-            ga.GetComponent<ui_slot>().icons = icons; //Assing icons
-            ga.GetComponent<ui_slot>().storage = false; //My or other inventory
-            belt.Add(ga.GetComponent<ui_slot>()); //Add to list
-        }
-        //Populate Slots
-        foreach (inv_item inv in invent)
-        {
-            if (inv.slot > 23)
-            {
-                belt[inv.slot - 24].UpdateIconData(inv);
-            }
-        }
-        if(player) {
-            player.GetComponent<playerWeapons>().EquipSlot(player.GetComponent<playerWeapons>().currentBeltSlot);
-        }
-    }
-
+    //Summon inventory items
     public void OpenInventory()
     {
         //Cursor
@@ -266,53 +437,31 @@ public class ui_inventory : MonoBehaviour
         tra_cloth.gameObject.SetActive(true);
         //Toggle variable
         inventoryStatus = true;
-        //Generate Slots
-        for (int x = 0; x < bag_count; x++)
-        {
-            GameObject ga = Instantiate(pre_slot, tra_bag); //Make slots
-            //ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
-            ga.GetComponent<ui_slot>().slot = x; //Assign slot number
-            ga.GetComponent<ui_slot>().icons = icons; //Assing icons
-            ga.GetComponent<ui_slot>().storage = false; //My or other inventory
-            bag.Add(ga.GetComponent<ui_slot>()); //Add to list
-        }
-        //Populate Slots
-        foreach (inv_item inv in invent)
-        {
-            if (inv.slot < 24)
-            {
-                bag[inv.slot].UpdateIconData(inv);
-            }
-        }
-        //UpdateBelt
-        UpdateBelt();
+        //Enable UI
+        tra_bag.gameObject.SetActive(true);
+
     }
+    //Summon storage items
     public void OpenStorage(List<inv_item> store, int slotCount, itemStorage obj)
     {
         //Variables
         currentStorageSlots = slotCount;
         currentStorage = obj;
         storage = store;
-        //Generate Slots
-        for (int x = 0; x < slotCount; x++)
-        {
-            GameObject ga = Instantiate(pre_slot, tra_box); //Make slots
-                                                            // ga.transform.GetChild(1).gameObject.SetActive(false); //Remove slot number
-            ga.GetComponent<ui_slot>().slot = x; //Assign slot number
-            ga.GetComponent<ui_slot>().icons = icons; //Assing icons
-            ga.GetComponent<ui_slot>().storage = true; //My or other inventory
-            box.Add(ga.GetComponent<ui_slot>()); //Add to list
-        }
+        //Enable UI
+        tra_box.gameObject.SetActive(true);
+        //Initialise
+        RefreshStorageUI(slotCount);
         //Populate Slots
         foreach (inv_item inv in storage)
         {
-            if (inv.slot < 24)
+            if (inv.slot < slotCount)
             {
                 box[inv.slot].UpdateIconData(inv);
             }
         }
     }
-
+    //delete inventory
     public void CloseInventory()
     {
         //Cursor
@@ -320,42 +469,28 @@ public class ui_inventory : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         //Clothing
         tra_cloth.gameObject.SetActive(false);
-        //Delete Slots
+        //Hide Slots
+        tra_bag.gameObject.SetActive(false);
         inventoryStatus = false;
-        foreach (Transform item in tra_bag)
-        {
-            Destroy(item.gameObject);
-        }
-        bag = new List<ui_slot>();
         CloseStorage();
     }
+    //delete storage
     public void CloseStorage()
     {
-        //Delete Slots
-        foreach (Transform item in tra_box)
-        {
-            Destroy(item.gameObject);
-        }
-        box = new List<ui_slot>();
+        //Enable UI
+        tra_box.gameObject.SetActive(false);
     }
-
-    public void UpdateInventory()
-    {
-        CloseInventory();
-        UpdateBelt();
-        OpenInventory();
-    }
-
-    public void UpdateStorage(List<inv_item> storage, int count)
+    //Refresh items in storage ui
+    void UpdateStorage(List<inv_item> storage, int count)
     {
         currentStorage.CMD_UpdateStorage(storage, count);
-        CloseStorage();
-        OpenStorage(storage, count, currentStorage);
+        RefreshStorageUI(count);
     }
-
+    //On start of item drag
     public void PickedItem(ui_slot input, bool store)
     {
         if (picked_picking) { return; }
+        picked_slot = input;
         //Find item data we picked up
         if (store)
         {
@@ -364,6 +499,7 @@ public class ui_inventory : MonoBehaviour
                 if (inv.slot == input.slot)
                 {
                     picked_inv = inv;
+
                 }
             }
         }
@@ -420,15 +556,7 @@ public class ui_inventory : MonoBehaviour
         if (occupied)
         {
             if (occupied.id != picked_inv.id)
-            {//Check if same item in slot
-             // int slotp = picked_inv.slot;
-             // int sloto = occupied.slot;
-             //     inv_item x = Instantiate(picked_inv);
-             //     inv_item y = Instantiate(occupied);
-             //     picked_inv = y;
-             //     occupied = x;
-             //     picked_inv.slot = slotp;
-             //     occupied.slot = sloto;
+            {
                 StopDrag(false);
                 return;
             }
@@ -437,7 +565,7 @@ public class ui_inventory : MonoBehaviour
             {
                 //Move half
                 int amountToSplit = picked_inv.amount / 2; //Split number
-                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(picked_inv.id).maxAmount;
+                int max = itemDictionary.singleton.GetDataFromItemID(picked_inv.id).maxAmount;
                 if ((occupied.amount + amountToSplit) > max)
                 {
                     int x = (max - occupied.amount);
@@ -455,7 +583,7 @@ public class ui_inventory : MonoBehaviour
             {
                 //Move half
                 int amountToSplit = 1; //Split number
-                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(picked_inv.id).maxAmount;
+                int max = itemDictionary.singleton.GetDataFromItemID(picked_inv.id).maxAmount;
                 if ((occupied.amount + amountToSplit) > max)
                 {
                 }
@@ -468,7 +596,7 @@ public class ui_inventory : MonoBehaviour
             else
             {
                 //Move completely
-                int max = FindObjectOfType<itemDictionary>().GetDataFromItemID(picked_inv.id).maxAmount;
+                int max = itemDictionary.singleton.GetDataFromItemID(picked_inv.id).maxAmount;
                 if ((occupied.amount + picked_inv.amount) > max)
                 {
                     int amountToSplit = (max - occupied.amount);
@@ -555,7 +683,7 @@ public class ui_inventory : MonoBehaviour
         //Reset
         StopDrag(false);
     }
-    //Unsuccessful drop (reset)
+    //Unsuccessful item drag stop (reset)
     public void StopDrag(bool wantToDrop)
     {
         //Attempt to drop to ground
@@ -573,13 +701,13 @@ public class ui_inventory : MonoBehaviour
                 {
                     invent.Remove(picked_inv);
                 }
-
             }
         }
+        //Update old spot
+        picked_slot = null;
         picked_inv = null;
         //UpdateInventory
-        UpdateInventory();
-        UpdateBelt();
+        RefreshInventoryUI();
         if (currentStorage != null)
         {
             UpdateStorage(storage, currentStorageSlots);

@@ -13,7 +13,7 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
     public Sprite[] icons;
     public TMP_Text text;
     public Slider durability;
-    [HideInInspector]
+    //[HideInInspector]
     public int slot;
     //[HideInInspector]
     public bool storage;
@@ -24,9 +24,21 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
         startScale = gameObject.transform.localScale;
         gameObject.transform.localScale = startScale * 0.95f;
     }
+    public void ResetToEmpty()
+    {
+        bp.SetActive(false); //Hide bp
+        icon.enabled = false;//Hide icon
+        durability.gameObject.SetActive(false);//Hide durability
+        text.text = "";//Hide text
+    }
     public void UpdateIconData(inv_item data)
     {
-
+        //Enable All
+        bp.SetActive(true); //Show bp
+        icon.enabled = true;//Show icon
+        durability.gameObject.SetActive(true);//Show durability
+        text.text = "";//Show text
+        text.enabled = true;
         //Check if has item
         if (data.id == 0)
         {
@@ -55,12 +67,12 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
             bp.SetActive(false); //Hide bp
         }
         //Decide text value
-        if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmmo != 0)
+        if (itemDictionary.singleton.GetDataFromItemID(data.id).maxAmmo != 0)
         {
-            text.text = data.ammoLoaded + "/" + FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmmo;
+            text.text = data.ammoLoaded + "/" + itemDictionary.singleton.GetDataFromItemID(data.id).maxAmmo;
         }
         else
-        if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxAmount > 1)
+        if (itemDictionary.singleton.GetDataFromItemID(data.id).maxAmount > 1)
         {
             text.text = data.amount.ToString();
         }
@@ -69,10 +81,10 @@ public class ui_slot : MonoBehaviour, IPointerDownHandler, IPointerClickHandler,
             text.text = "";
         }
         //Check if has durability
-        if (FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxDurability > 0)
+        if (itemDictionary.singleton.GetDataFromItemID(data.id).maxDurability > 0)
         {
             durability.gameObject.SetActive(true);
-            durability.maxValue = FindObjectOfType<itemDictionary>().GetDataFromItemID(data.id).maxDurability;
+            durability.maxValue = itemDictionary.singleton.GetDataFromItemID(data.id).maxDurability;
             durability.value = data.durability;
             //Debug.Log("[UI] Current: " + durability.value + "Max: " + durability.maxValue);
         }

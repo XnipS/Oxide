@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
+
 public class ui_crafting : MonoBehaviour
 {
     [HideInInspector]
@@ -30,7 +32,7 @@ public class ui_crafting : MonoBehaviour
         crafting.gameObject.SetActive(enabled);
         if (enabled)
         {
-            OpenTab(currentTab);
+            StartCoroutine(OpenTab(currentTab));
         }
     }
 
@@ -53,11 +55,11 @@ public class ui_crafting : MonoBehaviour
         inventory = GetComponent<ui_inventory>();
     }
 
-    public void OpenTab(int id)
+    public IEnumerator OpenTab(int id)
     {
         currentTab = id;
         //Get icons
-        icons = FindObjectOfType<itemDictionary>().icons;
+        icons = itemDictionary.singleton.icons;
         //Set tab name
         tab_title.text = tab_names[id];
         //Delete old data
@@ -89,9 +91,10 @@ public class ui_crafting : MonoBehaviour
         //Set tab info
         tab_info.text = "UNLOCKED " + final.Count + "/" + selected.Count;
         //Render final list
-        itemDictionary dic = FindObjectOfType<itemDictionary>();
+        itemDictionary dic = itemDictionary.singleton;
         foreach (inv_recipe r in final)
         {
+            yield return new WaitForEndOfFrame();
             GameObject g = Instantiate(pan_prefab, pan_transform);
             g.GetComponent<ui_craftingSlot>().icon.sprite = icons[r.outputItem];
             g.GetComponent<ui_craftingSlot>().myRec = r;
@@ -147,7 +150,7 @@ public class ui_crafting : MonoBehaviour
         inv_item it = inv_item.CreateInstance<inv_item>();
         it.amount = recipe.outputAmount;
         it.id = recipe.outputItem;
-        it.durability = FindObjectOfType<itemDictionary>().GetDataFromItemID(it.id).maxDurability;
+        it.durability = itemDictionary.singleton.GetDataFromItemID(it.id).maxDurability;
         inventory.GiveItem(it);
         //Refresh
         inventory.CloseInventory();

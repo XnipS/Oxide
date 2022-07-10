@@ -19,6 +19,7 @@ public class footstepSounds : MonoBehaviour
 	4=Concrete
 	5=Snow
 	6=Metal
+    7=Wood
 	*/
     //sand
     //dirt
@@ -39,7 +40,7 @@ public class footstepSounds : MonoBehaviour
     {
         Ray ray = new Ray(transform.position + Vector3.up * 0.5f, Vector3.down);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 1.15f))
+        if (Physics.Raycast(ray, out RaycastHit hit, 1.15f, LayerMask.GetMask("Default")))
         {
             if (hit.collider.GetComponent<Terrain>() != null)
             {
@@ -57,9 +58,9 @@ public class footstepSounds : MonoBehaviour
                     {
                         Step(4, hard, hit.point);
                     }
-                    if (hit.collider.sharedMaterial.name == "Dirt")
+                    if (hit.collider.sharedMaterial.name == "Wood")
                     {
-                        Step(1, hard, hit.point);
+                        Step(7, hard, hit.point);
                     }
                 }
             }

@@ -27,11 +27,22 @@ public class connected_client : NetworkBehaviour
         }
     }
 
-    public void OnDeath()
+    void OnDeath()
     {
         FindObjectOfType<ui_spawnManager>().ShowRespawnPoints();
-
     }
+    [ClientRpc]
+    public void RPC_PlayerDeath(Vector3 deathPos)
+    {
+        if (hasAuthority)
+        {
+            //FindObjectOfType<ui_spawnManager>().ShowRespawnPoints();
+            FindObjectOfType<respawn_manager>().CMD_SpawnBag(deathPos, FindObjectOfType<ui_inventory>().invent.ToArray());
+            FindObjectOfType<ui_inventory>().SetDefaultItems();
+        }
+    }
+
+
 
     public void Respawn(bool rnd, Vector3 pos)
     {

@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Linq;
 public class itemDictionary : MonoBehaviour
 {
+    public static itemDictionary singleton { get; private set; }
     //Input
     public inv_item_data[] dataDictionary;
     //Output
@@ -18,6 +19,7 @@ public class itemDictionary : MonoBehaviour
 
     void Start()
     {
+        singleton = this;
         //generate sprite list
         List<Sprite> sprites = new List<Sprite>();
         sprites.Add(null);

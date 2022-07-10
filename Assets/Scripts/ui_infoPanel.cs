@@ -28,7 +28,7 @@ public class ui_infoPanel : MonoBehaviour
         //Open panel
         panel.SetActive(true);
         //Get data
-        inv_item_data data = FindObjectOfType<itemDictionary>().GetDataFromItemID(it.id);
+        inv_item_data data = itemDictionary.singleton.GetDataFromItemID(it.id);
         //Set variables
         myItem = it;
         myStore = storage;
@@ -36,7 +36,7 @@ public class ui_infoPanel : MonoBehaviour
         //Set ui
         itemTitle.text = data.title;
         infoText.text = data.description;
-        itemSprite.sprite = FindObjectOfType<itemDictionary>().icons[it.id];
+        itemSprite.sprite = itemDictionary.singleton.icons[it.id];
         //Delete old actions
         foreach (Transform t in tra_action)
         {

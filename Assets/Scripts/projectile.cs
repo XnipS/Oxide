@@ -18,6 +18,7 @@ public class projectile : NetworkBehaviour
     Vector3 currentPos;
     [SyncVar]
     Vector3 currentDir;
+    float selfDestruct = 60f;
     bool isDead = false;
     void Start()
     {
@@ -30,6 +31,14 @@ public class projectile : NetworkBehaviour
         {
             if (!isDead)
             {
+                if (selfDestruct > 0)
+                {
+                    selfDestruct -= Time.fixedDeltaTime;
+                }
+                else
+                {
+                    NetworkServer.Destroy(gameObject);
+                }
                 if (cooldown > 0)
                 {
                     cooldown -= Time.fixedDeltaTime;

@@ -137,55 +137,67 @@ public class resourceManager : NetworkBehaviour
         //Add item to inventory
         inv_item item = inv_item.CreateInstance<inv_item>();
         switch (target.myType)
-        {
-            case 0:
-                switch (Random.Range(0, 625)) //626 for hq
+        {//500 total / damage (25) 
+            case 0://STONE NODE
+                switch (Random.Range(0, 10)) //626 for hq
                 {
-                    case < 500:
+                    case < 5:
                         item.id = 5;
-                        item.amount = 20; //500 total / damage (25) 
+                        item.amount = 20; 
                         break;
-                    case < 600:
+                    case < 7:
                         item.id = 9;
                         item.amount = 4;
                         break;
-                    case < 625:
+                    case < 9:
                         item.id = 8; //sulfur
+                        item.amount = 1;
+                        break;
+                    case < 10:
+                        item.id = 34; //hq
                         item.amount = 1;
                         break;
                 }
                 break;
             case 1://sulfur node
-                switch (Random.Range(0, 750)) //751 for hq
+                switch (Random.Range(0, 10))
                 {
-                    case < 500:
+                    case < 3:
                         item.id = 5;
-                        item.amount = 20; //500 total / damage (25) 
+                        item.amount = 20; 
                         break;
-                    case < 550:
+                    case < 5:
                         item.id = 9;
                         item.amount = 2;
                         break;
-                    case < 750:
+                    case < 9:
                         item.id = 8; //sulfur
                         item.amount = 8;
+                        break;
+                    case < 10:
+                        item.id = 34; //hq
+                        item.amount = 1;
                         break;
                 }
                 break;
             case 2://metal node
-                switch (Random.Range(0, 1025)) //1028 for hq
+                switch (Random.Range(0, 10)) 
                 {
-                    case < 500:
+                    case < 3:
                         item.id = 5;
-                        item.amount = 20; //500 total / damage (25) 
+                        item.amount = 20; //stone 
                         break;
-                    case < 1000:
-                        item.id = 9;
+                    case < 7:
+                        item.id = 9;//metal
                         item.amount = 20;
                         break;
-                    case < 1025:
+                    case < 8:
                         item.id = 8; //sulfur
                         item.amount = 1;
+                        break;
+                    case < 10:
+                        item.id = 34; //hq
+                        item.amount = 3;
                         break;
                 }
                 break;
@@ -228,13 +240,13 @@ public class resourceManager : NetworkBehaviour
             switch (weaponId)
             {
                 case 8://Rock 
-                    HarvestTree(2, 2, .5f, human, target);
+                    HarvestTree(3, 1, .5f, human, target);
                     break;
                 case 4://Stone hatchet 
-                    HarvestTree(4, 4, .8f, human, target);
+                    HarvestTree(4, 3, .8f, human, target);
                     break;
                 case 5://metal hatchet
-                    HarvestTree(5, 5, 1f, human, target);
+                    HarvestTree(5, 6, 1f, human, target);
                     break;
                 default:
                     //Invalid tool
@@ -283,13 +295,13 @@ public class resourceManager : NetworkBehaviour
             switch (weaponId)
             {
                 case 8://Rock
-                    HarvestNode(2, 2, .5f, human, target);
+                    HarvestNode(3, 1, .5f, human, target);
                     break;
                 case 2://Stone pick
-                    HarvestNode(4, 4, .8f, human, target);
+                    HarvestNode(4, 3, .8f, human, target);
                     break;
                 case 3://Metal pick
-                    HarvestNode(5, 5, 1f, human, target);
+                    HarvestNode(5, 6, 1f, human, target);
                     break;
                 default:
                     //Invalid tool
