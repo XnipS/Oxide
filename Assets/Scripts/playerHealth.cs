@@ -8,10 +8,10 @@ public class playerHealth : NetworkBehaviour
     [SyncVar]
     public float currentHealth = 100f;
     public int gibs;
-    public float maxHunger = 500f;
-    public float maxWater = 500f;
-    float currentHunger = 150f;
-    float currentWater = 150f;
+    public float maxHunger = 100;
+    public float maxWater = 100;
+    public float currentHunger = 25;
+    public float currentWater = 50;
 
     void Start()
     {
@@ -22,21 +22,21 @@ public class playerHealth : NetworkBehaviour
     {
         while (true)
         {
-            if (currentHunger == 0)
+            if (currentHunger <= 0)
             {
                 CMD_TakeDamage(1f, GetComponent<NetworkIdentity>());
             }
             else
             {
-                currentHunger -= .01f;
+                currentHunger -= .03f;
             }
-            if (currentWater == 0)
+            if (currentWater <= 0)
             {
                 CMD_TakeDamage(1f, GetComponent<NetworkIdentity>());
             }
             else
             {
-                currentWater -= .01f;
+                currentWater -= .03f;
             }
             FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.hunger, currentHunger);
             FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.water, currentWater);

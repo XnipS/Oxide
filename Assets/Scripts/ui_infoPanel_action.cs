@@ -49,6 +49,10 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                 m_text.text = "Reveal";
                 m_image.sprite = icons[3];
                 break;
+            case actionType.consume:
+                m_text.text = "Consume";
+                m_image.sprite = icons[4];
+                break;
         }
     }
 
@@ -60,6 +64,23 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                 FindObjectOfType<ui_inventory>().PickedItem(mySlot, myStore);
                 FindObjectOfType<ui_inventory>().StopDrag(true);
                 FindObjectOfType<ui_notifyManager>().Notify("Dropped!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.minus);
+                break;
+            case actionType.consume:
+                FindObjectOfType<ui_inventory>().DestroyItem(mySlot.slot, 1, myStore);
+                playerHealth phealth = FindObjectOfType<ui_inventory>().player.GetComponent<playerHealth>();
+                itemDictionary dic = itemDictionary.singleton;
+                phealth.currentHealth += dic.GetDataFromItemID(myItem.id).deltaHealth;
+                phealth.currentHunger += dic.GetDataFromItemID(myItem.id).deltaHunger;
+                phealth.currentWater += dic.GetDataFromItemID(myItem.id).deltaWater;
+                if(phealth.currentHealth > phealth.maxHealth) {
+                    phealth.currentHealth = phealth.maxHealth;
+                }
+                if(phealth.currentHunger > phealth.maxHunger) {
+                    phealth.currentHunger = phealth.maxHunger;
+                }
+                if(phealth.currentWater > phealth.maxWater) {
+                    phealth.currentWater = phealth.maxWater;
+                }
                 break;
             case actionType.learn:
                 playerInventory pinv = FindObjectOfType<ui_inventory>().player.GetComponent<playerInventory>();

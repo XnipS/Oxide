@@ -143,7 +143,7 @@ public class resourceManager : NetworkBehaviour
                 {
                     case < 5:
                         item.id = 5;
-                        item.amount = 20; 
+                        item.amount = 20;
                         break;
                     case < 7:
                         item.id = 9;
@@ -164,7 +164,7 @@ public class resourceManager : NetworkBehaviour
                 {
                     case < 3:
                         item.id = 5;
-                        item.amount = 20; 
+                        item.amount = 20;
                         break;
                     case < 5:
                         item.id = 9;
@@ -181,7 +181,7 @@ public class resourceManager : NetworkBehaviour
                 }
                 break;
             case 2://metal node
-                switch (Random.Range(0, 10)) 
+                switch (Random.Range(0, 10))
                 {
                     case < 3:
                         item.id = 5;
@@ -222,8 +222,17 @@ public class resourceManager : NetworkBehaviour
                 item.amount = 10 + Random.Range(0, 5);
                 break;
             case 1:
-                item.id = 12;
-                item.amount = 10 + Random.Range(0, 5);
+                if (Random.value > 0.5f)
+                {
+                    item.id = 12;
+                    item.amount = 10 + Random.Range(0, 5);
+                }
+                else
+                {
+                    item.id = 39;
+                    item.amount = 1 + Random.Range(0, 1);
+                }
+
                 break;
         }
 
