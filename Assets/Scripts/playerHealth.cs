@@ -20,27 +20,30 @@ public class playerHealth : NetworkBehaviour
 
     IEnumerator StatsThink()
     {
-        while (true)
+        if (hasAuthority)
         {
-            if (currentHunger <= 0)
+            while (true)
             {
-                CMD_TakeDamage(1f, GetComponent<NetworkIdentity>());
+                if (currentHunger <= 0)
+                {
+                    CMD_TakeDamage(1f, GetComponent<NetworkIdentity>());
+                }
+                else
+                {
+                    currentHunger -= .03f;
+                }
+                if (currentWater <= 0)
+                {
+                    CMD_TakeDamage(1f, GetComponent<NetworkIdentity>());
+                }
+                else
+                {
+                    currentWater -= .03f;
+                }
+                FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.hunger, currentHunger);
+                FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.water, currentWater);
+                yield return new WaitForSeconds(1f);
             }
-            else
-            {
-                currentHunger -= .03f;
-            }
-            if (currentWater <= 0)
-            {
-                CMD_TakeDamage(1f, GetComponent<NetworkIdentity>());
-            }
-            else
-            {
-                currentWater -= .03f;
-            }
-            FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.hunger, currentHunger);
-            FindObjectOfType<ui_manager>().UpdateStatus(ui_hud.statusType.water, currentWater);
-            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -72,7 +75,6 @@ public class playerHealth : NetworkBehaviour
         if (hasAuthority)
         {
             FindObjectOfType<ui_hud>().UpdateStatusHud(ui_hud.statusType.health, currentHealth);
-            Debug.Log(hp);
         }
 
     }

@@ -4,7 +4,9 @@ using Cinemachine;
 
 public class playerWeapons : NetworkBehaviour
 {
-
+    public AudioClip hitsound;
+    public AudioClip head_hitsound;
+    public Transform aimObj;
     public enum FireType
     {
         raycast, projectile
@@ -17,6 +19,7 @@ public class playerWeapons : NetworkBehaviour
     public weaponObject[] weaponObjects;
     Animation anim;
     public bool isAiming;
+    [HideInInspector]
     public int currentWeapon;
     inv_item_data currentData;
     inv_item myItem;
@@ -26,6 +29,7 @@ public class playerWeapons : NetworkBehaviour
     float viewmodelFov;
     public smoothMouseLook vert1;
     public smoothMouseLook vert2;
+    [HideInInspector]
     public int currentBeltSlot;
     [SyncVar]
     string current_aimAnim = "";
@@ -172,16 +176,11 @@ public class playerWeapons : NetworkBehaviour
     void DoFireChecks()
     {
         //Final check 
-        if(currentData == null){return;}
+        if (currentData == null) { return; }
         //Check durability
         if (currentData.maxDurability > 0)
         {
-            if (myItem.durability > 0)
-            {
-                myItem.durability -= currentData.durabilityOnUse;
-                myInv.RefreshInventoryUI();
-            }
-            else
+            if (myItem.durability <= 0)
             {
                 return;
             }
@@ -212,6 +211,12 @@ public class playerWeapons : NetworkBehaviour
 
     void Fire()
     {
+        //Apply durability
+        if (currentData.maxDurability > 0 && myItem.durability > 0)
+        {
+            myItem.durability -= currentData.durabilityOnUse;
+            myInv.RefreshInventoryUI();
+        }
         //Apply cooldown
         cooldown = currentData.cooldown;
         //Use aim fire animation or not
@@ -245,7 +250,13 @@ public class playerWeapons : NetworkBehaviour
                     GetComponent<smoothMouseLook>().rotationX += Random.Range(-currentData.recoil_std.x, currentData.recoil_std.x) + Random.Range(-currentData.recoil_rnd.x, currentData.recoil_rnd.x);
                     vert1.rotationY += currentData.recoil_std.y + Random.Range(0, currentData.recoil_rnd.y);
                     vert2.rotationY = vert1.rotationY;
-                    CMD_SpawnProjectile(currentData.id, Camera.main.transform.position + Camera.main.transform.forward, Quaternion.LookRotation(Camera.main.transform.forward));
+                    //Spawn bullets
+                    for (int i = 0; i < currentData.projectileCount; i++)
+                    {
+                        Vector2 bullet_cone = Random.insideUnitCircle * Random.Range(-currentData.projectileAngle / 2f, currentData.projectileAngle / 2f);
+                        Quaternion bullet_error = Quaternion.Euler(bullet_cone.x, bullet_cone.y, 0);
+                        CMD_SpawnProjectile(currentData.id, Camera.main.transform.position + Camera.main.transform.forward, Quaternion.LookRotation(Camera.main.transform.forward) * bullet_error);
+                    }
                     break;
             }
         }
@@ -295,8 +306,18 @@ public class playerWeapons : NetworkBehaviour
                     {
                         CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false, false);
                     }
-                    hit.collider.GetComponentInParent<NetworkIdentity>().GetComponentInParent<playerHealth>().CMD_TakeDamage(currentData.ray_damage * hit.collider.GetComponent<playerHitbox>().multiplier, GetComponent<NetworkIdentity>());
+                    hit.collider.GetComponentInParent<NetworkIdentity>().GetComponentInParent<playerHealth>().CMD_TakeDamage(currentData.dmgProfile.damage * currentData.dmgProfile.mul_player * hit.collider.GetComponent<playerHitbox>().multiplier, GetComponent<NetworkIdentity>());
                     FindObjectOfType<effectManager>().CMD_SpawnEffect(2, hit.point, Quaternion.identity);
+                    if (hit.collider.GetComponent<playerHitbox>().multiplier == 1.25f)
+                    {
+
+                        PlayHitsound(true);
+
+                    }
+                    else
+                    {
+                        PlayHitsound(false);
+                    }
                     break;
                 }
             }
@@ -308,9 +329,20 @@ public class playerWeapons : NetworkBehaviour
                 {
                     CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false, false);
                 }
-                hit.collider.GetComponent<objectHealth>().CMD_TakeDamage(currentData.ray_damage, GetComponent<NetworkIdentity>());
+                hit.collider.GetComponent<objectHealth>().CMD_TakeDamage(currentData.dmgProfile.damage * currentData.dmgProfile.mul_deployables, GetComponent<NetworkIdentity>());
                 break;
+            }
+            if (hit.collider.GetComponent<buildingObject>())
+            {
+                //Animation confirm
+                FindObjectOfType<effectManager>().CMD_SpawnEffect(1, hit.point, Quaternion.identity);
+                if (currentData.anim_attack_hit != null)
+                {
+                    CMD_PlayWeaponAnimation(currentData.anim_attack_hit.name, currentData.weaponId, false, false);
+                }
+                FindObjectOfType<buildingManager>().CMD_BuildingDamage(currentData.dmgProfile.damage * currentData.dmgProfile.mul_buildings_stick, hit.collider.GetComponentInParent<buildingObject>().myBuildingDontUse.myId);
 
+                break;
             }
         }
     }
@@ -374,6 +406,16 @@ public class playerWeapons : NetworkBehaviour
         {
             currentData = itemDictionary.singleton.GetDataFromItemID(occupied.id);
             myItem = occupied;
+            //Open building plan
+            if (occupied.id == 41)
+            {
+                FindObjectOfType<buildingManager>().buildingPlanOut = true;
+            }
+            else
+            {
+                //Close building plan
+                FindObjectOfType<buildingManager>().buildingPlanOut = false;
+            }
             if (currentData.weaponId != 0)
             {
                 CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId, false, false);
@@ -393,6 +435,16 @@ public class playerWeapons : NetworkBehaviour
         {
             currentData = itemDictionary.singleton.GetDataFromItemID(occupied.id);
             myItem = occupied;
+            //Open building plan
+            if (occupied.id == 41)
+            {
+                FindObjectOfType<buildingManager>().buildingPlanOut = true;
+            }
+            else
+            {
+                //Close building plan
+                FindObjectOfType<buildingManager>().buildingPlanOut = false;
+            }
             if (currentData.weaponId != 0)
             {
                 CMD_PlayWeaponAnimation(currentData.anim_equip.name, currentData.weaponId, false, false);
@@ -423,8 +475,10 @@ public class playerWeapons : NetworkBehaviour
             ob.SetActive(true);
         }
     }
-    public void ANIM_UseConsumable () {
-        if(itemDictionary.singleton.GetDataFromItemID(currentData.id).deltaHealth > 0) {
+    public void ANIM_UseConsumable()
+    {
+        if (itemDictionary.singleton.GetDataFromItemID(currentData.id).deltaHealth > 0)
+        {
             //Subtract health
             GetComponent<playerHealth>().currentHealth += Mathf.Min(itemDictionary.singleton.GetDataFromItemID(currentData.id).deltaHealth, GetComponent<playerHealth>().maxHealth - GetComponent<playerHealth>().currentHealth);
             //Update ui
@@ -459,6 +513,7 @@ public class playerWeapons : NetworkBehaviour
     {
         GameObject g = Instantiate(itemDictionary.singleton.GetDataFromItemID(type).projectile, pos, rot);
         g.GetComponent<projectile>().owner = GetComponent<NetworkIdentity>();
+        g.GetComponent<projectile>().profile = itemDictionary.singleton.GetDataFromItemID(type).dmgProfile;
         NetworkServer.Spawn(g);
     }
     [Command]
@@ -487,6 +542,25 @@ public class playerWeapons : NetworkBehaviour
             anim[animation].layer = 10;
             anim.Stop(animation);
             anim.CrossFade(animation, 0.1f, PlayMode.StopSameLayer);
+        }
+    }
+    [ClientRpc]
+    public void RPC_PlayHitsound(bool headshot)
+    {
+        if (hasAuthority)
+        {
+            PlayHitsound(headshot);
+        }
+    }
+    void PlayHitsound(bool headshot)
+    {
+        if (headshot)
+        {
+            GetComponent<reloadAudio>().PlayNotReloadAudio(head_hitsound);
+        }
+        else
+        {
+            GetComponent<reloadAudio>().PlayNotReloadAudio(hitsound);
         }
     }
 }

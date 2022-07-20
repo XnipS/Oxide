@@ -5,7 +5,6 @@ using static lootDictionary;
 public class lootBarrel : NetworkBehaviour
 {
 
-    public lootDictionary.LootTable[] myTable;
     public GameObject droppedItem;
 
     public int maxItemsDropped;

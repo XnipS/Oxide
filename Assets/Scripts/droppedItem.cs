@@ -1,11 +1,21 @@
 using UnityEngine;
 using Mirror;
+using System.Collections;
 
 public class droppedItem : NetworkBehaviour
 {
     [HideInInspector]
     [SyncVar]
     public inv_item myData;
+
+    void Start () {
+        StartCoroutine(Die());
+    }
+
+    IEnumerator Die () {
+        yield return new WaitForSeconds(300);
+        NetworkServer.Destroy(gameObject);
+    }
 
     [Command(requiresAuthority = false)]
     public void CMD_SyncItemData(inv_item data)

@@ -1,0 +1,9 @@
+Create required animations
+Aim = 30 frames
+Fire = 1st frame normal, 2nd frame recoil, 30 frames to reset, Add muzzle effect to 2nd frame
+Add reloadAudio to all clips
+Aim animation to clamp forever
+Reload to add reload event
+Possible create new muzzle
+Create icon
+Create item

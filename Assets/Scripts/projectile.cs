@@ -5,7 +5,7 @@ using Mirror;
 
 public class projectile : NetworkBehaviour
 {
-    public float damage;
+    public inv_item_data.DamageProfile profile;
     public float timePerStep;
     public float distance;
     public float dropAngle;
@@ -78,7 +78,12 @@ public class projectile : NetworkBehaviour
             }
             else if (hit.collider.GetComponent<objectHealth>())
             {
-                HitPlayer(0.1f, "", hit.collider.GetComponentInParent<NetworkIdentity>(), hit.point);
+                HitPlayer(1f, "", hit.collider.GetComponentInParent<NetworkIdentity>(), hit.point);
+            }
+            else if (hit.collider.GetComponent<buildingObject>())
+            {
+                FindObjectOfType<buildingManager>().CMD_BuildingDamage(profile.damage * profile.mul_buildings_stick, hit.collider.GetComponentInParent<buildingObject>().myBuildingDontUse.myId);
+                FindObjectOfType<effectManager>().CMD_SpawnEffect(hitEffect, hit.point, Quaternion.identity);
             }
             if (hit.collider.GetComponent<npcHealth>())
             {
@@ -99,18 +104,35 @@ public class projectile : NetworkBehaviour
         {
             if (target.GetComponentInParent<playerHealth>())
             {
-                target.GetComponentInParent<playerHealth>().CMD_TakeDamage(damage * multiplier, owner);
+                target.GetComponentInParent<playerHealth>().CMD_TakeDamage(profile.damage * multiplier * profile.mul_player, owner);
                 FindObjectOfType<effectManager>().CMD_SpawnEffect(2, pos, Quaternion.identity);
                 FindObjectOfType<effectManager>().CMD_SpawnEffect(hitEffect, pos, Quaternion.identity);
+                if (owner.GetComponent<playerWeapons>())
+                {
+                    if (multiplier == 1.25f)
+                    {
+
+                        owner.GetComponent<playerWeapons>().RPC_PlayHitsound(true);
+
+                    }
+                    else
+                    {
+                        owner.GetComponent<playerWeapons>().RPC_PlayHitsound(false);
+                    }
+                }
             }
             if (target.GetComponentInParent<objectHealth>())
             {
-                target.GetComponentInParent<objectHealth>().CMD_TakeDamage(damage * multiplier, owner);
+                target.GetComponentInParent<objectHealth>().CMD_TakeDamage(profile.damage * profile.mul_deployables, owner);
                 FindObjectOfType<effectManager>().CMD_SpawnEffect(hitEffect, pos, Quaternion.identity);
             }
             if (target.GetComponentInParent<npcHealth>())
             {
-                target.GetComponentInParent<npcHealth>().CMD_TakeDamage(damage * multiplier, owner);
+                if (owner.GetComponent<playerWeapons>())
+                {
+                    owner.GetComponent<playerWeapons>().RPC_PlayHitsound(false);
+                }
+                target.GetComponentInParent<npcHealth>().CMD_TakeDamage(profile.damage * profile.mul_npc, owner);
                 FindObjectOfType<effectManager>().CMD_SpawnEffect(hitEffect, pos, Quaternion.identity);
             }
         }

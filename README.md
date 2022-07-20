@@ -2,7 +2,7 @@
 
 ![Oxide Logo](https://drive.google.com/uc?export=view&id=1AveHQy8IlCIktX_c_tb2MK2D6PS0oUUv)
 
-# DevLog - v0.3.1
+# DevLog - v0.3.4
 
 ### Player Basics 0.1
 
@@ -43,9 +43,9 @@ Durability✔️
 ### Survival System 0.4
 
 Lootable Corpses✔️\
-Loot tables\
-Hunger & Eating\
-Thirst & Drinking\
+Loot tables✔️\
+Playtest Patch 003✔️\
+Hunger & Thirst✔️\
 Animals\
 Clothing\
 Temperature changes\

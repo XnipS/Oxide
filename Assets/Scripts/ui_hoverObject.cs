@@ -34,9 +34,12 @@ public class ui_hoverObject : MonoBehaviour
                 //Detected bag
                 hover = true;
                 string str = itemDictionary.singleton.GetDataFromItemID(hit.collider.GetComponent<droppedItem>().myData.id).title + " (" + hit.collider.GetComponent<droppedItem>().myData.amount + ")";
-                if(hit.collider.GetComponent<droppedItem>().myData.blueprint) {
+                if (hit.collider.GetComponent<droppedItem>().myData.blueprint)
+                {
                     str = "Pickup: [Blueprint] " + str;
-                }else {
+                }
+                else
+                {
                     str = "Pickup: " + str;
                 }
                 itemText.text = str;
@@ -85,14 +88,46 @@ public class ui_hoverObject : MonoBehaviour
                     FindObjectOfType<resourceManager>().CMD_PickNode(hit.collider.GetComponent<pickableNode>().id, player.GetComponent<NetworkIdentity>());
                 }
             }
+            if (hit.collider.GetComponent<playerTrap>() != null)
+            {
+                if (hit.collider.GetComponent<playerTrap>().activated)
+                {
+                    //Show UI
+                    hover = true;
+                    switch (hit.collider.GetComponent<playerTrap>().myType)
+                    {
+                        case playerTrap.TrapType.landmine:
+                            itemText.text = "Defuse";
+                            break;
+                        case playerTrap.TrapType.snaptrap:
+                            itemText.text = "Reset";
+                            break;
+                    }
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        hit.collider.GetComponent<playerTrap>().CMD_UseTrap();
+                    }
+                }
+            }
             if (hit.collider.GetComponent<objectHealth>() != null)
             {
+                //detected deployable/object
                 objectHealth ob = hit.collider.GetComponent<objectHealth>();
                 healthSlider.gameObject.SetActive(true);
                 healthText.enabled = true;
                 healthSlider.maxValue = ob.maxHealth;
                 healthSlider.value = ob.currentHealth;
                 healthText.text = ob.currentHealth.ToString() + "/" + ob.maxHealth.ToString();
+            }
+            else if (hit.collider.GetComponent<buildingObject>() != null)
+            {
+                //detected building
+                buildingObject ob = hit.collider.GetComponent<buildingObject>();
+                healthSlider.gameObject.SetActive(true);
+                healthText.enabled = true;
+                healthSlider.maxValue = ob.myBuildingDontUse.maxHealth;
+                healthSlider.value = ob.myBuildingDontUse.health;
+                healthText.text = ob.myBuildingDontUse.health.ToString() + "/" + ob.myBuildingDontUse.maxHealth.ToString();
             }
             else
             {

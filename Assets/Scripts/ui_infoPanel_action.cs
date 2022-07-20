@@ -64,6 +64,7 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                 FindObjectOfType<ui_inventory>().PickedItem(mySlot, myStore);
                 FindObjectOfType<ui_inventory>().StopDrag(true);
                 FindObjectOfType<ui_notifyManager>().Notify("Dropped!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.minus);
+                FindObjectOfType<ui_infoPanel>().CloseInfoPanel();
                 break;
             case actionType.consume:
                 FindObjectOfType<ui_inventory>().DestroyItem(mySlot.slot, 1, myStore);
@@ -72,14 +73,92 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                 phealth.currentHealth += dic.GetDataFromItemID(myItem.id).deltaHealth;
                 phealth.currentHunger += dic.GetDataFromItemID(myItem.id).deltaHunger;
                 phealth.currentWater += dic.GetDataFromItemID(myItem.id).deltaWater;
-                if(phealth.currentHealth > phealth.maxHealth) {
+                if (phealth.currentHealth > phealth.maxHealth)
+                {
                     phealth.currentHealth = phealth.maxHealth;
                 }
-                if(phealth.currentHunger > phealth.maxHunger) {
+                if (phealth.currentHunger > phealth.maxHunger)
+                {
                     phealth.currentHunger = phealth.maxHunger;
                 }
-                if(phealth.currentWater > phealth.maxWater) {
+                if (phealth.currentWater > phealth.maxWater)
+                {
                     phealth.currentWater = phealth.maxWater;
+                }
+                if (!FindObjectOfType<ui_inventory>().HasEnough(myItem.id, 1))
+                {
+                    FindObjectOfType<ui_infoPanel>().CloseInfoPanel();
+                }
+                break;
+            case actionType.reveal:
+                ui_inventory rinv = FindObjectOfType<ui_inventory>();
+                switch (myItem.id)
+                {
+                    case 30:
+                        if (rinv.HasEnough(myItem.id, 20))
+                        {
+                            inv_item i = ScriptableObject.CreateInstance<inv_item>();
+                            i.id = FindObjectOfType<lootDictionary>().loot_bp_common[Random.Range(0, FindObjectOfType<lootDictionary>().loot_bp_common.Count)];
+                            i.amount = 1;
+                            i.blueprint = true;
+                            rinv.DestroyItem(myItem.id, 20);
+                            rinv.GiveItem(i);
+                        }
+                        else
+                        {
+                            FindObjectOfType<ui_notifyManager>().Notify("Not enough!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.plus);
+                        }
+                        break;
+                    case 31:
+                        if (rinv.HasEnough(myItem.id, 1))
+                        {
+                            inv_item i = ScriptableObject.CreateInstance<inv_item>();
+                            i.id = FindObjectOfType<lootDictionary>().loot_bp_uncommon[Random.Range(0, FindObjectOfType<lootDictionary>().loot_bp_uncommon.Count)];
+                            i.amount = 1;
+                            i.blueprint = true;
+                            rinv.DestroyItem(myItem.id, 1);
+                            rinv.GiveItem(i);
+                        }
+                        else
+                        {
+                            FindObjectOfType<ui_notifyManager>().Notify("Not enough!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.plus);
+                        }
+                        break;
+                    case 32:
+                        if (rinv.HasEnough(myItem.id, 1))
+                        {
+                            inv_item i = ScriptableObject.CreateInstance<inv_item>();
+                            i.id = FindObjectOfType<lootDictionary>().loot_bp_rare[Random.Range(0, FindObjectOfType<lootDictionary>().loot_bp_rare.Count)];
+                            i.amount = 1;
+                            i.blueprint = true;
+                            rinv.DestroyItem(myItem.id, 1);
+                            rinv.GiveItem(i);
+                        }
+                        else
+                        {
+                            FindObjectOfType<ui_notifyManager>().Notify("Not enough!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.plus);
+                        }
+                        break;
+                    case 33:
+                        if (rinv.HasEnough(myItem.id, 1))
+                        {
+                            inv_item i = ScriptableObject.CreateInstance<inv_item>();
+                            i.id = FindObjectOfType<lootDictionary>().loot_bp_veryrare[Random.Range(0, FindObjectOfType<lootDictionary>().loot_bp_veryrare.Count)];
+                            i.amount = 1;
+                            i.blueprint = true;
+                            rinv.DestroyItem(myItem.id, 1);
+                            rinv.GiveItem(i);
+                        }
+                        else
+                        {
+                            FindObjectOfType<ui_notifyManager>().Notify("Not enough!", ui_notification.NotifyColourType.red, ui_notification.NotifyIconType.plus);
+                        }
+                        break;
+
+                }
+                if (!FindObjectOfType<ui_inventory>().HasEnough(myItem.id, 1))
+                {
+                    FindObjectOfType<ui_infoPanel>().CloseInfoPanel();
                 }
                 break;
             case actionType.learn:
@@ -93,6 +172,7 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                     pinv.myMemory.Add(myItem.id);
                     FindObjectOfType<ui_inventory>().DestroyItem(mySlot.slot, myStore);
                     FindObjectOfType<ui_notifyManager>().Notify("Learned!", ui_notification.NotifyColourType.blue, ui_notification.NotifyIconType.learn);
+                    FindObjectOfType<ui_infoPanel>().CloseInfoPanel();
                 }
                 break;
             case actionType.upgrade:
@@ -142,8 +222,13 @@ public class ui_infoPanel_action : MonoBehaviour, IPointerClickHandler
                         }
                         break;
                 }
+                if (!FindObjectOfType<ui_inventory>().HasEnough(myItem.id, 1))
+                {
+                    FindObjectOfType<ui_infoPanel>().CloseInfoPanel();
+                }
                 break;
         }
-        FindObjectOfType<ui_infoPanel>().CloseInfoPanel();
+
+
     }
 }

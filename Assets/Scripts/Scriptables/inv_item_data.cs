@@ -12,11 +12,13 @@ public class inv_item_data : ScriptableObject
     [Header("EQUIPPABLE")]//////////////////////////////////////
     public int weaponId = 0;
     public int fireType;
+    public DamageProfile dmgProfile;
     [Header("Projectile")]
     public GameObject projectile;
+    public int projectileCount = 1;
+    public float projectileAngle = 0;
     [Header("Ray")]
     public float ray_range = 2f;
-    public float ray_damage = 20f;
     [Header("Ammo")]
     public int ammo = 0;
     public int maxAmmo = 0;
@@ -43,4 +45,18 @@ public class inv_item_data : ScriptableObject
     public float deltaHealth = 0f;
     public float deltaHunger = 0f;
     public float deltaWater = 0f;
+    [System.Serializable]
+    public class DamageProfile
+    {
+        public float damage;
+
+        public float mul_player = 1f;
+        public float mul_deployables = 1f;
+        public float mul_buildings_stick = 1f;
+        public float mul_buildings_wood = 0f;
+        public float mul_buildings_stone = 0f;
+        public float mul_buildings_metal = 0f;
+        public float mul_buildings_reinforced = 0f;
+        public float mul_npc = 1f;
+    }
 }

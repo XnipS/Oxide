@@ -57,6 +57,7 @@ public class ui_crafting : MonoBehaviour
 
     public IEnumerator OpenTab(int id)
     {
+        float dev_startTime = Time.time;
         currentTab = id;
         //Get icons
         icons = itemDictionary.singleton.icons;
@@ -75,15 +76,7 @@ public class ui_crafting : MonoBehaviour
         //Remove unknown engrams
         foreach (inv_recipe r in selected)
         {
-            bool shown = false;
-            for (int i = 0; i < FindObjectOfType<ui_inventory>().myMemory.Count; i++)
-            {
-                if (FindObjectOfType<ui_inventory>().myMemory[i] == r.outputItem)
-                {
-                    shown = true;
-                }
-            }
-            if (shown)
+            if (inventory.myMemory.Any(x => x == r.outputItem))
             {
                 final.Add(r);
             }
@@ -128,6 +121,7 @@ public class ui_crafting : MonoBehaviour
             }
             g.GetComponent<ui_craftingSlot>().smallText.text = str;
         }
+        Debug.LogWarning("Crafting UI took: " + (Time.time - dev_startTime));
     }
 
     public void Craft(inv_recipe recipe)

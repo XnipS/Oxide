@@ -40,12 +40,12 @@ public class ui_inventory : MonoBehaviour
     //Start
     void Start()
     {
-        //Add initial dev items
-        SetDefaultItems();
         //Get icons
         icons = itemDictionary.singleton.icons;
         //Initialise
         RebuildInventoryUI();
+        //Add initial dev items
+        SetDefaultItems();
         //UpdateItems
         RefreshInventoryUI();
     }
@@ -174,7 +174,7 @@ public class ui_inventory : MonoBehaviour
     public void RefreshStorageUI(int slotCount)
     {
         //Rebuild if slots are different size
-       // if (storage.Count != slotCount)
+        // if (storage.Count != slotCount)
         {
             RebuildStorageUI(slotCount);
         }
@@ -218,12 +218,11 @@ public class ui_inventory : MonoBehaviour
     public bool HasEnough(int itemId, int amount)
     {
         int needed = amount;
-        foreach (inv_item it in invent)
+        List<inv_item> selected = new List<inv_item>();
+        selected = invent.FindAll(x => x.id == itemId);
+        foreach (inv_item it in selected)
         {
-            if (it.id == itemId)
-            {
-                needed -= it.amount;
-            }
+            needed -= it.amount;
         }
         return (needed <= 0);
     }
@@ -231,12 +230,11 @@ public class ui_inventory : MonoBehaviour
     public int HowMuch(int itemId)
     {
         int has = 0;
-        foreach (inv_item it in invent)
+        List<inv_item> selected = new List<inv_item>();
+        selected = invent.FindAll(x => x.id == itemId);
+        foreach (inv_item it in selected)
         {
-            if (it.id == itemId)
-            {
-                has += it.amount;
-            }
+            has += it.amount;
         }
         return (has);
     }
@@ -329,7 +327,7 @@ public class ui_inventory : MonoBehaviour
             {
                 if (occupied.amount > 1)
                 {
-                     occupied.amount--;
+                    occupied.amount--;
                 }
                 else
                 {

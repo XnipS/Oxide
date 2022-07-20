@@ -125,7 +125,7 @@ public class resourceManager : NetworkBehaviour
         //Add item to inventory
         inv_item item = inv_item.CreateInstance<inv_item>();
         item.id = tree.resource_id;
-        item.amount = 750 / 25;
+        item.amount = 30;
         item.amount = Mathf.CeilToInt(item.amount * multiplier);
         item.amount += Random.Range(0, bonus);
         human.GetComponent<playerInventory>().RPC_GiveItem(item, false);
@@ -147,11 +147,11 @@ public class resourceManager : NetworkBehaviour
                         break;
                     case < 7:
                         item.id = 9;
-                        item.amount = 4;
+                        item.amount = 5;
                         break;
                     case < 9:
                         item.id = 8; //sulfur
-                        item.amount = 1;
+                        item.amount = 2;
                         break;
                     case < 10:
                         item.id = 34; //hq
@@ -168,11 +168,11 @@ public class resourceManager : NetworkBehaviour
                         break;
                     case < 5:
                         item.id = 9;
-                        item.amount = 2;
+                        item.amount = 5;
                         break;
                     case < 9:
                         item.id = 8; //sulfur
-                        item.amount = 8;
+                        item.amount = 20;
                         break;
                     case < 10:
                         item.id = 34; //hq

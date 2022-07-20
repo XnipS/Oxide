@@ -16,10 +16,10 @@ public class lootDictionary : NetworkBehaviour
         public float chance;
         public bool blueprint = false;
     }
-    public LootTable[] loot_bp_common;
-    public LootTable[] loot_bp_uncommon;
-    public LootTable[] loot_bp_rare;
-    public LootTable[] loot_bp_veryrare;
+    public List<int> loot_bp_common;
+    public List<int> loot_bp_uncommon;
+    public List<int> loot_bp_rare;
+    public List<int> loot_bp_veryrare;
     public LootTable[] loot_airDrop;
     public LootTable[] loot_barrel;
 

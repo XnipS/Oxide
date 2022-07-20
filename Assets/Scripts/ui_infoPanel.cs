@@ -51,6 +51,9 @@ public class ui_infoPanel : MonoBehaviour
         if(it.id == 30 || it.id == 31 || it.id == 32) {
              SummonAction(ui_infoPanel_action.actionType.upgrade);
         }
+        if(it.id == 30 || it.id == 31 || it.id == 32| it.id == 33) {
+             SummonAction(ui_infoPanel_action.actionType.reveal);
+        }
         if(it.id == 39) {
              SummonAction(ui_infoPanel_action.actionType.consume);
         }
