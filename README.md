@@ -2,6 +2,9 @@
 
 ![Oxide Logo](https://drive.google.com/uc?export=view&id=1AveHQy8IlCIktX_c_tb2MK2D6PS0oUUv)
 
+# Installation
+It is recommended you install https://github.com/XnipS/NIP-Manager/releases which will clean and manage your installation. Or you can manually download from https://github.com/XnipS/Oxide/releases
+
 # DevLog - v0.3.4
 
 ### Player Basics 0.1
